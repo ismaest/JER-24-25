@@ -113,7 +113,7 @@ El juego estará disponible tan solo en ordenador. Se podrá jugar tanto de form
 
 **1.10 Licencia**
 
-La licencia del juego es de libre uso. El juego será gratuito y cualquier persona podrá tomar el código, assets y demás componentes del juego y hacer lo que quiera con ellos. Una licencia Creative Commons 0.
+La licencia del proyecto es Apache-2.0 license
 
 
 **1.11 Análisis DAFO**
