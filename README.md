@@ -1,5 +1,8 @@
 # GDD - LABRATS
 
+![PORTADA](https://github.com/user-attachments/assets/6f8a6e2c-2bb6-4277-863f-e4bb4e89a232)
+> Portada del juego
+
 LABRATS es un juego arcade 1vs1 en el que ambos jugadores tomarán el rol de una rata o un científico. La rata deberá sobrevivir a los intentos del científico por acabar con ella.
 
   - Iván de Castilla Guitián, i.decastilla.2022@alumnos.urjc.es, smartwastaken
