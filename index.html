@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+
+    <head>
+        
+        <meta charset="UTF-8">
+
+        <!-- Incluir Phaser desde CDN -->
+        <script src="Scripts/phaser.js"></script>
+        <script src="Scripts/menu.js"> </script>
+        <script src="Scripts/game.js"> </script>
+        <script src="Scripts/options.js"> </script>
+        
+        <title>LABRATS</title>
+        
+        <link rel="stylesheet" href="style.css">
+        
+    </head>
+    
+    <body>
+
+        <script>
+            
+            var config = {
+                type: Phaser.AUTO,
+                width: 800,
+                height: 600,
+                parent: 'game-canvas',
+                physics: {
+                    default: 'arcade',
+                    arcade: {
+                        gravity: { y: 0 }
+                    }
+                },
+                scene: [MenuScene, GameScene, OptionsMenu]
+            };
+            const game = new Phaser.Game(config);
+            
+        </script>
+        
+    </body>
+
+</html>
