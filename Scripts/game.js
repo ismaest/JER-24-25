@@ -41,7 +41,7 @@ class GameScene extends Phaser.Scene {
         }); //Se crea la opcion de usar las teclas W A S D. 
     }
 
-    update() {
+    update(time, delta) {
         
         //MOVIMIENTO DE LA RATA
 
