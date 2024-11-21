@@ -29,7 +29,7 @@ class GameScene extends Phaser.Scene {
         //Crear la rata
         //this.rat = this.add.image(100, 100, 'rat');
         this.rat = this.physics.add.sprite(100,100, 'rat');
-        this.rat.setScale(0.5);
+        this.rat.setScale(0.1);
         this.rat.setCollideWorldBounds(true);
         
         this.cursors = this.input.keyboard.createCursorKeys();
