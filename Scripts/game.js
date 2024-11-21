@@ -14,7 +14,7 @@ class GameScene extends Phaser.Scene {
         
         this.load.image('rat', 'rata.png');
         this.load.image('hand', 'hand.png');
-
+        this.load.image('clon', 'clon.png');
     }
 
     create() {
@@ -32,12 +32,21 @@ class GameScene extends Phaser.Scene {
         this.lastMove = 0;
         
         
-        
         //Crear la rata
         //this.rat = this.add.image(100, 100, 'rat');
         this.rat = this.physics.add.sprite(100,100, 'rat');
         this.rat.setScale(0.1);
         this.rat.setCollideWorldBounds(true);
+        
+        //contador de vidas para las ratas
+        this.lives=3; //por defecto empieza en 3
+        
+        this.difcoordx; //diferencia de coordenadas entre objetos para colisiones
+        this.difcoordy; //diferencia de coordenadas entre objetos para colisiones
+        
+        //crear la clonacion
+        this.clon= this.add.image (300,200, 'clon');
+        this.clon.setScale(0.3);
         
         this.cursors = this.input.keyboard.createCursorKeys();
         this.keys = this.input.keyboard.addKeys({
@@ -68,7 +77,27 @@ class GameScene extends Phaser.Scene {
             this.rat.setVelocityX(0); // Detener en X si no hay input
         }
         
-            
+        //MANEJO DE VIDAS
+        if (this.rat.x >400) { //HAY QUE CAMBIAR LA CONDICIÓN DE DERROTA DE VIDAS 
+            this.lives--;
+            this.rat.x=100;
+            this.rat.y=100; //devolvemos a la posicion inicial
+        }
+        if (this.lives == 0) {
+            {this.scene.start('MenuScene');} //HAY QUE CAMBIARLO POR PANTALLA DE DERROTA
+        }
+        
+        //COLISION CON LA CLONACION
+        
+        //DEFINIMOS UN RANGO COMO COLLIDER
+        this.difcoordx= Math.abs(this.clon.x-this.rat.x);
+        this.difcoordy= Math.abs(this.clon.y-this.rat.y); //pilla la diferencia (valor absoluto) entre la coordenada de los dos objetos y si es menor a un rango establecido se activa
+        
+        if (this.difcoordx<50 && this.difcoordy<50) {
+            this.clon.x=10000; //habria que ocultar el objeto en lugar de moverlo
+            this.lives++;
+        }
+        
         //MOVIMIENTO DE LA MANO
         if (this.cursors.left.isDown){
             if (this.index > 0 && time-this.lastMove > 150) {
