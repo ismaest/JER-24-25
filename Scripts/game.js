@@ -26,6 +26,13 @@ class GameScene extends Phaser.Scene {
         this.hand.setScale(0.5);
         //this.hand.setCollideWorldBounds(true);
         
+        //crear array y cooldown para la mano
+        this.handcoords = [150, 400, 650];
+        this.index = 0; 
+        this.lastMove = 0;
+        
+        
+        
         //Crear la rata
         //this.rat = this.add.image(100, 100, 'rat');
         this.rat = this.physics.add.sprite(100,100, 'rat');
@@ -64,11 +71,19 @@ class GameScene extends Phaser.Scene {
             
         //MOVIMIENTO DE LA MANO
         if (this.cursors.left.isDown){
-            this.hand.x -= 5;
+            if (this.index > 0 && time-this.lastMove > 150) {
+                this.index--;
+                this.hand.x = this.handcoords[this.index];
+                this.lastMove=time;
+            }
         }
 
         if (this.cursors.right.isDown){
-            this.hand.x += 5;
+            if (this.index < 2 && time-this.lastMove > 150) {
+                this.index++;
+                this.hand.x = this.handcoords[this.index];
+                this.lastMove=time;
+            }
         }
         
         //Al pulsar la tecla espacio...
