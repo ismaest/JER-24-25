@@ -18,11 +18,20 @@ class GameScene extends Phaser.Scene {
         this.load.image('vacuna', 'vacuna.png');
         this.load.image('trapdoor', 'trapdoor.png');
         
+        this.load.image("roleInfo", "btnOpciones.png") //cambiar a btn de menu
+        
         this.load.image('lifeIcon', 'lifeIcons.png');
     }
 
     create() {
         this.add.image(400, 300, 'scenery');
+        
+        //crear el boton de arriba de opciones
+        var btnOpt = this.add.image(700, 40, 'roleInfo').setScale(0.5);
+        btnOpt.setInteractive();
+        btnOpt.on('pointerdown', () => {
+            this.scene.launch("RoleInfo");
+        });
 
         //crear la mano
         this.hand = this.add.image(400, 500, 'hand');
@@ -133,7 +142,7 @@ class GameScene extends Phaser.Scene {
             this.rat.y = 100; //devolvemos a la posicion inicial
         }
         if (this.lives == 0) {
-            { this.scene.start('MenuScene'); } //HAY QUE CAMBIARLO POR PANTALLA DE DERROTA
+            { this.scene.start('GameOverScene'); } //HAY QUE CAMBIARLO POR PANTALLA DE DERROTA
         }
 
         //COLISION CON LA CLONACION
