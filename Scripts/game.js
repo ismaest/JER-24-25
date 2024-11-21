@@ -46,17 +46,17 @@ class GameScene extends Phaser.Scene {
         //MOVIMIENTO DE LA RATA
 
         if (this.keys.W.isDown) {
-            this.rat.setVelocityY(-200); // Arriba
+            this.rat.setVelocityY(-100); // Arriba
         } else if (this.keys.S.isDown) {
-            this.rat.setVelocityY(200); // Abajo
+            this.rat.setVelocityY(100); // Abajo
         } else {
             this.rat.setVelocityY(0); // Detener en Y si no hay input
         }
 
         if (this.keys.A.isDown) {
-            this.rat.setVelocityX(-200); // Izquierda
+            this.rat.setVelocityX(-100); // Izquierda
         } else if (this.keys.D.isDown) {
-            this.rat.setVelocityX(200); // Derecha
+            this.rat.setVelocityX(100); // Derecha
         } else {
             this.rat.setVelocityX(0); // Detener en X si no hay input
         }
@@ -64,11 +64,11 @@ class GameScene extends Phaser.Scene {
             
         //MOVIMIENTO DE LA MANO
         if (this.cursors.left.isDown){
-            this.hand.x -= 1;
+            this.hand.x -= 5;
         }
 
         if (this.cursors.right.isDown){
-            this.hand.x += 1;
+            this.hand.x += 5;
         }
         
         //Al pulsar la tecla espacio...
