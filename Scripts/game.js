@@ -78,7 +78,9 @@ class GameScene extends Phaser.Scene {
             this.createLives(20, 40),
             this.createLives(60, 40),
             this.createLives(100, 40),
+            this.createLives(140, 40),
         ];
+        this.lifeIcons[3].setVisible(false); //Quitar el icono de corazones
 
         //crear boton jeringuilla
         this.createButton(150, 500, 'vacuna', 'bvacuna');
@@ -139,16 +141,10 @@ class GameScene extends Phaser.Scene {
         if (this.rat.x > 300) { //HAY QUE CAMBIAR LA CONDICIÓN DE DERROTA DE VIDAS
             this.rat.x = 100;
             this.rat.y = 100; //devolvemos a la posicion inicial
-            if(this.lives===4){
-                this.lifeIcons[3].setVisible(false);
-            } else if(this.lives===3){
-                this.lifeIcons[2].setVisible(false);
-            }else if(this.lives===2) {
-                this.lifeIcons[1].setVisible(false);
-            }else if(this.lives===1) {
-                this.lifeIcons[0].setVisible(false);
-            }
-            this.lives--;
+
+            this.lives--; //Restar la variable de vidas
+            
+            this.lifeIcons[this.lives].setVisible(false); //Quitar el icono de corazones
         }
         if (this.lives === 0) {
             { this.scene.start('GameOverScene'); } //HAY QUE CAMBIARLO POR PANTALLA DE DERROTA
@@ -158,10 +154,7 @@ class GameScene extends Phaser.Scene {
         if (this.checkCollision(this.rat, this.clon, 50)) {
             this.clon.x = 10000; //habria que ocultar el objeto en lugar de moverlo
             this.lives++;
-            let x=20;
-            const visible = this.lifeIcons.filter(life=>life.visible);
-            x=visible[visible.length - 1].x+40;
-            this.lifeIcons.push(this.createLives(x, 40));
+            this.lifeIcons[this.lives-1].setVisible(true); //Quitar el icono de corazones
         }
 
         //TP ENTRE LAS ALCANTARILLAS
