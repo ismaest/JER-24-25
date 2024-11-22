@@ -153,8 +153,10 @@ class GameScene extends Phaser.Scene {
         //COLISION CON LA CLONACION
         if (this.checkCollision(this.rat, this.clon, 50)) {
             this.clon.x = 10000; //habria que ocultar el objeto en lugar de moverlo
+            
+            this.lifeIcons[this.lives].setVisible(true); //Quitar el icono de corazones
+            
             this.lives++;
-            this.lifeIcons[this.lives-1].setVisible(true); //Quitar el icono de corazones
         }
 
         //TP ENTRE LAS ALCANTARILLAS
