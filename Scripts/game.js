@@ -20,7 +20,7 @@ class GameScene extends Phaser.Scene {
         
         this.load.image("roleInfo", "btnOpciones.png") //cambiar a btn de menu
         
-        this.load.image('lifeIcon', 'lifeIcons.png');
+        this.load.image('lifeIcon', 'lifeIcon.png');
     }
 
     create() {
@@ -68,17 +68,17 @@ class GameScene extends Phaser.Scene {
         this.cheeses = [
             this.createCheese(250, 100),
             this.createCheese(300, 300),
-            this.createCheese(700, 400), // Añade más posiciones si lo necesitas
+            this.createCheese(700, 400),
         ];
         this.cheeseCollider = false;
         this.cheeseTime = 0;
 
         //crear vidas dinámicamente
-        //this.lives = [
-        //    this.createLives(20, 20),
-        //    this.createLives(60, 20),
-        //    this.createLives(100, 20), // Añade más posiciones si lo necesitas
-        //];
+        this.lifeIcons = [
+            this.createLives(20, 40),
+            this.createLives(60, 40),
+            this.createLives(100, 40),
+        ];
 
         //crear boton jeringuilla
         this.createButton(150, 500, 'vacuna', 'bvacuna');
@@ -136,12 +136,21 @@ class GameScene extends Phaser.Scene {
         }
 
         //MANEJO DE VIDAS
-        if (this.rat.x > 250) { //HAY QUE CAMBIAR LA CONDICIÓN DE DERROTA DE VIDAS 
-            this.lives--;
+        if (this.rat.x > 300) { //HAY QUE CAMBIAR LA CONDICIÓN DE DERROTA DE VIDAS
             this.rat.x = 100;
             this.rat.y = 100; //devolvemos a la posicion inicial
+            if(this.lives===4){
+                this.lifeIcons[3].setVisible(false);
+            } else if(this.lives===3){
+                this.lifeIcons[2].setVisible(false);
+            }else if(this.lives===2) {
+                this.lifeIcons[1].setVisible(false);
+            }else if(this.lives===1) {
+                this.lifeIcons[0].setVisible(false);
+            }
+            this.lives--;
         }
-        if (this.lives == 0) {
+        if (this.lives === 0) {
             { this.scene.start('GameOverScene'); } //HAY QUE CAMBIARLO POR PANTALLA DE DERROTA
         }
 
@@ -149,6 +158,10 @@ class GameScene extends Phaser.Scene {
         if (this.checkCollision(this.rat, this.clon, 50)) {
             this.clon.x = 10000; //habria que ocultar el objeto en lugar de moverlo
             this.lives++;
+            let x=20;
+            const visible = this.lifeIcons.filter(life=>life.visible);
+            x=visible[visible.length - 1].x+40;
+            this.lifeIcons.push(this.createLives(x, 40));
         }
 
         //TP ENTRE LAS ALCANTARILLAS
@@ -161,9 +174,7 @@ class GameScene extends Phaser.Scene {
         });
 
         if (
-            this.tps.every(
-                tp => !this.checkCollision(this.rat, tp, 50)
-            ) && !this.exitCollider
+            this.tps.every(tp => !this.checkCollision(this.rat, tp, 50)) && !this.exitCollider
         ) {
             this.exitCollider = true;
         }
@@ -174,7 +185,7 @@ class GameScene extends Phaser.Scene {
     
     createTeleport(x, y) {
         const tp = this.add.image(x, y, 'tp').setScale(0.3);
-        tp.targetX = x + 200; // Cambia esto según dónde quieres que lleve
+        tp.targetX = x + 200; //cambia esto según dónde quieres que lleve
         tp.targetY = y + 200;
         return tp;
     }
@@ -191,7 +202,6 @@ class GameScene extends Phaser.Scene {
         const lifeIcon = this.add.image(x, y, 'lifeIcon').setScale(0.01);
         return lifeIcon;
     }
-
 
 
     //Crea un botón interactivo.
