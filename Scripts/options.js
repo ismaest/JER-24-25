@@ -8,7 +8,7 @@ class OptionsMenu extends Phaser.Scene {
 
         this.load.setPath('assets/');
         this.load.image('background', 'MenuBackground.png');
-        this.load.image('backBtn', 'btnOpciones.png'); //cambiar el boton (.png)
+        this.load.image('backBtn', 'btnSalir.png'); //cambiar el boton (.png)
         this.load.audio('mainMenuMusic', 'mainMenuMusic.ogg');
         this.load.audio('click', 'click.wav');
         
