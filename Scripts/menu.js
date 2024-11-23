@@ -28,7 +28,9 @@ class MenuScene extends Phaser.Scene {
         var startBtn = this.add.image(400, 400, 'startBtn');
         startBtn.setScale(0.5);
         startBtn.setInteractive();
-        startBtn.on('pointerdown', () => {this.scene.start('GameScene');
+        startBtn.on('pointerdown', () => {
+        this.scene.stop("MenuScene");
+        this.scene.start('GameScene');
         this.scene.launch("RoleInfo");
         });
         
