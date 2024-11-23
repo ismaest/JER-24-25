@@ -90,7 +90,7 @@ class GameScene extends Phaser.Scene {
 
         //crear array y cooldown para la mano
         this.handcoords = [150, 400, 650];
-        this.index = 0;
+        this.index = 1;
         this.lastMove = 0;
 
         //crear la rata
