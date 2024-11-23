@@ -4,7 +4,42 @@ class GameScene extends Phaser.Scene {
     }
 
     preload() {
-        //cargar aquí las imágenes o sprites necesarios
+
+        //color del fondo
+        this.cameras.main.setBackgroundColor(0xe6e1be); //amarillo estandar de nuestro juego
+        
+        //pantalla de carga
+        //dimensiones de la camara
+        const width = this.cameras.main.width;
+        const height = this.cameras.main.height;
+
+        //porcentaje de carga
+        const loadingText = this.add.text(width / 2, height / 2 - 50, 'Loading: 0%', {
+            fontSize: '20px',
+            fill: '#000',
+        }).setOrigin(0.5);
+
+        //barra de carga
+        const progressBar = this.add.graphics();
+        const progressBox = this.add.graphics();
+        progressBox.fillStyle(0x222222, 0.8);
+        progressBox.fillRect(width / 4, height / 2, width / 2, 30);
+
+        //eventos para mostrar el progreso
+        this.load.on('progress', (value) => {
+            loadingText.setText(`Loading: ${Math.round(value * 100)}%`);
+            progressBar.clear();
+            progressBar.fillStyle(0x00000, 1);
+            progressBar.fillRect(width / 4 + 5, height / 2 + 5, (width / 2 - 10) * value, 20);
+        });
+
+        this.load.on('complete', () => {
+            loadingText.setText('Loading Complete!');
+            progressBar.destroy();
+            progressBox.destroy();
+        });
+        
+        //cargamos aquí las imágenes o sprites necesarios
 
         this.load.setPath('assets/');
 
@@ -24,15 +59,25 @@ class GameScene extends Phaser.Scene {
         
         this.load.audio('mainMenuMusic', 'mainMenuMusic.ogg');
         this.load.audio('deathMusic', 'deathMusic.mp3');
+        this.load.audio('hitSound', 'hitSound.wav');
+        this.load.audio('eatSound', 'eatSound.mp3');
+        this.load.audio('healthBoost', 'healthBoost.wav');
+        this.load.audio('handMoving', 'handMoving.mp3');
+        this.load.audio('click', 'click.wav');
+        this.load.audio('tpSound', 'tpSound.wav');
     }
 
     create() {
         this.add.image(400, 300, 'scenery');
         
+        this.game.click = this.sound.add('click');
+        this.game.tpSound = this.sound.add('tpSound');
+        
         //crear el boton de arriba de opciones
         var btnOpt = this.add.image(700, 40, 'roleInfo').setScale(0.5);
         btnOpt.setInteractive();
         btnOpt.on('pointerdown', () => {
+            this.game.click.play();
             this.scene.launch("RoleInfo");
         });
 
@@ -63,7 +108,7 @@ class GameScene extends Phaser.Scene {
         this.tps = [
             this.createTeleport(400, 200),
             this.createTeleport(100, 200),
-            this.createTeleport(600, 400), // Añade más TPs aquí si lo necesitas
+            this.createTeleport(600, 400),
         ];
         this.exitCollider = true;
 
@@ -104,6 +149,8 @@ class GameScene extends Phaser.Scene {
     }
 
     update(time, delta) {
+
+        this.game.eatSound = this.sound.add('eatSound');
         //MOVIMIENTO DE LA RATA
         if (this.cheeseCollider == false) {
             this.handleRatMovement(100);
@@ -115,8 +162,11 @@ class GameScene extends Phaser.Scene {
                     this.cheeses.splice(index, 1); // Elimina el queso de la lista
                     this.cheeseCollider = true;
                     this.cheeseTime = time;
+
+                    this.game.eatSound.play();
                 }
             });
+            
         } else {
             //EFECTOS DEL QUESO
             if (Math.abs(time - this.cheeseTime) > 10000) {
@@ -147,6 +197,9 @@ class GameScene extends Phaser.Scene {
 
             this.lives--; //Restar la variable de vidas
             
+            this.game.hitSound = this.sound.add('hitSound');
+            this.game.hitSound.play();
+            
             this.lifeIcons[this.lives].setVisible(false); //Quitar el icono de corazones
         }
         if (this.lives === 0) {
@@ -165,6 +218,8 @@ class GameScene extends Phaser.Scene {
             this.lifeIcons[this.lives].setVisible(true); //Quitar el icono de corazones
             
             this.lives++;
+            this.game.healthBoost = this.sound.add('healthBoost');
+            this.game.healthBoost.play();
         }
 
         //TP ENTRE LAS ALCANTARILLAS
@@ -173,12 +228,11 @@ class GameScene extends Phaser.Scene {
                 this.rat.x = tp.targetX;
                 this.rat.y = tp.targetY;
                 this.exitCollider = false;
+                this.game.tpSound.play();
             }
         });
 
-        if (
-            this.tps.every(tp => !this.checkCollision(this.rat, tp, 50)) && !this.exitCollider
-        ) {
+        if (this.tps.every(tp => !this.checkCollision(this.rat, tp, 50)) && !this.exitCollider) {
             this.exitCollider = true;
         }
     }
@@ -239,11 +293,14 @@ class GameScene extends Phaser.Scene {
     //Maneja el movimiento de la mano.
     
     handleHandMovement(time) {
+        this.game.handMoving = this.sound.add('handMoving');
+        
         if (this.cursors.left.isDown) {
             if (this.index > 0 && time - this.lastMove > 150) {
                 this.index--;
                 this.hand.x = this.handcoords[this.index];
                 this.lastMove = time;
+                this.game.handMoving.play();
             }
         }
 
@@ -252,6 +309,7 @@ class GameScene extends Phaser.Scene {
                 this.index++;
                 this.hand.x = this.handcoords[this.index];
                 this.lastMove = time;
+                this.game.handMoving.play();
             }
         }
     }

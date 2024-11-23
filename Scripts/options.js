@@ -10,18 +10,24 @@ class OptionsMenu extends Phaser.Scene {
         this.load.image('background', 'MenuBackground.png');
         this.load.image('backBtn', 'btnOpciones.png'); //cambiar el boton (.png)
         this.load.audio('mainMenuMusic', 'mainMenuMusic.ogg');
+        this.load.audio('click', 'click.wav');
         
     }
 
     //Fondo del menu de opciones
     create(){
+
+        this.game.click = this.sound.add('click');
         
         this.add.image(400, 300, 'background');
         
         var backBtn = this.add.image(400, 500, 'backBtn');
         backBtn.setScale(0.5);
         backBtn.setInteractive();
-        backBtn.on('pointerdown', () => {this.scene.start('MenuScene');});
+        backBtn.on('pointerdown', () => {
+            this.game.click.play();
+            this.scene.start('MenuScene');
+        });
         
         //VOLUMEN (Y máximo 550)
         this.add.text(150,275, "Volumen General", {font: "20px Arial", fill: "#000" });

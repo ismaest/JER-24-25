@@ -13,10 +13,13 @@ class RoleInfo extends Phaser.Scene {
         this.load.image('acceptBtn', 'btnJugar.png'); //Boton de aceptar (esconde escena)
         this.load.image('exitBtn', 'btnOpciones.png');
         this.load.audio('mainMenuMusic', 'mainMenuMusic.ogg');
+        this.load.audio('click', 'click.wav');
     }
 
     create(){
 
+        this.game.click = this.sound.add('click');
+        
         var bg = this.add.image(200, 150, 'background');
         bg.setScale(0.75);
         bg.setOrigin(0.15, 0.2);
@@ -32,6 +35,7 @@ class RoleInfo extends Phaser.Scene {
         acceptBtn.setInteractive();
         acceptBtn.on('pointerdown', () => {
             console.log('Accept button pressed');
+            this.game.click.play();
             this.scene.stop('RoleInfo');
         });
 
@@ -41,6 +45,7 @@ class RoleInfo extends Phaser.Scene {
         exitBtn.setInteractive();
         exitBtn.on('pointerdown', () => {
             console.log('Exit button pressed'); // Mensaje de depuración
+            this.game.click.play();
             this.scene.stop('RoleInfo'); // Detenemos la escena actual
             this.scene.stop('GameScene'); // Detenemos la escena actual
             this.scene.start('MenuScene'); // Cambiamos a la escena del menú

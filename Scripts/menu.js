@@ -14,9 +14,12 @@ class MenuScene extends Phaser.Scene {
         this.load.image('optionsBtn', 'btnOpciones.png');
         this.load.audio('mainMenuMusic', 'mainMenuMusic.ogg');
         this.load.audio('deathMusic', 'deathMusic.ogg');
+        this.load.audio('click', 'click.wav');
     }
     
     create(){
+
+        this.game.click = this.sound.add('click');
         
         this.add.image(400, 300, 'background');
         
@@ -29,6 +32,7 @@ class MenuScene extends Phaser.Scene {
         startBtn.setScale(0.5);
         startBtn.setInteractive();
         startBtn.on('pointerdown', () => {
+        this.game.click.play();
         this.scene.stop("MenuScene");
         this.scene.start('GameScene');
         this.scene.launch("RoleInfo");
@@ -37,7 +41,10 @@ class MenuScene extends Phaser.Scene {
         var optionsBtn = this.add.image(400, 500, 'optionsBtn');
         optionsBtn.setScale(0.5);
         optionsBtn.setInteractive();
-        optionsBtn.on('pointerdown', () => {this.scene.start('OptionsMenu');});
+        optionsBtn.on('pointerdown', () => {
+            this.game.click.play();
+            this.scene.start('OptionsMenu');
+        });
         
     }
     

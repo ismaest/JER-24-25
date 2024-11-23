@@ -4,13 +4,16 @@ class LoadingScene extends Phaser.Scene {
     }
 
     preload() {
+        //color del fondo
+        this.cameras.main.setBackgroundColor(0xe6e1be); //amarillo estandar de nuestro juego
+        
         //texto de porcentaje de carga
         const width = this.cameras.main.width;
         const height = this.cameras.main.height;
 
         const loadingText = this.add.text(width / 2, height / 2 - 50, 'Loading: 0%', {
             fontSize: '20px',
-            fill: '#ffffff',
+            fill: '#000',
         }).setOrigin(0.5);
 
         //barra de carga
@@ -23,7 +26,7 @@ class LoadingScene extends Phaser.Scene {
         this.load.on('progress', (value) => {
             loadingText.setText(`Loading: ${Math.round(value * 100)}%`);
             progressBar.clear();
-            progressBar.fillStyle(0xffffff, 1);
+            progressBar.fillStyle(0x00000, 1);
             progressBar.fillRect(width / 4 + 5, height / 2 + 5, (width / 2 - 10) * value, 20);
         });
 
