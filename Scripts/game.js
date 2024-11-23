@@ -103,8 +103,8 @@ class GameScene extends Phaser.Scene {
         this.lives = 3; //por defecto empieza en 3
         
         //crear la clonacion
-        this.clon = this.add.image(300, 200, 'clon');
-        this.clon.setScale(0.3);
+        this.clon = this.add.image(300, 200, 'lifeIcon');
+        this.clon.setScale(0.01);
 
         //crear los tps dinámicamente
         this.tps = [
@@ -329,4 +329,3 @@ class GameScene extends Phaser.Scene {
         return dx < range && dy < range;
     }
 }
-
