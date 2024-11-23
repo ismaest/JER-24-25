@@ -151,6 +151,8 @@ class GameScene extends Phaser.Scene {
     update(time, delta) {
 
         this.game.eatSound = this.sound.add('eatSound');
+        this.game.handMoving = this.sound.add('handMoving');
+        
         //MOVIMIENTO DE LA RATA
         if (this.cheeseCollider == false) {
             this.handleRatMovement(100);
@@ -293,7 +295,10 @@ class GameScene extends Phaser.Scene {
     //Maneja el movimiento de la mano.
     
     handleHandMovement(time) {
-        this.game.handMoving = this.sound.add('handMoving');
+
+        if (this.index === undefined || this.index < 0) {
+            this.index = 0; //valor inicial
+        }
         
         if (this.cursors.left.isDown) {
             if (this.index > 0 && time - this.lastMove > 150) {
