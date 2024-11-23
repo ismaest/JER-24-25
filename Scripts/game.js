@@ -74,15 +74,17 @@ class GameScene extends Phaser.Scene {
         this.game.tpSound = this.sound.add('tpSound');
         
         //crear el boton de arriba de opciones
-        var btnOpt = this.add.image(700, 40, 'roleInfo').setScale(0.5);
-        btnOpt.setInteractive();
-        btnOpt.on('pointerdown', () => {
+        this.btnOpt = this.add.image(680, 40, 'roleInfo').setScale(0.5);
+        this.btnOpt.setInteractive();
+        this.btnOpt.on('pointerdown', () => {
             this.game.click.play();
             this.scene.launch("RoleInfo");
         });
+        this.btnOpt.on('pointerover', () => {this.btnOpt.setScale(0.55)});
+        this.btnOpt.on('pointerout', () => {this.btnOpt.setScale(0.5)});
 
-        //crear la mano
-        this.hand = this.add.image(400, 500, 'hand');
+        //crear la mano (habrá que ponerlo como sprite con fisicas)
+        this.hand = this.add.image(400, 500, 'hand'); 
         this.hand.setScale(0.5);
         //this.hand.setCollideWorldBounds(true);
 

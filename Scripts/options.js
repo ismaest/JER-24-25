@@ -21,12 +21,18 @@ class OptionsMenu extends Phaser.Scene {
         
         this.add.image(400, 300, 'background');
         
-        var backBtn = this.add.image(400, 500, 'backBtn');
-        backBtn.setScale(0.5);
-        backBtn.setInteractive();
-        backBtn.on('pointerdown', () => {
+        this.backBtn = this.add.image(400, 500, 'backBtn');
+        this.backBtn.setScale(0.5);
+        this.backBtn.setInteractive();
+        this.backBtn.on('pointerdown', () => {
             this.game.click.play();
             this.scene.start('MenuScene');
+        });
+        this.backBtn.on('pointerover', () => {
+            this.backBtn.setScale(0.55);
+        });
+        this.backBtn.on('pointerout', () => {
+            this.backBtn.setScale(0.5);
         });
         
         //VOLUMEN (Y máximo 550)
