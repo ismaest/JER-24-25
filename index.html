@@ -13,6 +13,7 @@
         <script src="Scripts/roleInfo.js"></script>
         <script src="Scripts/gameOver.js"></script>
         <script src="Scripts/winScene.js"></script>
+        <script src="Scripts/loadingScreen.js"></script>
         
         <title>LABRATS</title>
         
@@ -35,7 +36,7 @@
                         gravity: { y: 0 }
                     }
                 },
-                scene: [MenuScene, GameScene, RoleInfo, OptionsMenu, GameOverScene, WinScene]
+                scene: [LoadingScene, MenuScene, GameScene, RoleInfo, OptionsMenu, GameOverScene, WinScene]
             };
             const game = new Phaser.Game(config);
             

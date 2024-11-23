@@ -21,6 +21,9 @@ class GameScene extends Phaser.Scene {
         this.load.image("roleInfo", "btnOpciones.png") //cambiar a btn de menu
         
         this.load.image('lifeIcon', 'lifeIcon.png');
+        
+        this.load.audio('mainMenuMusic', 'mainMenuMusic.ogg');
+        this.load.audio('deathMusic', 'deathMusic.mp3');
     }
 
     create() {
@@ -147,6 +150,11 @@ class GameScene extends Phaser.Scene {
             this.lifeIcons[this.lives].setVisible(false); //Quitar el icono de corazones
         }
         if (this.lives === 0) {
+            if(!this.game.deathMusic) {
+                this.game.mainMenuMusic.stop();
+                this.game.deathMusic = this.sound.add('deathMusic', {loop: true});
+                this.game.deathMusic.play();
+            }
             { this.scene.start('GameOverScene'); } //HAY QUE CAMBIARLO POR PANTALLA DE DERROTA
         }
 

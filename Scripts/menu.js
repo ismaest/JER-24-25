@@ -13,6 +13,7 @@ class MenuScene extends Phaser.Scene {
         this.load.image('startBtn', 'btnJugar.png');
         this.load.image('optionsBtn', 'btnOpciones.png');
         this.load.audio('mainMenuMusic', 'mainMenuMusic.ogg');
+        this.load.audio('deathMusic', 'deathMusic.ogg');
     }
     
     create(){
