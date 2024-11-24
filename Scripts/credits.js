@@ -22,17 +22,17 @@ class Credits extends Phaser.Scene {
         this.add.image(400, 300, 'creditsBackground');
 
         this.backBtn = this.add.image(720, 550, 'backBtn');
-        this.backBtn.setScale(0.25);
+        this.backBtn.setScale(0.5);
         this.backBtn.setInteractive();
         this.backBtn.on('pointerdown', () => {
             this.game.click.play();
             this.scene.start('MenuScene');
         });
         this.backBtn.on('pointerover', () => {
-            this.backBtn.setScale(0.3);
+            this.backBtn.setScale(0.55);
         });
         this.backBtn.on('pointerout', () => {
-            this.backBtn.setScale(0.25);
+            this.backBtn.setScale(0.5);
         });
     }
     
