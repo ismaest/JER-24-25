@@ -66,7 +66,7 @@ LABRATS es un juego arcade 1vs1 en el que ambos jugadores tomarán el rol de una
 
 ```
 
-> ## Introducción
+> ## 1. Introducción
 
 En este documento se detallan todos los requisitos y especificaciones del videojuego “Labrats”, creado para la asignatura Juegos en Red del grado en Diseño y Desarrollo de Videojuegos de la Universidad Rey Juan Carlos.
 
@@ -83,13 +83,13 @@ Un videojuego en el que dos jugadores deben competir el uno contra el otro en un
 
 Aquí se definen las principales características del juego:
 
-  - División del juego en niveles: El juego contará con varios niveles, o carreras, para que los jugadores puedan elegir qué circuito quieren jugar.
+  **- División del juego en niveles:** El juego contará con varios niveles, o carreras, para que los jugadores puedan elegir qué circuito quieren jugar.
 
-  - Frenetismo: El juego será rápido y frenético, exigiendo a ambos jugadores que estén atentos el uno del otro para poder lograr sus objetivos personales.
+  **- Frenetismo:** El juego será rápido y frenético, exigiendo a ambos jugadores que estén atentos el uno del otro para poder lograr sus objetivos personales.
 
-  - Diversión: La idea principal del juego siempre está en divertir a los jugadores. El estilo desenfadado del juego y su inmediatez dan pie a partidas rápidas y divertidas donde la competitividad desemboca en momentos de diversión.
+  **- Diversión:** La idea principal del juego siempre está en divertir a los jugadores. El estilo desenfadado del juego y su inmediatez dan pie a partidas rápidas y divertidas donde la competitividad desemboca en momentos de diversión.
 
-  - Competitividad: Uno de los componentes principales también es la competitividad entre jugadores, dado que, al fin y al cabo, solo puede ganar uno.
+  **- Competitividad:** Uno de los componentes principales también es la competitividad entre jugadores, dado que, al fin y al cabo, solo puede ganar uno.
 
 > ##  **1.4 Género**
 
@@ -133,15 +133,15 @@ Es un proyecto académico, realizado con el fin de profundizar en el tema de jue
 
 El desarrollo del videojuego se dividirá en 5 fases:
 
-  - Fase 1: formación del equipo de desarrollo, elección de la temática del juego, diseño de las mecánicas e identificación y descripción de las funcionalidades principales. El objetivo de esta fase será la creación del GDD.
+  **- Fase 1:** formación del equipo de desarrollo, elección de la temática del juego, diseño de las mecánicas e identificación y descripción de las funcionalidades principales. El objetivo de esta fase será la creación del GDD.
 
-  - Fase 2: desarrollo de juego en local.
+  **- Fase 2:** desarrollo de juego en local.
 
-  - Fase 3: extensión del juego incluyendo un back-end que utilice tecnología REST.
+  **- Fase 3:** extensión del juego incluyendo un back-end que utilice tecnología REST.
 
-  - Fase 4: extensión del juego utilizando REST y WebSockets.
+  **- Fase 4:** extensión del juego utilizando REST y WebSockets.
 
-  - Fase 5 (opcional): Mejoras finales / Publicación del juego
+  **- Fase 5 (opcional):** Mejoras finales / Publicación del juego
 
 
 > ##  **1.14 Riesgos Técnicos y Desafíos**
@@ -157,7 +157,7 @@ Entre ellos, nos encontramos con desafíos como:
   - Falta de tiempo para poder refinar aspectos más técnicos dentro de las mecánicas y la jugabilidad.
 
 
-> ## Diseño del juego
+> ## 2. Diseño del juego
 
 
 > ##  **2.1 Guion**
@@ -172,25 +172,22 @@ El juego se desarrolla en partidas rápidas, donde un jugador debe esquivar las 
 Las trampas tienen el objetivo de matar a las ratas, y estas deben esquivarlas para evitar morir. Si mueren menos de 3 ratas antes de llegar a la meta, ese jugador habrá ganado. Si por el contrario, el científico que activa las trampas logra matar 3 veces al contrario, él será el ganador.
 
 	2.2.1 Controles
+La Rata: 
+	**- W:** Avanzar hacia arriba.
+	**- A:** Avanzar hacia la izquierda.
+ 	**- D:** Avanzar hacia ala derecha.
+	**- S:** Avanzar hacia abajo.
 
-  - La Rata: 
-
-    - W: Avanzar hacia arriba.
-    - A: Avanzar hacia la izquierda.
-    - D: Avanzar hacia ala derecha.
-    - S: Avanzar hacia abajo.
-
-  - El Científico:
-
-    - ESPACIO: Accionar la trampa que se corresponde con la posición en la que te encuentras. 
-    - Flecha izquierda Desplazarse a la izquierda.
-    - Flecha derecha: Desplazarse a la derecha.
+El Científico:
+	**- Flecha arriba:** Accionar la trampa que se corresponde con la posición en la que te encuentras. 
+ 	**- Flecha izquierda:** Desplazarse a la izquierda.
+	**- Flecha derecha:** Desplazarse a la derecha.
 
 	2.2.2 Balance de roles
 
-La Rata: No sabe cuándo el científico accionará la trampa. Debe intentar engañarlo para forzarle a activar la trampa cuando él esté fuera de peligro.
-
-El Científico: Existe un retardo desde que se acciona el botón hasta que ocurre la acción, por lo tanto, este debe anticiparse a los movimientos de la rata, sabiendo que le puede engañar dicha rata.
+Aquí se plantea el balance de roles para que el juego sea equitaativo y justo para ambos jugadores: 
+	**- La Rata:** No sabe cuándo el científico accionará la trampa. Debe intentar engañarlo para forzarle a activar la trampa cuando él esté fuera de peligro.
+	**- El Científico:** Existe un retardo desde que se acciona el botón hasta que ocurre la acción, por lo tanto, este debe anticiparse a los movimientos de la rata, sabiendo que le puede engañar dicha rata.
 
 
 > ## **2.3 Estados**
@@ -206,32 +203,43 @@ Entre los diferentes estados del juego, se plantean:
   - Créditos
 
 > ## **2.4 Interfaces**
+Aquí se recogen las diferentes interfaces del juego:
 
-![MENU PRINCIPAL](https://github.com/user-attachments/assets/33678f96-d86a-4faf-b8e9-fdc64a9d1270)
-> Menú Principal
+![inicio](https://github.com/user-attachments/assets/c4cac163-e82a-4279-80ad-6460dd49c21c)
+> Pantalla de inicio.
 
-![PAUSA](https://github.com/user-attachments/assets/1749d80f-314c-41a0-ba14-0de7622efd33)
-> Menú de pausa
+![opciones](https://github.com/user-attachments/assets/746912f7-799b-42ce-9371-9edc2abcf1c6)
+> Pantalla de opciones.
 
-![CONFIGURACION](https://github.com/user-attachments/assets/45219d1b-4b2b-40c0-9027-0cc01f3bb83c)
-> Menú de configuración
+![carga](https://github.com/user-attachments/assets/94275833-f9c4-4b28-a0f5-c16fb9141c60)
+> Pantalla de carga.
 
-![SELECCION DE ROL](https://github.com/user-attachments/assets/e80c9d4c-b6c6-4baa-b47c-594c2abbcabe)
-> Selección de Rol
+![menuTutorial](https://github.com/user-attachments/assets/504c3938-bc13-4afa-bba3-a71999bfe8b6)
+> Pantalla de tutorial.
 
-![VICTORIA DERROTA](https://github.com/user-attachments/assets/51ba7636-8fd9-406f-9fc2-3a8aad2f3cd9)
-> Pantalla de victoria/derrota
+![gameBackground](https://github.com/user-attachments/assets/300955c1-ebce-48fe-befb-d91ae2ec92a4)
+> Fondo sobre el que se coloca el nivel principal.
 
-![CREDITOS](https://github.com/user-attachments/assets/22cf41cd-047c-4c67-9958-0eea79446f46)
-> Pantalla de créditos
+![loseBackground](https://github.com/user-attachments/assets/ce1da9f6-9150-4145-a39d-df4bacf42276)
+> Pantalla de victoria para el científico.
+
+![winBackground](https://github.com/user-attachments/assets/99150b8f-03a9-4856-9cfa-3f9c1ea7bcef)
+> Pantalla de victoria para la rata.
+
+![credits](https://github.com/user-attachments/assets/fae96f76-2bd3-4a0c-873f-726587d9bf0c)
+> Pantalla de créditos.
 
 
-> ## Desarrollo del Juego
+> ## 3. Desarrollo del Juego
 
 
 > ## **3.1 Niveles**
 
-Se van a diseñar 2 carreras para dar a los jugadores un poco de variedad y que no se aburran rápidamente del juego. Dichas carreras contarán con trampas únicas y una estética propia.
+> [!NOTE]
+> Para este prototipo se ha decidido realizar un único nivel en el que se presenten todas las mecánicas del juego.
+> Para futuros prototipos se incluirán más niveles.
+ 
+Se van a diseñar dos carreras para dar a los jugadores un poco de variedad y que no se aburran rápidamente del juego. Dichas carreras contarán con trampas únicas y una estética propia.
 
   - Laboratorio 1: Se desarrolla dentro de un centro de control donde se evalúa el comportamiento de la rata y tiene que llegar a una trampilla (objetivo). Dicha rata deberá escapar del centro de control sorteando trampas que se encuentran dispuestas por toda la sala (objetos punzantes, sustancias químicas peligrosas, entre otras).
 
@@ -242,14 +250,45 @@ Se van a diseñar 2 carreras para dar a los jugadores un poco de variedad y que 
 
 El juego cuenta con dos personajes:
 
-  - La Rata, que es el jugador que debe esquivar las trampas para sobrevivir.
+  - La Rata, que es el jugador que debe esquivar las trampas para sobrevivir. Cuenta con movimiento libre por el escenario y tres vidas en total.
 
-  - El Científico, que es el jugador que activa las trampas del escenario.
+    ![rata](https://github.com/user-attachments/assets/623009e2-1304-4977-b7df-405f106ff321)
+    > Sprite utilizado para la rata.
 
+
+  - El Científico, que es el jugador que activa las trampas del escenario. Solo será visible su mano, que tiene un movimiento limitado entre los tres botones disponibles a pulsar.
+
+    ![hand](https://github.com/user-attachments/assets/b7dd86e8-686b-4c8a-9c31-3678e579b7b8)
+    > Sprite de la mano del científico.
+    
 
 > ## **3.3 Ítems**
+Aquí se recogen los diferentes objetos presentes en el juego. 
 
-  - Clonación: Cuando mueres, pierdes una rata, pero a lo largo del espacio nos podemos encontrar con un ítem de clonación, permitiendo clonar una de las ratas y aumentando tus probabilidades de ganar.
+ 	3.3.1 Ayudas para La Rata
+  
+  **- Clonación:** Cuando La Rata cae en alguna de las trampas, el jugador pierde una vida de las tres totales, teniendo que volver a empezar el laberinto. En el escenario podemos encontrar diferentes matraces de clonación que nos permiten aumentar nuestro número de vidas. (Figura 1)
+  **- Alcantarillas:** En el escenario hay repartidas varias alcantarillas que actuan como teletransportes entre diferentes puntos del mapa. Pueden ser útiles para avanzar por el mapa. (Figura 2)
+
+	3.3.2 Trampas para La Rata
+ **- Inyección letal:** Aguja activable por el científico que, en caso de colisionar con la rata, termina con su vida de inmediato. (Figura 3)
+ **- Trampilla:** Trampilla activable que, en caso de activarse con una rata sobre ella, termina con su vida. (Figura 4)
+ **- El queso:** Diferentes quesos colocados por el escenario, aunque por defecto están escondidos y deben de ser activados por el científico. En caso de que la rata choque con un queso, se reducirá significativamente su velocidad de movimiento durante diez segundos. (Figura 5)
+
+![clon](https://github.com/user-attachments/assets/8d5a8f32-84a7-4239-b431-53dad5726c82)
+> Sprite de la clonación (Figura 1)
+
+![tpB](https://github.com/user-attachments/assets/181fa47a-27bf-4afd-a90b-0a7adfc80333)
+> Sprite de la alcantarilla (Figura 2)
+
+![needle](https://github.com/user-attachments/assets/ddc97365-5be9-491e-b32c-d53882928447)
+> Sprite de la inyección letal (Figura 3)
+
+![trapdoor](https://github.com/user-attachments/assets/089c7d4f-6a85-4459-b956-e82fd681e3d2)
+> Sprite de la trampilla (Figura 4)
+
+![cheeseOpen](https://github.com/user-attachments/assets/2af7b168-2f58-49cb-bb62-a6c23ad733c7)
+> Sprite del queso (Figura 5)
 
 
 > ## **3.4 Logros**
@@ -270,7 +309,7 @@ El juego cuenta con dos personajes:
   - Victor Frank: Acaba con todas las ratas.
 
 
-> ## Apartado Artístico
+> ## 4. Apartado Artístico
 
 
 > ## **4.1 Música y Sonidos**
@@ -279,25 +318,62 @@ Los sonidos de ambiente serán propios de un laboratorio, como sonidos de máqui
 
 Las ratas harán ruidos característicos con su movimiento, y, las trampas y los botones, también harán sonidos para dar feedback a los jugadores de lo que está sucediendo.
 
+Se han utilizado sonidos externos con licencia "Creative Commons 0" para los siguientes eventos del juego:
+	- Movimiento de la mano
+ 	- Muerte de la rata
+  	- Teletransporte entre alcantarillas
+        - Click en los botones
+	- Comer queso
+	- Curación con la clonación
+ 	- Música de fondo
+  	- Caer en una trampa
+
 
 > ## **4.2 Arte y concept art**
 
 Estilo comiquero y de esbozo como si estuviera dibujado en un cuaderno, basándonos en un estilo caricaturesco como el de Cuphead, Borderlands, entre otros. Pero teniendo en cuenta el minimalismo, no queremos hacerlo muy complicado, queremos hacerlo fácil de ver y entender. Por lo tanto, no tendrá colores tan llamativos y texturas tan bien hechas como las de los juegos mencionados anteriormente.
 
+	4.2.1 Perspectiva de la cámara
+ 
+ Se ha decidido que el juego cuente con una perspectiva cenital que muestre el mapa por completo para proporcionar a ambos jugadores toda la información presente en el juego en todo momento.
 
-> ## 4.2.1 Paleta de colores
+	4.2.2 Paleta de colores
 
 
 > Paleta de colores principal
 
-El negro y el blanco son los que van a predominar, manteniendo ese estilo comiquero y de esbozo, mientras que el amarillo se utilizará para objetos interactuables y haciendo referencia al queso.
+El negro y el blanco son los que van a predominar, manteniendo ese estilo comiquero y de esbozo.
 
-> ## 4.2.2 Concept art
+> Paleta de colores de los menús
+Para el diseño de menús, se ha decidido usar la siguiente paleta que mantiene la presencia de la paleta principal y añade tonos apagados para que no ganen demasiada importancia.
+![image](https://github.com/user-attachments/assets/76e6a3cf-675d-454e-a98f-1e08e4b8ab48)
+> Paleta de colores de los menús del juego
+
+
+	4.2.3 Concept art
+
+![MENU PRINCIPAL](https://github.com/user-attachments/assets/33678f96-d86a-4faf-b8e9-fdc64a9d1270)
+> Menú Principal
+
+![PAUSA](https://github.com/user-attachments/assets/1749d80f-314c-41a0-ba14-0de7622efd33)
+> Menú de pausa
+
+![CONFIGURACION](https://github.com/user-attachments/assets/45219d1b-4b2b-40c0-9027-0cc01f3bb83c)
+> Menú de configuración
+
+![SELECCION DE ROL](https://github.com/user-attachments/assets/e80c9d4c-b6c6-4baa-b47c-594c2abbcabe)
+> Selección de Rol
+
+![VICTORIA DERROTA](https://github.com/user-attachments/assets/51ba7636-8fd9-406f-9fc2-3a8aad2f3cd9)
+> Pantalla de victoria/derrota
+
+![CREDITOS](https://github.com/user-attachments/assets/22cf41cd-047c-4c67-9958-0eea79446f46)
+> Pantalla de créditos
 
 ![JUEGO](https://github.com/user-attachments/assets/1741e759-afd5-468b-9c68-839305c35039)
 > Escena de juego
 
-> ## Equipo Autor
+> ## 5. Equipo Autor
 
 > ## **5.1 Javier San Juan Ledesma**
 
@@ -305,6 +381,9 @@ Artista y programador.
 	
 	5.1.1. Primera fase de desarrollo: Javier
 Se ha encargado de detallar el aspecto visual y conceptual del videojuego, entre ellos, la paleta de colores, interfaces y estética del juego.
+	
+ 	5.1.2. Segunda fase de desarrollo: Javier
+Ha dibujado todo el arte del juego. Se ha encargado de la implementación de dicho arte, de la programación de la pantalla de créditos y de las pantallas de victoria/derrota.
 
 > ##  **5.2 Iván De Castilla Guitián**
 
@@ -313,12 +392,18 @@ Guionista, programación.
 	5.2.1. Primera fase de desarrollo: Iván
 Se ha encargado de diferentes aspectos dentro del gdd, entre ellos las metas, definir las fases de desarrollo, los logros, mecánicas concretas y roles de cada equipo, habiendo sido previamente elegidos por cada miembro del grupo de manera democrática.
 
+	5.2.2. Segunda fase de desarrollo: Iván
+Se ha encargado de la programación de interfaces, gestión de escenas, implementación de sonidos y música. Por otro lado, ha reescrito código para mayor legibilidad y optimización. También ha elaborado la presentación. 
+
 > ## **5.3 Ismael Esteban Liberal**
 
 Game Designer y programación.
 	
 	5.3.1. Primera fase de desarrollo: Ismael
 Ha sido el autor de la idea principal del juego, y se ha centrado en gran parte de la introducción, guion, niveles del juego y personajes.
+
+	5.3.2. Segunda fase de desarrollo: Ismael
+Se ha encargado de programar las mecánicas del juego, movimiento de la mano y otras funciones como detectores de colisiones. También ha sido el encargado de actualizar el archivo 'readme.md' del proyecto y del diseño del nivel.
 
 > ## **5.4 Xabier López Aguilera**
 
@@ -327,16 +412,17 @@ Game Designer y programación.
 	5.4.1. Primera fase de desarrollo: Xabier
 Se ha ocupado del análisis DAFO, los estados y parte de las interfaces. Dentro del apartado artístico, la música y los sonidos y de buscar gran parte de las referencias que vamos a utilizar para la realización de nuestro juego.
 
-> ## Créditos
+	5.4.2. Segunda fase de desarrollo: Xabier
+ Ha programado las mecánicas del juego, reorganizado y reescrito código. También ha sido el encargado de colocar todos los elementos del escenario y comprobar su finalidad.
+
+> ## 6. Créditos
 
 Aquí se listan los créditos del juego, como personas que han apoyado el desarrollo o assets de uso externos que deban de ser apropiadamente acreditados.
 
-> ## Anexos
+> ## 7. Anexos
 
 En este apartado se mostrarán los anexos.
 
 > ## **7.1. Futuras Características**
 
-Como se ha concretado en este GDD, a medida que se avance con las fases de desarrollo, se irán creando diferentes niveles. 
-
-La idea inicial son dos niveles, comenzando con el nivel inicial y ampliándose en futuras fases.
+Para futuras fases de desarrollo se plantea diseñar más niveles para el juego, cumpliendo con la idea inicial. También se añadirá la función de multijugador en línea.
