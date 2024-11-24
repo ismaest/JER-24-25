@@ -97,7 +97,7 @@ class GameScene extends Phaser.Scene {
         //CRAR ELEMENTOS DEL ESCENARIO
         
         //Crear el botón de arriba de opciones
-        this.btnOpt = this.add.image(720, 65, 'roleInfo').setScale(0.5);
+        this.btnOpt = this.add.image(720, 50, 'roleInfo').setScale(0.5);
         this.btnOpt.setInteractive();
         this.btnOpt.on('pointerdown', () => {
             this.game.click.play();
@@ -137,10 +137,10 @@ class GameScene extends Phaser.Scene {
 
         //Crear vidas dinámicamente
         this.lifeIcons = [
-            this.createLives(20, 40),
-            this.createLives(60, 40),
-            this.createLives(100, 40),
-            this.createLives(140, 40),
+            this.createLives(30, 40),
+            this.createLives(70, 40),
+            this.createLives(110, 40),
+            this.createLives(150, 40),
         ];
         this.lifeIcons[3].setVisible(false); //Quitar el icono de corazones
         
@@ -191,8 +191,15 @@ class GameScene extends Phaser.Scene {
         //creacion del laberinto
         
         const walls = this.physics.add.staticGroup();
-        this.top = this.add.image(400, 7.5, 'top');
-        this.left = this.add.image(6, 200, 'left');
+        //bordes
+        walls.create(400, 7.5, 'top');    //pared superior
+        walls.create(6, 220, 'left');  //pared izquierda
+        walls.create(792, 220, 'right'); //pared derecha
+        walls.create(400, 442, 'bot');  //pared inferior
+        walls.create(6, 665, 'right'); //borde mano
+        walls.create(792, 665, 'right'); //borde mano
+        
+        this.physics.add.collider(this.rat, walls);
     }
 
     update(time, delta) {
