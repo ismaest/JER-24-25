@@ -98,21 +98,12 @@ class GameScene extends Phaser.Scene {
         });
         this.btnOpt.on('pointerover', () => {this.btnOpt.setScale(0.55)});
         this.btnOpt.on('pointerout', () => {this.btnOpt.setScale(0.5)});
-
-        //Crear y configurar la mano
-        this.hand = this.add.image(400, 500, 'hand'); 
-        this.hand.setScale(0.5);
         
         this.handcoords = [150, 400, 650];
         this.index = 1;
         this.lastMove = 0;
 
-        //Crear la rata
-        this.rat = this.physics.add.sprite(100, 100, 'rat');
-        this.rat.setScale(0.1);
-        this.rat.setCollideWorldBounds(true);
-        this.ratSpeed = 100;
-
+        
         //Contador de vidas para las ratas
         this.lives = 3; //por defecto empieza en 3
         
@@ -168,7 +159,17 @@ class GameScene extends Phaser.Scene {
             A: Phaser.Input.Keyboard.KeyCodes.A,
             S: Phaser.Input.Keyboard.KeyCodes.S,
             D: Phaser.Input.Keyboard.KeyCodes.D,
-        }); 
+        });
+
+        //Crear la rata
+        this.rat = this.physics.add.sprite(100, 100, 'rat');
+        this.rat.setScale(0.1);
+        this.rat.setCollideWorldBounds(true);
+        this.ratSpeed = 100;
+        
+        //Crear y configurar la mano
+        this.hand = this.add.image(400, 530, 'hand');
+        this.hand.setScale(0.5);
     }
 
     update(time, delta) {
