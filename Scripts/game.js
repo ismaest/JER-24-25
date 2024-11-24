@@ -77,6 +77,8 @@ class GameScene extends Phaser.Scene {
         this.load.image('left', 'Left.png');
         this.load.image('right', 'Right.png');
         this.load.image('bot', 'Bot.png');
+        
+        this.load.image('exit', 'exit.png');
     }
 
     create() {
@@ -178,6 +180,9 @@ class GameScene extends Phaser.Scene {
             D: Phaser.Input.Keyboard.KeyCodes.D,
         });
 
+        //creamos el sprite "exit" en una posición específica
+        this.exit = this.physics.add.staticImage(500, 400, 'exit');
+        
         //Crear la rata
         this.rat = this.physics.add.sprite(100, 100, 'rat');
         this.rat.setScale(0.1);
@@ -207,6 +212,8 @@ class GameScene extends Phaser.Scene {
         //MOVIMIENTO DE LA RATA
         
         this.handleRatMovement(this.ratSpeed);
+
+        this.physics.add.overlap(this.rat, this.exit, this.changeScene, null, this);
         
         if (this.cheeseCollider == false) {
 
@@ -281,7 +288,11 @@ class GameScene extends Phaser.Scene {
             this.exitCollider = true;
         }
     }
-    
+
+
+    changeScene() {
+        this.scene.start('WinScene');
+    }
     
     //MANEJO DE LA RATA
     
