@@ -55,10 +55,27 @@ class LoadingScene extends Phaser.Scene {
         this.load.image('queso', 'queso.png');
         this.load.image('vacuna', 'vacuna.png');
         this.load.image('trapdoor', 'trapdoor.png');
+        this.load.image('creditos', 'btnCréditos.png');
+        this.load.image('salir', 'btnSalir.png');
+        this.load.image('creditsBg', 'creditsBackground.png');
+        this.load.image('loseBg', 'loseBackground.png');
+        this.load.image('menuTuto', 'menuTutorial.png');
+        this.load.image('plantilla', 'plantilla.png');
+        this.load.image('winBg', 'winBackground.png');
+        this.load.image('closedDown', 'closedDown.png');
+        this.load.image('closedLeft', 'closedLeft.png');
+        this.load.image('closedRight', 'closedRight.png');
+        this.load.image('closedUp', 'closedUp.png');
+        this.load.image('Horizontal', 'Horizontal.png');
+        this.load.image('vertical', 'verical.png');
         
         //MUSICA
         this.load.audio('mainMenuMusic', 'mainMenuMusic.ogg');
         this.load.audio('deathMusic', 'deathMusic.mp3');
+        this.load.audio('tpSound', 'tpSound.wav');
+        this.load.audio('healthBoost', 'healthBoost.wav');
+        this.load.audio('handMoving', 'handMoving.mp3');
+        this.load.audio('click', 'click.wav');
     }
 
     create() {
