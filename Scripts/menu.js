@@ -5,32 +5,50 @@ class MenuScene extends Phaser.Scene {
     }
 
     preload() {
+        
+        //Cargamos los assets necesarios
         this.loadAssets();
     }
 
     create() {
+        
+        //Configuramos los sonidos
         this.setupSounds();
-        this.setupBackground();
+    
+        //Creamos el escenario
+        this.add.image(400, 300, 'background');
+        
+        ///Creamos los botones básicos
         this.createStartButton();
         this.createOptionsButton();
         this.createCreditsButton();
+        
+        //Configuramos los botones
         this.buttonAnims();
     }
 
-    update() {
-
-    }
+    update() {}
+    
+    //CARGA DE ASSETS
+    
     loadAssets() {
+        
         this.load.setPath('assets/');
+        
+        //Imágenes
         this.load.image('background', 'MenuBackground.png');
-        this.load.image('startBtn', 'btnJugar.png');
+        this.load.image('startBtn', 'ejemplo.png');
         this.load.image('optionsBtn', 'btnOpciones.png');
         this.load.image('creditsBtn', 'btnCréditos.png');
+        
+        //Audio
         this.load.audio('mainMenuMusic', 'mainMenuMusic.ogg');
         this.load.audio('deathMusic', 'deathMusic.ogg');
         this.load.audio('click', 'click.wav');
     }
 
+    //CONFIGURACIÓN DE SONIDOS
+    
     setupSounds() {
         this.game.click = this.sound.add('click');
         if (!this.game.mainMenuMusic) {
@@ -38,11 +56,9 @@ class MenuScene extends Phaser.Scene {
             this.game.mainMenuMusic.play();
         }
     }
-
-    setupBackground() {
-        this.add.image(400, 300, 'background');
-    }
-
+    
+    //CREACIÓN DE BOTONES
+    
     createStartButton() {
         this.startBtn = this.add.image(400, 300, 'startBtn').setScale(0.5).setInteractive();
         this.startBtn.on('pointerdown', () => {
@@ -69,15 +85,19 @@ class MenuScene extends Phaser.Scene {
         });
     }
     
+    //CONFIGURACIÓN DE BOTONES
+    
     buttonAnims(){
         [this.startBtn, this.optionsBtn, this.creditsBtn].forEach(button => {
             button.on('pointerover', ()=>this.onButtonHover(button));
             button.on('pointerout', ()=>this.onButtonOut(button));
         });
     }
+    
     onButtonHover(button){
         button.setScale(0.55);
     }
+    
     onButtonOut(button){
         button.setScale(0.5);
     }
