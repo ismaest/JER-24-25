@@ -90,7 +90,7 @@ class GameScene extends Phaser.Scene {
         //CRAR ELEMENTOS DEL ESCENARIO
         
         //Crear el botón de arriba de opciones
-        this.btnOpt = this.add.image(750, 65, 'roleInfo').setScale(0.5);
+        this.btnOpt = this.add.image(720, 65, 'roleInfo').setScale(0.5);
         this.btnOpt.setInteractive();
         this.btnOpt.on('pointerdown', () => {
             this.game.click.play();
