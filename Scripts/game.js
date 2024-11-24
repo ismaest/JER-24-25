@@ -183,7 +183,7 @@ class GameScene extends Phaser.Scene {
             this.cheeses.forEach((cheese, index) => {
                 if (this.checkCollision(this.rat, cheese, 50)) {
                     this.ratSpeed = 50;
-                    cheese.setActive(false); // Desactiva el queso del juego
+                    cheese.destroy(); // Desactiva el queso del juego
                     this.cheeseCollider = true;
                     this.cheeseTime = time;
                     this.game.eatSound.play();
@@ -358,13 +358,10 @@ class GameScene extends Phaser.Scene {
     }
     
     ActivateCheese(){
-        if(this.checkCollision(this.rat, syringe, 30)){
-            this.cheeses.forEach((cheese, index) => {
-                if(!this.cheeses[index].active){
-                    cheese.setActiv(true); // Elimina el queso del juego
-                }
-            });
-        }
+        //Regenra los quesos en sus respectivas posiciones
+        this.cheeses.push(this.createCheese(250, 100));
+        this.cheeses.push(this.createCheese(300, 300));
+        this.cheeses.push(this.createCheese(700, 400));
     }
     
     
