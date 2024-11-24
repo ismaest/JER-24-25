@@ -137,6 +137,16 @@ class GameScene extends Phaser.Scene {
         ];
         this.lifeIcons[3].setVisible(false); //Quitar el icono de corazones
         
+        //Crear jeringuillas dinámicamente
+        this.syringes = [
+            this.createSyringes(200, 100),
+        ];
+        
+        //Crear trampillas dinámicamente
+        this.trapdoors = [ 
+            this.createTrapdoors(250, 200),
+        ];
+        
         
         //BOTONES DEL CIENTÍFICO
         
@@ -346,16 +356,20 @@ class GameScene extends Phaser.Scene {
     
     //MÉTODOS PARA EL CONTROL DE LOS BOTONES DEL CIENTIFICO
     
-    ActivateSyringe(syringe){
-        if(this.checkCollision(this.rat, syringe, 30)){
-            this.LifeDown();
-        }
+    ActivateSyringe(){
+        this.syringes.forEach((syringe, index) => {
+            if (this.checkCollision(this.rat, syringe, 50)) {
+                this.LifeDown();
+            }
+        });
     }
     
-    ActivateTrapdoor(Trapdoor){
-        if(this.checkCollision(this.rat, Trapdoor, 30)){
-            this.LifeDown();
-        }
+    ActivateTrapdoor(){
+        this.trapdoors.forEach((trapdoor, index) => {
+            if (this.checkCollision(this.rat, trapdoor, 50)) {
+                this.LifeDown();
+            }
+        });
     }
     
     ActivateCheese(){
@@ -386,11 +400,25 @@ class GameScene extends Phaser.Scene {
     }
     
     //Crea un icono de vida
+    
     createLives(x, y) {
         const lifeIcon = this.add.image(x, y, 'lifeIcon').setScale(0.01);
         return lifeIcon;
     }
+
+    //Crea una jeringuilla
     
+    createSyringes(x, y){
+        const syringe = this.add.image(x, y, 'vacuna').setScale(0.3);
+        return syringe;
+    }
+    
+    //Crea una trampilla
+    
+    createTrapdoors(x, y){
+        const trapdoor = this.add.image(x, y, 'trapdoor').setScale(0.3);
+        return trapdoor;
+    }
     
     //Crea un botón interactivo.
 
