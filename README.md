@@ -75,7 +75,7 @@ Un videojuego en el que dos jugadores deben competir el uno contra el otro en un
 
 **1.3 Características Principales**
 
-  - División del juego en niveles: El juego contará con varios niveles, o carreras, para que los jugadores puedan elegir qué circuito quieren jugar.
+  - División del juego en niveles: El juego contará con varios niveles, o carreras, para que los jugadores puedan elegir qué circuito quieren jugar. En el prototipo actual contamos con un único nivel que muestra las diferentes mecánicas del juego
 
   - Frenetismo: El juego será rápido y frenético, exigiendo a ambos jugadores que estén atentos el uno del otro para poder lograr sus objetivos personales.
 
@@ -171,6 +171,8 @@ El juego se desarrolla en partidas rápidas, donde un jugador debe esquivar las 
 
 Las trampas tienen el objetivo de matar a las ratas, y estas deben esquivarlas para evitar morir. Si mueren menos de 3 ratas antes de llegar a la meta, ese jugador habrá ganado. Si por el contrario, el científico que activa las trampas logra matar 3 veces al contrario, él será el ganador.
 
+Entre los diferentes elementos del escenario encontraremos:
+ - Jeringuilla: La primera de las trampas mortales. Se activan todas cuando el científico 
 
 2.2.1 Controles
 
@@ -183,7 +185,7 @@ Las trampas tienen el objetivo de matar a las ratas, y estas deben esquivarlas p
 
   - El Científico:
 
-    - ESPACIO: Accionar la trampa que se corresponde con la posición en la que te encuentras. 
+    - Flecha arriba: Accionar la trampa que se corresponde con la posición en la que te encuentras. 
     - Flecha izquierda Desplazarse a la izquierda.
     - Flecha derecha: Desplazarse a la derecha.
 
