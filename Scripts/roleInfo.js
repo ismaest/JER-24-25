@@ -32,10 +32,11 @@ class RoleInfo extends Phaser.Scene {
     loadAssets() {
         
         this.load.setPath('assets/');
-        
-        this.load.image('background', 'MenuBackground.png'); // Cambiar assets
+
+        this.load.image('tutorialBackground', 'menuTutorial.png'); // Cambiar assets
+
         this.load.image('acceptBtn', 'btnJugar.png'); // Botón de aceptar (esconde escena)
-        this.load.image('exitBtn', 'btnOpciones.png');
+        this.load.image('exitBtn', 'btnSalir.png');
         this.load.audio('mainMenuMusic', 'mainMenuMusic.ogg');
         this.load.audio('click', 'click.wav');
     }
@@ -50,7 +51,7 @@ class RoleInfo extends Phaser.Scene {
     }
 
     setupBackground() {
-        const bg = this.add.image(200, 150, 'background');
+        const bg = this.add.image(200, 150, 'tutorialBackground');
         bg.setScale(0.75);
         bg.setOrigin(0.15, 0.2);
     }
@@ -58,7 +59,7 @@ class RoleInfo extends Phaser.Scene {
     //CREACIÓN DE BOTONES
     
     createAcceptButton() {
-        this.acceptBtn = this.add.image(300, 400, 'acceptBtn').setScale(0.45).setInteractive();
+        this.acceptBtn = this.add.image(260, 500, 'acceptBtn').setScale(0.45).setInteractive();
         this.acceptBtn.on('pointerdown', () => {
             console.log('Accept button pressed');
             this.game.click.play();
@@ -67,7 +68,7 @@ class RoleInfo extends Phaser.Scene {
     }
 
     createExitButton() {
-        this.exitBtn = this.add.image(550, 400, 'exitBtn').setScale(0.45).setInteractive();
+        this.exitBtn = this.add.image(550, 500, 'exitBtn').setScale(0.45).setInteractive();
         this.exitBtn.on('pointerdown', () => {
             console.log('Exit button pressed');
             this.game.click.play();

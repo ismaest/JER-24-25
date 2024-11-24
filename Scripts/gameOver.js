@@ -8,19 +8,19 @@ class GameOverScene extends Phaser.Scene {
 
         this.load.setPath('assets/');
 
-        this.load.image('background', 'MenuBackground.png');
+        this.load.image('loseBackground', 'loseBackground.png');
 
         this.load.image('startBtn', 'btnJugar.png');
-        this.load.image('optionsBtn', 'btnOpciones.png');
+        this.load.image('exitBtn', 'btnSalir.png');
         this.load.audio('mainMenuMusic', 'mainMenuMusic.ogg');
         this.load.audio('deathMusic', 'deathMusic.mp3');
     }
 
     create(){
 
-        this.add.image(400, 300, 'background');
+        this.add.image(400, 300, 'loseBackground');
 
-        this.optionsBtn = this.add.image(400, 500, 'optionsBtn'); //CAMBIAR A SALIR AL MENU
+        this.optionsBtn = this.add.image(400, 540, 'exitBtn'); //CAMBIAR A SALIR AL MENU
         this.optionsBtn.setScale(0.5);
         this.optionsBtn.setInteractive();
         this.optionsBtn.on('pointerdown', () => {
