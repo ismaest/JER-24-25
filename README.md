@@ -41,23 +41,30 @@ LABRATS es un juego arcade 1vs1 en el que ambos jugadores tomarán el rol de una
   3.1 Niveles
   3.2 Personajes
   3.3 Ítems
+    3.3.1 Ayudas para La Rata
+    3.3.2 Trampas para La Rata
   3.4 Logros
 
 4. Apartado Artístico
   4.1 Música y Sonidos
   4.2 Arte y concept art
-    4.2.1 Paleta de colores
-    4.2.2 Concept art
+    4.2.1 Perspectiva de la cámara
+    4.2.2 Paleta de colores
+    4.2.3 Concept art
 
 5. Equipo Autor
   5.1 Javier San Juan Ledesma
     5.1.1. Primera fase de desarrollo: Javier
+    5.1.2. Segunda fase de desarrollo: Javier
   5.2 Iván De Castilla Guitián
     5.2.1. Primera fase de desarrollo: Iván
+    5.2.2. Segunda fase de desarrollo: Iván
   5.3 Ismael Esteban Liberal
     5.3.1. Primera fase de desarrollo: Ismael
+    5.3.2. Segunda fase de desarrollo: Ismael
   5.4 Xabier López Aguilera
     5.4.1. Primera fase de desarrollo: Xabier
+    5.4.2. Segunda fase de desarrollo: Xabier
 
 6. Créditos
 
@@ -172,22 +179,22 @@ El juego se desarrolla en partidas rápidas, donde un jugador debe esquivar las 
 Las trampas tienen el objetivo de matar a las ratas, y estas deben esquivarlas para evitar morir. Si mueren menos de 3 ratas antes de llegar a la meta, ese jugador habrá ganado. Si por el contrario, el científico que activa las trampas logra matar 3 veces al contrario, él será el ganador.
 
 	2.2.1 Controles
-La Rata: 
-	**- W:** Avanzar hacia arriba.
-	**- A:** Avanzar hacia la izquierda.
- 	**- D:** Avanzar hacia ala derecha.
-	**- S:** Avanzar hacia abajo.
+La Rata: <br>
+	**- W:** Avanzar hacia arriba. <br>
+	**- A:** Avanzar hacia la izquierda. <br>
+ 	**- D:** Avanzar hacia ala derecha. <br>
+	**- S:** Avanzar hacia abajo. <br>
 
-El Científico:
-	**- Flecha arriba:** Accionar la trampa que se corresponde con la posición en la que te encuentras. 
- 	**- Flecha izquierda:** Desplazarse a la izquierda.
-	**- Flecha derecha:** Desplazarse a la derecha.
+El Científico: <br>
+	**- Flecha arriba:** Accionar la trampa que se corresponde con la posición en la que te encuentras. <br>
+ 	**- Flecha izquierda:** Desplazarse a la izquierda. <br>
+	**- Flecha derecha:** Desplazarse a la derecha. <br>
 
 	2.2.2 Balance de roles
 
 Aquí se plantea el balance de roles para que el juego sea equitaativo y justo para ambos jugadores: 
-	**- La Rata:** No sabe cuándo el científico accionará la trampa. Debe intentar engañarlo para forzarle a activar la trampa cuando él esté fuera de peligro.
-	**- El Científico:** Existe un retardo desde que se acciona el botón hasta que ocurre la acción, por lo tanto, este debe anticiparse a los movimientos de la rata, sabiendo que le puede engañar dicha rata.
+	**- La Rata:** No sabe cuándo el científico accionará la trampa. Debe intentar engañarlo para forzarle a activar la trampa cuando él esté fuera de peligro. <br>
+	**- El Científico:** Existe un retardo desde que se acciona el botón hasta que ocurre la acción, por lo tanto, este debe anticiparse a los movimientos de la rata, sabiendo que le puede engañar dicha rata. <br>
 
 
 > ## **2.3 Estados**
@@ -267,13 +274,17 @@ Aquí se recogen los diferentes objetos presentes en el juego.
 
  	3.3.1 Ayudas para La Rata
   
-  **- Clonación:** Cuando La Rata cae en alguna de las trampas, el jugador pierde una vida de las tres totales, teniendo que volver a empezar el laberinto. En el escenario podemos encontrar diferentes matraces de clonación que nos permiten aumentar nuestro número de vidas. (Figura 1)
-  **- Alcantarillas:** En el escenario hay repartidas varias alcantarillas que actuan como teletransportes entre diferentes puntos del mapa. Pueden ser útiles para avanzar por el mapa. (Figura 2)
+  **- Clonación:** Cuando La Rata cae en alguna de las trampas, el jugador pierde una vida de las tres totales, teniendo que volver a empezar el laberinto. En el escenario podemos encontrar diferentes matraces de clonación que nos permiten aumentar nuestro número de vidas. (Figura 1) <br>
+  
+  **- Alcantarillas:** En el escenario hay repartidas varias alcantarillas que actuan como teletransportes entre diferentes puntos del mapa. Pueden ser útiles para avanzar por el mapa. (Figura 2) <br>
 
 	3.3.2 Trampas para La Rata
- **- Inyección letal:** Aguja activable por el científico que, en caso de colisionar con la rata, termina con su vida de inmediato. (Figura 3)
- **- Trampilla:** Trampilla activable que, en caso de activarse con una rata sobre ella, termina con su vida. (Figura 4)
- **- El queso:** Diferentes quesos colocados por el escenario, aunque por defecto están escondidos y deben de ser activados por el científico. En caso de que la rata choque con un queso, se reducirá significativamente su velocidad de movimiento durante diez segundos. (Figura 5)
+ 
+ **- Inyección letal:** Aguja activable por el científico que, en caso de colisionar con la rata, termina con su vida de inmediato. (Figura 3)<br>
+ 
+ **- Trampilla:** Trampilla activable que, en caso de activarse con una rata sobre ella, termina con su vida. (Figura 4) <br>
+ 
+ **- El queso:** Diferentes quesos colocados por el escenario, aunque por defecto están escondidos y deben de ser activados por el científico. En caso de que la rata choque con un queso, se reducirá significativamente su velocidad de movimiento durante diez segundos. (Figura 5) <br>
 
 ![clon](https://github.com/user-attachments/assets/8d5a8f32-84a7-4239-b431-53dad5726c82)
 > Sprite de la clonación (Figura 1)
@@ -345,12 +356,15 @@ Estilo comiquero y de esbozo como si estuviera dibujado en un cuaderno, basándo
 El negro y el blanco son los que van a predominar, manteniendo ese estilo comiquero y de esbozo.
 
 > Paleta de colores de los menús
-Para el diseño de menús, se ha decidido usar la siguiente paleta que mantiene la presencia de la paleta principal y añade tonos apagados para que no ganen demasiada importancia.
+
+Para el diseño de menús, se ha decidido usar la siguiente paleta que mantiene la presencia de la paleta principal y añade tonos apagados para que no ganen demasiada importancia. <br>
+
 ![image](https://github.com/user-attachments/assets/76e6a3cf-675d-454e-a98f-1e08e4b8ab48)
 > Paleta de colores de los menús del juego
 
 
 	4.2.3 Concept art
+Aquí se recogen los diferentes concepts arts previos al desarrollo del juego: 
 
 ![MENU PRINCIPAL](https://github.com/user-attachments/assets/33678f96-d86a-4faf-b8e9-fdc64a9d1270)
 > Menú Principal
