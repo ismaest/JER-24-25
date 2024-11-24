@@ -8,7 +8,8 @@ class GameScene extends Phaser.Scene {
         //color del fondo
         this.cameras.main.setBackgroundColor(0xe6e1be); //amarillo estandar de nuestro juego
         
-        //pantalla de carga
+        //PANTALLA DE CARGA
+        
         //dimensiones de la camara
         const width = this.cameras.main.width;
         const height = this.cameras.main.height;
@@ -38,6 +39,8 @@ class GameScene extends Phaser.Scene {
             progressBar.destroy();
             progressBox.destroy();
         });
+        
+        //JUEGO
         
         //cargamos aquí las imágenes o sprites necesarios
 
@@ -74,14 +77,19 @@ class GameScene extends Phaser.Scene {
         //Añadir escenario
         this.add.image(400, 300, 'scenery');
         
+        
         //Añadir sonidos
         this.game.click = this.sound.add('click');
         this.game.tpSound = this.sound.add('tpSound');
         this.game.eatSound = this.sound.add('eatSound');
         this.game.handMoving = this.sound.add('handMoving');
         this.game.healthBoost = this.sound.add('healthBoost');
+        this.game.hitSound = this.sound.add('hitSound');
         
-        //Crear el boton de arriba de opciones
+        
+        //CRAR ELEMENTOS DEL ESCENARIO
+        
+        //Crear el botón de arriba de opciones
         this.btnOpt = this.add.image(750, 65, 'roleInfo').setScale(0.5);
         this.btnOpt.setInteractive();
         this.btnOpt.on('pointerdown', () => {
@@ -91,29 +99,28 @@ class GameScene extends Phaser.Scene {
         this.btnOpt.on('pointerover', () => {this.btnOpt.setScale(0.55)});
         this.btnOpt.on('pointerout', () => {this.btnOpt.setScale(0.5)});
 
-        //crear la mano (habrá que ponerlo como sprite con fisicas)
+        //Crear y configurar la mano
         this.hand = this.add.image(400, 500, 'hand'); 
         this.hand.setScale(0.5);
-        //this.hand.setCollideWorldBounds(true);
-
-        //crear array y cooldown para la mano
+        
         this.handcoords = [150, 400, 650];
         this.index = 1;
         this.lastMove = 0;
 
-        //crear la rata
+        //Crear la rata
         this.rat = this.physics.add.sprite(100, 100, 'rat');
         this.rat.setScale(0.1);
         this.rat.setCollideWorldBounds(true);
+        this.ratSpeed = 100;
 
-        //contador de vidas para las ratas
+        //Contador de vidas para las ratas
         this.lives = 3; //por defecto empieza en 3
         
-        //crear la clonacion
+        //Crear la clonacion
         this.clon = this.add.image(300, 200, 'lifeIcon');
         this.clon.setScale(0.01);
 
-        //crear los tps dinámicamente
+        //Crear los tps dinámicamente
         this.tps = [
             this.createTeleport(400, 200),
             this.createTeleport(100, 200),
@@ -121,7 +128,7 @@ class GameScene extends Phaser.Scene {
         ];
         this.exitCollider = true;
 
-        //crear quesos dinámicamente
+        //Crear quesos dinámicamente
         this.cheeses = [
             this.createCheese(250, 100),
             this.createCheese(300, 300),
@@ -130,7 +137,7 @@ class GameScene extends Phaser.Scene {
         this.cheeseCollider = false;
         this.cheeseTime = 0;
 
-        //crear vidas dinámicamente
+        //Crear vidas dinámicamente
         this.lifeIcons = [
             this.createLives(20, 40),
             this.createLives(60, 40),
@@ -138,17 +145,22 @@ class GameScene extends Phaser.Scene {
             this.createLives(140, 40),
         ];
         this.lifeIcons[3].setVisible(false); //Quitar el icono de corazones
-
-        //crear boton jeringuilla
+        
+        
+        //BOTONES DEL CIENTÍFICO
+        
+        //Crear boton jeringuilla
         this.createButton(150, 500, 'vacuna', 'bvacuna');
 
-        //crear boton trampilla
+        //Crear boton trampilla
         this.createButton(400, 500, 'trapdoor', 'btrapdoor');
 
-        //crear boton queso
+        //Crear boton queso
         this.createButton(650, 500, 'queso', 'bqueso');
 
-        //Configuración de controles
+        
+        //CONFIGURACIÓN DE CONTROLES
+        
         this.cursors = this.input.keyboard.createCursorKeys(); //Añadir las flechas de dirección
         
         this.keys = this.input.keyboard.addKeys({ //Se crea la opcion de usar las teclas W A S D. 
@@ -160,20 +172,20 @@ class GameScene extends Phaser.Scene {
     }
 
     update(time, delta) {
-        
+
         //MOVIMIENTO DE LA RATA
+        
+        this.handleRatMovement(this.ratSpeed);
+        
         if (this.cheeseCollider == false) {
-            
-            this.handleRatMovement(100);
 
             //comprobar colisiones con los quesos
             this.cheeses.forEach((cheese, index) => {
                 if (this.checkCollision(this.rat, cheese, 50)) {
-                    cheese.destroy(); // Elimina el queso del juego
-                    this.cheeses.splice(index, 1); // Elimina el queso de la lista
+                    this.ratSpeed = 50;
+                    cheese.setActive(false); // Desactiva el queso del juego
                     this.cheeseCollider = true;
                     this.cheeseTime = time;
-
                     this.game.eatSound.play();
                 }
             });
@@ -182,8 +194,8 @@ class GameScene extends Phaser.Scene {
             //EFECTOS DEL QUESO
             if (Math.abs(time - this.cheeseTime) > 10000) {
                 this.cheeseCollider = false;
+                this.ratSpeed = 100;
             }
-            this.handleRatMovement(50);
         }
 
         //MOVIMIENTO DE LA MANO
@@ -192,45 +204,24 @@ class GameScene extends Phaser.Scene {
         //USO DE BOTONES
         if (this.cursors.up.isDown) {
             switch (this.index) {
-                case 0:
+                case 0: //Activar jeringuilla
                     this.bvacuna = true;
-                    this.rat.x = 150;
+                    this.ActivateSyringe();
                     break;
 
-                case 1:
+                case 1: //Activar trampilla
                     this.btrapdoor = true;
-                    this.rat.x = 300;
+                    this.ActivateTrapdoor();
                     break;
 
-                case 2:
+                case 2: //Activar queso
                     this.bqueso = true;
-                    this.rat.x = 200;
+                    this.ActivateCheese();
                     break;
             }
-        }
-
-        //MANEJO DE VIDAS
-        if (this.rat.x > 300) { //HAY QUE CAMBIAR LA CONDICIÓN DE DERROTA DE VIDAS
-            this.rat.x = 100;
-            this.rat.y = 100; //devolvemos a la posicion inicial
-
-            this.lives--; //Restar la variable de vidas
-            
-            this.game.hitSound = this.sound.add('hitSound');
-            this.game.hitSound.play();
-            
-            this.lifeIcons[this.lives].setVisible(false); //Quitar el icono de corazones
         }
         
-        if (this.lives === 0) {
-            if(!this.game.deathMusic) {
-                this.game.mainMenuMusic.stop();
-                this.game.deathMusic = this.sound.add('deathMusic', {loop: true});
-                this.game.deathMusic.play();
-            }
-            { this.scene.start('GameOverScene'); } //Cargar la escena de derrota
-        }
-
+        
         //COLISION CON LA CLONACION
         if (this.checkCollision(this.rat, this.clon, 50)) {
             
@@ -238,7 +229,7 @@ class GameScene extends Phaser.Scene {
             
             this.lifeIcons[this.lives].setVisible(true); //Añadir el icono de corazones
             
-            this.lives++;
+            this.lives++; //Aumenta en 1 la vida
             this.game.healthBoost.play();
 
             this.clon.destroy();
@@ -260,8 +251,10 @@ class GameScene extends Phaser.Scene {
         }
     }
     
-    //Maneja el movimiento de la rata según la velocidad.
     
+    //MANEJO DE LA RATA
+    
+    //Maneja el movimiento de la rata según la velocidad.
     handleRatMovement(speed) {
         
         //Movimiento vertical
@@ -283,9 +276,36 @@ class GameScene extends Phaser.Scene {
         }
     }
 
+    //Manejo de perder vidas y de morir
+    LifeDown(){
+
+        //Devolvemos a la posicion inicial
+        this.rat.x = 100;
+        this.rat.y = 100; 
+        
+        this.lives--; //Restar la variable de vidas
+        
+        this.lifeIcons[this.lives].setVisible(false); //Quitar el icono de corazones
+
+        this.game.hitSound.play();
+        
+        //COMPROBAR SI EL JUGADOR HA MUERTO
+        if (this.lives === 0) {
+            
+            if(!this.game.deathMusic) {
+                this.game.mainMenuMusic.stop();
+                this.game.deathMusic = this.sound.add('deathMusic', {loop: true});
+                this.game.deathMusic.play();
+            }
+            
+            this.scene.start('GameOverScene'); //Cargar la escena de derrota
+        }
+    }
     
-    //Maneja el movimiento de la mano.
     
+    //MANEJO DEL CIENTÍFICO
+    
+    //Manejo de la mano
     handleHandMovement(time) {
 
         if (this.index === undefined || this.index < 0) {
@@ -313,7 +333,8 @@ class GameScene extends Phaser.Scene {
         }
     }
     
-    //Comprueba colisiones entre dos objetos.
+    
+    //MANEJO DE COLISIONES
     
     checkCollision(obj1, obj2, range) {
         const dx = Math.abs(obj1.x - obj2.x);
@@ -321,6 +342,31 @@ class GameScene extends Phaser.Scene {
         return dx < range && dy < range;
     }
 
+    
+    //MÉTODOS PARA EL CONTROL DE LOS BOTONES DEL CIENTIFICO
+    
+    ActivateSyringe(syringe){
+        if(this.checkCollision(this.rat, syringe, 30)){
+            this.LifeDown();
+        }
+    }
+    
+    ActivateTrapdoor(Trapdoor){
+        if(this.checkCollision(this.rat, Trapdoor, 30)){
+            this.LifeDown();
+        }
+    }
+    
+    ActivateCheese(){
+        if(this.checkCollision(this.rat, syringe, 30)){
+            this.cheeses.forEach((cheese, index) => {
+                if(!this.cheeses[index].active){
+                    cheese.setActiv(true); // Elimina el queso del juego
+                }
+            });
+        }
+    }
+    
     
     //MÉTODOS PARA CREAR OBJETOS DE FORMA MÁS SENCILLA
 
