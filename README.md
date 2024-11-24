@@ -5,10 +5,10 @@
 
 LABRATS es un juego arcade 1vs1 en el que ambos jugadores tomarán el rol de una rata o un científico. La rata deberá sobrevivir a los intentos del científico por acabar con ella.
 
-  - Iván de Castilla Guitián, i.decastilla.2022@alumnos.urjc.es, smartwastaken
-  - Ismael Esteban Liberal, i.esteban.2022@alumnos.urjc.es, ismaest
-  - Javier San Juan Ledesma, j.sanjuan.2021@alumnos.urjc.es, KaZeRHD
-  - Xabier López Aguilera, x.lopez.2022@alumnos.urjc.es, ReibaxL
+  - Iván de Castilla Guitián, i.decastilla.2022@alumnos.urjc.es, @smartwastaken
+  - Ismael Esteban Liberal, i.esteban.2022@alumnos.urjc.es, @ismaest
+  - Javier San Juan Ledesma, j.sanjuan.2021@alumnos.urjc.es, @KaZeRHD
+  - Xabier López Aguilera, x.lopez.2022@alumnos.urjc.es, @ReibaxL
 
 ## ÍNDICE
 
@@ -28,6 +28,7 @@ LABRATS es un juego arcade 1vs1 en el que ambos jugadores tomarán el rol de una
   1.12 Metas del proyecto
   1.13 Fases de desarrollo
   1.14 Riesgos Técnicos y Desafíos
+
 2. Diseño del juego
   2.1 Guion
   2.2 Mecánicas
@@ -35,16 +36,19 @@ LABRATS es un juego arcade 1vs1 en el que ambos jugadores tomarán el rol de una
   2.2.2 Balance de roles	
   2.3 Estados
   2.4 Interfaces
+
 3. Desarrollo del Juego
   3.1 Niveles
   3.2 Personajes
   3.3 Ítems
   3.4 Logros
+
 4. Apartado Artístico
   4.1 Música y Sonidos
   4.2 Arte y concept art
     4.2.1 Paleta de colores
     4.2.2 Concept art
+
 5. Equipo Autor
   5.1 Javier San Juan Ledesma
     5.1.1. Primera fase de desarrollo: Javier
@@ -54,18 +58,23 @@ LABRATS es un juego arcade 1vs1 en el que ambos jugadores tomarán el rol de una
     5.3.1. Primera fase de desarrollo: Ismael
   5.4 Xabier López Aguilera
     5.4.1. Primera fase de desarrollo: Xabier
+
 6. Créditos
+
 7. Anexos
   7.1. Futuras Características
+
 ```
 
 ## Introducción
 
 En este documento se detallan todos los requisitos y especificaciones del videojuego “Labrats”, creado para la asignatura Juegos en Red del grado en Diseño y Desarrollo de Videojuegos de la Universidad Rey Juan Carlos.
 
+
 **1.1 Título del juego**
 
 El título del juego es “Labrats”. Se ha elegido este título a raíz de la ambientación elegida para el mismo, donde se nos presentan dos roles jugables: Unas ratas de laboratorio o un científico loco.
+
 
 
 **1.2 Concepto principal**
@@ -73,7 +82,10 @@ El título del juego es “Labrats”. Se ha elegido este título a raíz de la 
 Un videojuego en el que dos jugadores deben competir el uno contra el otro en una especie de carrera de obstáculos. Mientras que uno de los jugadores debe llegar hasta la meta esquivando obstáculos mortales, el otro jugador es quien controla la activación de dichos obstáculos, con el objetivo de detener el avance del jugador contrario.
 
 
+
 **1.3 Características Principales**
+
+Aquí se definen las principales características del juego:
 
   - División del juego en niveles: El juego contará con varios niveles, o carreras, para que los jugadores puedan elegir qué circuito quieren jugar.
 
@@ -84,9 +96,11 @@ Un videojuego en el que dos jugadores deben competir el uno contra el otro en un
   - Competitividad: Uno de los componentes principales también es la competitividad entre jugadores, dado que, al fin y al cabo, solo puede ganar uno.
 
 
+
 **1.4 Género**
 
 Se trata de un juego de género Death Run, caracterizado por dividir a los jugadores en roles, teniendo generalmente uno de ellos escapar con vida como objetivo, mientras que el contrario debe activar trampas mortales para acabar con el primero. Debido a la propia característica del género, también se puede considerar como un juego multijugador. Además, se puede categorizar como juego 2D debido a la estética escogida.
+
 
 
 **1.5 Propósito y público objetivo**
@@ -94,9 +108,11 @@ Se trata de un juego de género Death Run, caracterizado por dividir a los jugad
 Es un juego divertido y competitivo que busca un desafío para ambos jugadores, apto para todos los públicos por encima de los 7 años.
 
 
+
 **1.6 Jugabilidad**
 
 La jugabilidad dependerá del rol que tome cada jugador en función de la partida. En caso de ser “La Rata” se deberá avanzar por el mapa saltando por diferentes plataformas evitando las trampas mortales. En el caso de tomar el rol del “El Científico” debes observar la trayectoria que sigue “La Rata” y activar las trampas por las que pase en el momento idóneo para terminar con su vida.
+
 
 
 **1.7 Estilo Visual**
@@ -104,9 +120,11 @@ La jugabilidad dependerá del rol que tome cada jugador en función de la partid
 Es un juego 2D con un estilo comiquero y de esbozo como si estuviera dibujado en un cuaderno.
 
 
+
 **1.8 Alcance**
 
 Este proyecto se plantea únicamente como un prototipo jugable sin la posibilidad de ser ampliado hasta un producto final ni comercial.
+
 
 
 **1.9 Plataforma**
@@ -114,15 +132,20 @@ Este proyecto se plantea únicamente como un prototipo jugable sin la posibilida
 El juego estará disponible tan solo en ordenador. Se podrá jugar tanto de forma local, como en dos ordenadores de forma online.
 
 
+
 **1.10 Licencia**
 
-La licencia del proyecto es Apache-2.0 license
+La licencia del proyecto es Apache-2.0 license. También se incluye la biblioteca Phaser de código abierto para el desarrollo del videojuego.
+
 
 
 **1.11 Análisis DAFO**
 
+Aquí se recoge el análisis DAFO realizado previo al comienzo del desarrollo del juego.
 ![DAFO](https://github.com/user-attachments/assets/23be39b4-e0c7-4482-b1da-6e2402f4d56b)
 > Análisis DAFO
+
+
 
 **1.12 Metas del proyecto**
 
