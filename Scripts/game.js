@@ -60,6 +60,14 @@ class GameScene extends Phaser.Scene {
         
         this.load.image('lifeIcon', 'lifeIcon.png');
 
+        this.load.image('tpA', 'tpA.png');
+        this.load.image('tpB', 'tpB.png');
+        this.load.image('cheeseOpen', 'cheeseOpen.png');
+        this.load.image('cheeseClosed', 'cheeseClosed.png');
+        this.load.image('needle', 'needle.png');
+        this.load.image('trapdoorOpen', 'trapdoorOpen.png');
+        this.load.image('trapdoorClosed', 'trapdoorClosed.png');
+
         //cargamos aquí los efectos de sonido necesarios
         
         this.load.audio('mainMenuMusic', 'mainMenuMusic.ogg');
