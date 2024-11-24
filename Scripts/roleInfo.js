@@ -5,22 +5,34 @@ class RoleInfo extends Phaser.Scene {
     }
 
     preload() {
+        
+        //Cargamos los assets
         this.loadAssets();
     }
 
     create() {
+        
+        //Configuramos los sonidos
         this.setupSounds();
+        
+        //Configuramos el fondo
         this.setupBackground();
+        
+        //Creamos botones
         this.createAcceptButton();
         this.createExitButton();
+        
+        //Configuramos botones
         this.buttonAnims();
     }
 
-    update() {
-
-    }
+    update() {}
+    
+    //CARGA DE ASSETS
     loadAssets() {
+        
         this.load.setPath('assets/');
+        
         this.load.image('background', 'MenuBackground.png'); // Cambiar assets
         this.load.image('acceptBtn', 'btnJugar.png'); // Botón de aceptar (esconde escena)
         this.load.image('exitBtn', 'btnOpciones.png');
@@ -28,6 +40,7 @@ class RoleInfo extends Phaser.Scene {
         this.load.audio('click', 'click.wav');
     }
 
+    //CONFIGURACIÓN 
     setupSounds() {
         this.game.click = this.sound.add('click');
         if (!this.game.mainMenuMusic) {
@@ -42,6 +55,8 @@ class RoleInfo extends Phaser.Scene {
         bg.setOrigin(0.15, 0.2);
     }
 
+    //CREACIÓN DE BOTONES
+    
     createAcceptButton() {
         this.acceptBtn = this.add.image(300, 400, 'acceptBtn').setScale(0.45).setInteractive();
         this.acceptBtn.on('pointerdown', () => {
@@ -61,7 +76,9 @@ class RoleInfo extends Phaser.Scene {
             this.scene.start('MenuScene'); // Cambiamos a la escena del menú
         });
     }
-
+    
+    //CONFIGURACIÓN DE OTONES
+    
     buttonAnims(){
         [this.acceptBtn, this.exitBtn].forEach(button => {
             button.on('pointerover', ()=>this.onButtonHover(button));

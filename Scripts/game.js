@@ -56,6 +56,8 @@ class GameScene extends Phaser.Scene {
         this.load.image("roleInfo", "btnOpciones.png") //cambiar a btn de menu
         
         this.load.image('lifeIcon', 'lifeIcon.png');
+
+        //cargamos aquí los efectos de sonido necesarios
         
         this.load.audio('mainMenuMusic', 'mainMenuMusic.ogg');
         this.load.audio('deathMusic', 'deathMusic.mp3');
@@ -68,13 +70,19 @@ class GameScene extends Phaser.Scene {
     }
 
     create() {
+        
+        //Añadir escenario
         this.add.image(400, 300, 'scenery');
         
+        //Añadir sonidos
         this.game.click = this.sound.add('click');
         this.game.tpSound = this.sound.add('tpSound');
+        this.game.eatSound = this.sound.add('eatSound');
+        this.game.handMoving = this.sound.add('handMoving');
+        this.game.healthBoost = this.sound.add('healthBoost');
         
-        //crear el boton de arriba de opciones
-        this.btnOpt = this.add.image(680, 40, 'roleInfo').setScale(0.5);
+        //Crear el boton de arriba de opciones
+        this.btnOpt = this.add.image(750, 65, 'roleInfo').setScale(0.5);
         this.btnOpt.setInteractive();
         this.btnOpt.on('pointerdown', () => {
             this.game.click.play();
@@ -94,7 +102,6 @@ class GameScene extends Phaser.Scene {
         this.lastMove = 0;
 
         //crear la rata
-        //this.rat = this.add.image(100, 100, 'rat');
         this.rat = this.physics.add.sprite(100, 100, 'rat');
         this.rat.setScale(0.1);
         this.rat.setCollideWorldBounds(true);
@@ -141,22 +148,22 @@ class GameScene extends Phaser.Scene {
         //crear boton queso
         this.createButton(650, 500, 'queso', 'bqueso');
 
-        this.cursors = this.input.keyboard.createCursorKeys();
-        this.keys = this.input.keyboard.addKeys({
+        //Configuración de controles
+        this.cursors = this.input.keyboard.createCursorKeys(); //Añadir las flechas de dirección
+        
+        this.keys = this.input.keyboard.addKeys({ //Se crea la opcion de usar las teclas W A S D. 
             W: Phaser.Input.Keyboard.KeyCodes.W,
             A: Phaser.Input.Keyboard.KeyCodes.A,
             S: Phaser.Input.Keyboard.KeyCodes.S,
             D: Phaser.Input.Keyboard.KeyCodes.D,
-        }); //Se crea la opcion de usar las teclas W A S D. 
+        }); 
     }
 
     update(time, delta) {
-
-        this.game.eatSound = this.sound.add('eatSound');
-        this.game.handMoving = this.sound.add('handMoving');
         
         //MOVIMIENTO DE LA RATA
         if (this.cheeseCollider == false) {
+            
             this.handleRatMovement(100);
 
             //comprobar colisiones con los quesos
@@ -183,15 +190,23 @@ class GameScene extends Phaser.Scene {
         this.handleHandMovement(time);
 
         //USO DE BOTONES
-        if (this.cursors.up.isDown && this.index == 0) {
-            this.bvacuna = true;
-            this.rat.x = 150;
-        } else if (this.cursors.up.isDown && this.index == 1) {
-            this.btrapdoor = true;
-            this.rat.x = 300;
-        } else if (this.cursors.up.isDown && this.index == 2) {
-            this.bqueso = true;
-            this.rat.x = 200;
+        if (this.cursors.up.isDown) {
+            switch (this.index) {
+                case 0:
+                    this.bvacuna = true;
+                    this.rat.x = 150;
+                    break;
+
+                case 1:
+                    this.btrapdoor = true;
+                    this.rat.x = 300;
+                    break;
+
+                case 2:
+                    this.bqueso = true;
+                    this.rat.x = 200;
+                    break;
+            }
         }
 
         //MANEJO DE VIDAS
@@ -206,26 +221,30 @@ class GameScene extends Phaser.Scene {
             
             this.lifeIcons[this.lives].setVisible(false); //Quitar el icono de corazones
         }
+        
         if (this.lives === 0) {
             if(!this.game.deathMusic) {
                 this.game.mainMenuMusic.stop();
                 this.game.deathMusic = this.sound.add('deathMusic', {loop: true});
                 this.game.deathMusic.play();
             }
-            { this.scene.start('GameOverScene'); } //HAY QUE CAMBIARLO POR PANTALLA DE DERROTA
+            { this.scene.start('GameOverScene'); } //Cargar la escena de derrota
         }
 
         //COLISION CON LA CLONACION
         if (this.checkCollision(this.rat, this.clon, 50)) {
-            this.clon.x = 10000; //habria que ocultar el objeto en lugar de moverlo
             
-            this.lifeIcons[this.lives].setVisible(true); //Quitar el icono de corazones
+            this.clon.x = 10000;
+            
+            this.lifeIcons[this.lives].setVisible(true); //Añadir el icono de corazones
             
             this.lives++;
-            this.game.healthBoost = this.sound.add('healthBoost');
             this.game.healthBoost.play();
-        }
 
+            this.clon.destroy();
+
+        }
+        
         //TP ENTRE LAS ALCANTARILLAS
         this.tps.forEach(tp => {
             if (this.checkCollision(this.rat, tp, 50) && this.exitCollider) {
@@ -240,50 +259,21 @@ class GameScene extends Phaser.Scene {
             this.exitCollider = true;
         }
     }
-
-    
-    //Crea un teleport con posición y destino.
-    
-    createTeleport(x, y) {
-        const tp = this.add.image(x, y, 'tp').setScale(0.3);
-        tp.targetX = x + 200; //cambia esto según dónde quieres que lleve
-        tp.targetY = y + 200;
-        return tp;
-    }
-
-    
-    //Crea un queso en la posición especificada.
-    
-    createCheese(x, y) {
-        const cheese = this.add.image(x, y, 'queso').setScale(0.3);
-        return cheese;
-    }
-
-    createLives(x, y) {
-        const lifeIcon = this.add.image(x, y, 'lifeIcon').setScale(0.01);
-        return lifeIcon;
-    }
-
-
-    //Crea un botón interactivo.
-    
-    createButton(x, y, texture, name) {
-        this[name] = this.add.image(x, y, texture).setScale(0.3);
-        this[name] = false;
-    }
-
     
     //Maneja el movimiento de la rata según la velocidad.
     
     handleRatMovement(speed) {
+        
+        //Movimiento vertical
         if (this.keys.W.isDown) {
             this.rat.setVelocityY(-speed); // Arriba
         } else if (this.keys.S.isDown) {
             this.rat.setVelocityY(speed); // Abajo
         } else {
-            this.rat.setVelocityY(0); // Detener en Y si no hay input
+           this.rat.setVelocityY(0); // Detener en Y si no hay input
         }
-
+        
+        //Movimiento horizontal
         if (this.keys.A.isDown) {
             this.rat.setVelocityX(-speed); // Izquierda
         } else if (this.keys.D.isDown) {
@@ -302,6 +292,7 @@ class GameScene extends Phaser.Scene {
             this.index = 0; //valor inicial
         }
         
+        //Moverse a la izquierda
         if (this.cursors.left.isDown) {
             if (this.index > 0 && time - this.lastMove > 150) {
                 this.index--;
@@ -310,7 +301,8 @@ class GameScene extends Phaser.Scene {
                 this.game.handMoving.play();
             }
         }
-
+        
+        //Moverse a la derecha
         if (this.cursors.right.isDown) {
             if (this.index < this.handcoords.length - 1 && time - this.lastMove > 150) {
                 this.index++;
@@ -321,11 +313,45 @@ class GameScene extends Phaser.Scene {
         }
     }
     
-    //comprueba colisiones entre dos objetos.
+    //Comprueba colisiones entre dos objetos.
     
     checkCollision(obj1, obj2, range) {
         const dx = Math.abs(obj1.x - obj2.x);
         const dy = Math.abs(obj1.y - obj2.y);
         return dx < range && dy < range;
+    }
+
+    
+    //MÉTODOS PARA CREAR OBJETOS DE FORMA MÁS SENCILLA
+
+    
+    //Crea un teleport con posición y destino.
+
+    createTeleport(x, y) {
+        const tp = this.add.image(x, y, 'tp').setScale(0.3);
+        tp.targetX = x + 200; //cambia esto según dónde quieres que lleve
+        tp.targetY = y + 200;
+        return tp;
+    }
+
+    //Crea un queso en la posición especificada.
+
+    createCheese(x, y) {
+        const cheese = this.add.image(x, y, 'queso').setScale(0.3);
+        return cheese;
+    }
+    
+    //Crea un icono de vida
+    createLives(x, y) {
+        const lifeIcon = this.add.image(x, y, 'lifeIcon').setScale(0.01);
+        return lifeIcon;
+    }
+    
+    
+    //Crea un botón interactivo.
+
+    createButton(x, y, texture, name) {
+        this[name] = this.add.image(x, y, texture).setScale(0.3);
+        this[name] = false;
     }
 }
