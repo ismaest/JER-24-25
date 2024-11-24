@@ -70,6 +70,13 @@ class GameScene extends Phaser.Scene {
         this.load.audio('handMoving', 'handMoving.mp3');
         this.load.audio('click', 'click.wav');
         this.load.audio('tpSound', 'tpSound.wav');
+
+        //Elementos del laberinto
+        this.load.setPath('assets/laberinto/');
+        this.load.image('top', 'Top.png');
+        this.load.image('left', 'Left.png');
+        this.load.image('right', 'Right.png');
+        this.load.image('bot', 'Bot.png');
     }
 
     create() {
@@ -180,6 +187,12 @@ class GameScene extends Phaser.Scene {
         //Crear y configurar la mano
         this.hand = this.add.image(400, 530, 'hand');
         this.hand.setScale(0.5);
+        
+        //creacion del laberinto
+        
+        const walls = this.physics.add.staticGroup();
+        this.top = this.add.image(400, 7.5, 'top');
+        this.left = this.add.image(6, 200, 'left');
     }
 
     update(time, delta) {
