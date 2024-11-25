@@ -60,6 +60,15 @@ class GameScene extends Phaser.Scene {
         
         this.load.image('lifeIcon', 'lifeIcon.png');
 
+        this.load.image('tpA', 'tpA.png');
+        this.load.image('tpB', 'tpB.png');
+        this.load.image('cheeseOpen', 'cheeseOpen.png');
+        this.load.image('cheeseClosed', 'cheeseClosed.png');
+        this.load.image('needle', 'needle.png');
+        this.load.image('needleClosed', 'needleClosed.png');
+        this.load.image('trapdoorOpen', 'trapdoorOpen.png');
+        this.load.image('trapdoorClosed', 'trapdoorClosed.png');
+
         //cargamos aquí los efectos de sonido necesarios
         
         this.load.audio('mainMenuMusic', 'mainMenuMusic.ogg');
@@ -194,7 +203,9 @@ class GameScene extends Phaser.Scene {
         
         //Crear la rata
         this.rat = this.physics.add.sprite(100, 100, 'rat');
+
         this.rat.setScale(0.05);
+
         this.rat.setCollideWorldBounds(true);
         this.ratSpeed = 100;
         
@@ -386,25 +397,49 @@ class GameScene extends Phaser.Scene {
 
     
     //MÉTODOS PARA EL CONTROL DE LOS BOTONES DEL CIENTIFICO
-    
-    ActivateSyringe(){
+
+    ActivateSyringe() {
         this.syringes.forEach((syringe, index) => {
-            if (this.checkCollision(this.rat, syringe, 50)) {
+            if (this.checkCollision(this.rat, syringe, 50) && syringe.isActive !== false) {
                 this.LifeDown();
+
+                //cambia la textura de la jeringuilla
+                syringe.setTexture('needle'); // Cambia a la textura de jeringuilla usada
+
+                //desactivaa temporalmente la jeringuilla
+                syringe.isActive = false;
+
+                //retrasar el reinicio de la textura y la reactivación de la jeringuilla
+                this.time.delayedCall(3000, () => {
+                    syringe.setTexture('needleClosed'); //regresa a la textura original
+                    syringe.isActive = true; //reactiva la jeringuilla
+                });
             }
         });
     }
-    
-    ActivateTrapdoor(){
+
+    ActivateTrapdoor() {
         this.trapdoors.forEach((trapdoor, index) => {
-            if (this.checkCollision(this.rat, trapdoor, 50)) {
+            if (this.checkCollision(this.rat, trapdoor, 50) && trapdoor.isActive !== false) {
                 this.LifeDown();
+
+                //cambiar la textura de la trampilla
+                trapdoor.setTexture('trapdoorOpen'); // Cambia a la textura de trampa activada
+
+                //desactivar temporalmente la trampa para evitar múltiples activaciones
+                trapdoor.isActive = false;
+
+                //retrasaa el reinicio de la textura y la reactivación de la trampa
+                this.time.delayedCall(3000, () => {
+                    trapdoor.setTexture('trapdoorClosed'); //regresa a la textura original
+                    trapdoor.isActive = true; //reactiva la trampa
+                });
             }
         });
     }
     
     ActivateCheese(){
-        //Regenra los quesos en sus respectivas posiciones
+        //Regenera los quesos en sus respectivas posiciones
         this.cheeses.push(this.createCheese(250, 100));
         this.cheeses.push(this.createCheese(300, 300));
         this.cheeses.push(this.createCheese(700, 400));
@@ -633,28 +668,28 @@ class GameScene extends Phaser.Scene {
     //Crea un queso en la posición especificada.
 
     createCheese(x, y) {
-        const cheese = this.add.image(x, y, 'queso').setScale(0.3);
+        const cheese = this.add.image(x, y, 'cheeseOpen').setScale(0.115);
         return cheese;
     }
     
     //Crea un icono de vida
     
     createLives(x, y) {
-        const lifeIcon = this.add.image(x, y, 'lifeIcon').setScale(0.01);
+        const lifeIcon = this.add.image(x, y, 'lifeIcon').setScale(0.15);
         return lifeIcon;
     }
 
     //Crea una jeringuilla
     
     createSyringes(x, y){
-        const syringe = this.add.image(x, y, 'vacuna').setScale(0.3);
+        const syringe = this.add.image(x, y, 'needleClosed').setScale(0.115);
         return syringe;
     }
     
     //Crea una trampilla
     
     createTrapdoors(x, y){
-        const trapdoor = this.add.image(x, y, 'trapdoor').setScale(0.3);
+        const trapdoor = this.add.image(x, y, 'trapdoorClosed').setScale(0.115);
         return trapdoor;
     }
     

@@ -68,6 +68,13 @@ class LoadingScene extends Phaser.Scene {
         this.load.image('closedUp', 'closedUp.png');
         this.load.image('Horizontal', 'Horizontal.png');
         this.load.image('vertical', 'verical.png');
+        this.load.image('tpA', 'tpA.png');
+        this.load.image('tpB', 'tpB.png');
+        this.load.image('cheeseOpen', 'cheeseOpen.png');
+        this.load.image('cheeseClosed', 'cheeseClosed.png');
+        this.load.image('needle', 'needle.png');
+        this.load.image('trapdoorOpen', 'trapdoorOpen.png');
+        this.load.image('trapdoorClosed', 'trapdoorClosed.png');
         
         //MUSICA
         this.load.audio('mainMenuMusic', 'mainMenuMusic.ogg');
