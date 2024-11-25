@@ -117,16 +117,6 @@ class GameScene extends Phaser.Scene {
         
         //CRAR ELEMENTOS DEL ESCENARIO
         
-        //Crear el botón de arriba de opciones
-        this.btnOpt = this.add.image(720, 50, 'roleInfo').setScale(0.5);
-        this.btnOpt.setInteractive();
-        this.btnOpt.on('pointerdown', () => {
-            this.game.click.play();
-            this.scene.launch("RoleInfo");
-        });
-        this.btnOpt.on('pointerover', () => {this.btnOpt.setScale(0.55)});
-        this.btnOpt.on('pointerout', () => {this.btnOpt.setScale(0.5)});
-        
         this.handcoords = [150, 400, 650];
         this.index = 1;
         this.lastMove = 0;
@@ -137,42 +127,48 @@ class GameScene extends Phaser.Scene {
         
         //Crear la clonacion
         this.clon = this.add.image(300, 200, 'clon');
-        this.clon.setScale(0.01);
+        this.clon.setScale(0.1);
 
         //Crear los tps dinámicamente
         this.tps = [
-            this.createTeleport(400, 200),
-            this.createTeleport(100, 200),
-            this.createTeleport(600, 400),
+            this.createTeleportA1(400, 200),
+            this.createTeleportA2(30, 210),
+            this.createTeleportB1(600, 415),
+            this.createTeleportB2(600, 290),
         ];
         this.exitCollider = true;
 
         //Crear quesos dinámicamente
         this.cheeses = [
-            this.createCheese(250, 100),
+            this.createCheese(275, 100),
             this.createCheese(300, 300),
-            this.createCheese(700, 400),
+            this.createCheese(735, 400),
         ];
         this.cheeseCollider = false;
         this.cheeseTime = 0;
 
         //Crear vidas dinámicamente
         this.lifeIcons = [
-            this.createLives(30, 40),
-            this.createLives(70, 40),
-            this.createLives(110, 40),
-            this.createLives(150, 40),
+            this.createLives(30, 30),
+            this.createLives(70, 30),
+            this.createLives(110, 30),
+            this.createLives(150, 30),
         ];
         this.lifeIcons[3].setVisible(false); //Quitar el icono de corazones
         
         //Crear jeringuillas dinámicamente
         this.syringes = [
             this.createSyringes(200, 100),
+            this.createSyringes(410, 385),
+            this.createSyringes(410, 385),
+            this.createSyringes(450, 100)
         ];
         
         //Crear trampillas dinámicamente
         this.trapdoors = [ 
-            this.createTrapdoors(250, 200),
+            this.createTrapdoors(225, 200),
+            this.createTrapdoors(225, 345),
+            this.createTrapdoors(400, 31)
         ];
         
         
@@ -199,12 +195,12 @@ class GameScene extends Phaser.Scene {
         });
 
         //creamos el sprite "exit" en una posición específica
-        this.exit = this.physics.add.staticImage(500, 400, 'exit');
+        this.exit = this.physics.add.staticImage(317, 415, 'exit').setScale(0.5);
         
         //Crear la rata
-        this.rat = this.physics.add.sprite(100, 100, 'rat');
+        this.rat = this.physics.add.sprite(20, 140, 'rat');
 
-        this.rat.setScale(0.05);
+        this.rat.setScale(0.035);
 
         this.rat.setCollideWorldBounds(true);
         this.ratSpeed = 100;
@@ -215,6 +211,16 @@ class GameScene extends Phaser.Scene {
         
         //Creación del laberinto
         this.createLabyritnh();
+        
+        //Crear el botón de arriba de opciones
+        this.btnOpt = this.add.image(745, 30, 'roleInfo').setScale(0.3);
+        this.btnOpt.setInteractive();
+        this.btnOpt.on('pointerdown', () => {
+            this.game.click.play();
+            this.scene.launch("RoleInfo");
+        });
+        this.btnOpt.on('pointerover', () => {this.btnOpt.setScale(0.35)});
+        this.btnOpt.on('pointerout', () => {this.btnOpt.setScale(0.3)});
         
     }
 
@@ -333,8 +339,8 @@ class GameScene extends Phaser.Scene {
     LifeDown(){
 
         //Devolvemos a la posicion inicial
-        this.rat.x = 100;
-        this.rat.y = 100; 
+        this.rat.x = 20;
+        this.rat.y = 140; 
         
         this.lives--; //Restar la variable de vidas
         
@@ -658,17 +664,35 @@ class GameScene extends Phaser.Scene {
     
     //Crea un teleport con posición y destino.
 
-    createTeleport(x, y) {
-        const tp = this.add.image(x, y, 'tp').setScale(0.3);
-        tp.targetX = x + 200; //cambia esto según dónde quieres que lleve
-        tp.targetY = y + 200;
+    createTeleportA1(x, y) {
+        const tp = this.add.image(x, y, 'tpA').setScale(0.125);
+        tp.targetX = 85; //cambia esto según dónde quieres que lleve
+        tp.targetY = 200;
+        return tp;
+    }
+    createTeleportA2(x, y) {
+        const tp = this.add.image(x, y, 'tpA').setScale(0.125);
+        tp.targetX = 400; //cambia esto según dónde quieres que lleve
+        tp.targetY = 200;
+        return tp;
+    }
+    createTeleportB1(x, y) {
+        const tp = this.add.image(x, y, 'tpB').setScale(0.125);
+        tp.targetX = 600; //cambia esto según dónde quieres que lleve
+        tp.targetY = 290;
+        return tp;
+    }
+    createTeleportB2(x, y) {
+        const tp = this.add.image(x, y, 'tpB').setScale(0.125);
+        tp.targetX = 600; //cambia esto según dónde quieres que lleve
+        tp.targetY = 415;
         return tp;
     }
 
     //Crea un queso en la posición especificada.
 
     createCheese(x, y) {
-        const cheese = this.add.image(x, y, 'cheeseOpen').setScale(0.115);
+        const cheese = this.add.image(x, y, 'cheeseOpen').setScale(0.085);
         return cheese;
     }
     
