@@ -192,7 +192,7 @@ El Científico: <br>
 
 	2.2.2 Balance de roles
 
-Aquí se plantea el balance de roles para que el juego sea equitaativo y justo para ambos jugadores: 
+Aquí se plantea el balance de roles para que el juego sea equitaativo y justo para ambos jugadores: <br>
 	**- La Rata:** No sabe cuándo el científico accionará la trampa. Debe intentar engañarlo para forzarle a activar la trampa cuando él esté fuera de peligro. <br>
 	**- El Científico:** Existe un retardo desde que se acciona el botón hasta que ocurre la acción, por lo tanto, este debe anticiparse a los movimientos de la rata, sabiendo que le puede engañar dicha rata. <br>
 
@@ -248,9 +248,9 @@ Aquí se recogen las diferentes interfaces del juego:
  
 Se van a diseñar dos carreras para dar a los jugadores un poco de variedad y que no se aburran rápidamente del juego. Dichas carreras contarán con trampas únicas y una estética propia.
 
-  - Laboratorio 1: Se desarrolla dentro de un centro de control donde se evalúa el comportamiento de la rata y tiene que llegar a una trampilla (objetivo). Dicha rata deberá escapar del centro de control sorteando trampas que se encuentran dispuestas por toda la sala (objetos punzantes, sustancias químicas peligrosas, entre otras).
+  **- Laboratorio 1:** Se desarrolla dentro de un centro de control donde se evalúa el comportamiento de la rata y tiene que llegar a una trampilla (objetivo). Dicha rata deberá escapar del centro de control sorteando trampas que se encuentran dispuestas por toda la sala (objetos punzantes, sustancias químicas peligrosas, entre otras).
 
-  - Laboratorio 2: Después de escapar por la trampilla del primer laboratorio, nos encontramos dentro del sótano que lleva directamente a las alcantarillas del laboratorio (objetivo). En el sótano nos encontramos con aparatos peligrosos que fueron diseñados con un fin pero que fueron descartados y guardados en dicho sótano.
+  **- Laboratorio 2:** Después de escapar por la trampilla del primer laboratorio, nos encontramos dentro del sótano que lleva directamente a las alcantarillas del laboratorio (objetivo). En el sótano nos encontramos con aparatos peligrosos que fueron diseñados con un fin pero que fueron descartados y guardados en dicho sótano.
 
 
 > ## **3.2 Personajes**
@@ -329,15 +329,15 @@ Los sonidos de ambiente serán propios de un laboratorio, como sonidos de máqui
 
 Las ratas harán ruidos característicos con su movimiento, y, las trampas y los botones, también harán sonidos para dar feedback a los jugadores de lo que está sucediendo.
 
-Se han utilizado sonidos externos con licencia "Creative Commons 0" para los siguientes eventos del juego:
-	- Movimiento de la mano
- 	- Muerte de la rata
-  	- Teletransporte entre alcantarillas
-        - Click en los botones
-	- Comer queso
-	- Curación con la clonación
- 	- Música de fondo
-  	- Caer en una trampa
+Se han utilizado sonidos externos con licencia "Creative Commons 0" para los siguientes eventos del juego: <br>
+	- Movimiento de la mano <br>
+ 	- Muerte de la rata <br>
+  	- Teletransporte entre alcantarillas <br>
+        - Click en los botones <br>
+	- Comer queso <br>
+	- Curación con la clonación <br>
+ 	- Música de fondo <br>
+  	- Caer en una trampa <br>
 
 
 > ## **4.2 Arte y concept art**
