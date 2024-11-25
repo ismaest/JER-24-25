@@ -227,6 +227,9 @@ Aquí se recogen las diferentes interfaces del juego:
 ![gameBackground](https://github.com/user-attachments/assets/300955c1-ebce-48fe-befb-d91ae2ec92a4)
 > Fondo sobre el que se coloca el nivel principal.
 
+![juego](https://github.com/user-attachments/assets/a631c97a-2bca-4152-be0c-6b1ce14b3c52)
+> Pantalla de juego.
+
 ![loseBackground](https://github.com/user-attachments/assets/ce1da9f6-9150-4145-a39d-df4bacf42276)
 > Pantalla de victoria para el científico.
 
