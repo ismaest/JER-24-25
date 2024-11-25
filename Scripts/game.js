@@ -82,11 +82,21 @@ class GameScene extends Phaser.Scene {
 
         //Elementos del laberinto
         this.load.setPath('assets/laberinto/');
+        
+        //Bordes
         this.load.image('top', 'Top.png');
         this.load.image('left', 'Left.png');
         this.load.image('right', 'Right.png');
         this.load.image('bot', 'Bot.png');
         
+        //Paredes
+        this.load.image('closedDown', 'closedDown.png');
+        this.load.image('closedLeft', 'closedLeft.png');
+        this.load.image('closedRight', 'closedRight.png');
+        this.load.image('closedUp', 'closedUp.png');
+        this.load.image('vertical', 'verical.png');
+        this.load.image('horizontal', 'Horizontal.png');
+
         this.load.image('exit', 'exit.png');
     }
 
@@ -126,8 +136,8 @@ class GameScene extends Phaser.Scene {
         this.lives = 3; //por defecto empieza en 3
         
         //Crear la clonacion
-        this.clon = this.add.image(300, 200, 'lifeIcon');
-        this.clon.setScale(0.15);
+        this.clon = this.add.image(300, 200, 'clon');
+        this.clon.setScale(0.01);
 
         //Crear los tps dinámicamente
         this.tps = [
@@ -176,7 +186,6 @@ class GameScene extends Phaser.Scene {
 
         //Crear boton queso
         this.createButton(650, 500, 'queso', 'bqueso');
-
         
         //CONFIGURACIÓN DE CONTROLES
         
@@ -194,7 +203,9 @@ class GameScene extends Phaser.Scene {
         
         //Crear la rata
         this.rat = this.physics.add.sprite(100, 100, 'rat');
-        this.rat.setScale(0.07);
+
+        this.rat.setScale(0.05);
+
         this.rat.setCollideWorldBounds(true);
         this.ratSpeed = 100;
         
@@ -202,18 +213,9 @@ class GameScene extends Phaser.Scene {
         this.hand = this.add.image(400, 530, 'hand');
         this.hand.setScale(0.5);
         
-        //creacion del laberinto
+        //Creación del laberinto
+        this.createLabyritnh();
         
-        const walls = this.physics.add.staticGroup();
-        //bordes
-        walls.create(400, 7.5, 'top');    //pared superior
-        walls.create(6, 220, 'left');  //pared izquierda
-        walls.create(792, 220, 'right'); //pared derecha
-        walls.create(400, 442, 'bot');  //pared inferior
-        walls.create(6, 665, 'right'); //borde mano
-        walls.create(792, 665, 'right'); //borde mano
-        
-        this.physics.add.collider(this.rat, walls);
     }
 
     update(time, delta) {
@@ -441,6 +443,213 @@ class GameScene extends Phaser.Scene {
         this.cheeses.push(this.createCheese(250, 100));
         this.cheeses.push(this.createCheese(300, 300));
         this.cheeses.push(this.createCheese(700, 400));
+    }
+    
+    //CREAR EL LABERINTO
+    
+    createLabyritnh(){
+        
+        //Crear el grupo estático "Paredes"
+        const walls = this.physics.add.staticGroup();
+        
+        //Añadir los bordes
+        walls.create(400, 7.5, 'top');    //pared superior
+        walls.create(6, 220, 'left');  //pared izquierda
+        walls.create(792, 220, 'right'); //pared derecha
+        walls.create(400, 442, 'bot');  //pared inferior
+        walls.create(6, 665, 'right'); //borde mano
+        walls.create(792, 665, 'right'); //borde mano
+        
+        //Añadir las paredes del propio laberinto
+        
+        walls.create(30, 115, 'horizontal');
+        walls.create(60, 60, 'vertical');
+        
+        walls.create(30, 170, 'horizontal');
+        walls.create(60, 180, 'vertical');
+        walls.create(60, 210, 'vertical');
+        walls.create(60, 230, 'vertical');
+        walls.create(60, 300, 'vertical');
+        walls.create(60, 330, 'vertical');
+        walls.create(60, 360, 'vertical');
+        walls.create(60, 390, 'vertical');
+        walls.create(60, 420, 'vertical');
+        
+        walls.create(75, 50, 'horizontal');
+        walls.create(100, 50, 'horizontal');
+        
+        walls.create(75, 280, 'horizontal');
+        walls.create(85, 280, 'horizontal');
+        
+        walls.create(110, 120, 'vertical');
+        walls.create(110, 150, 'vertical');
+        walls.create(110, 180, 'vertical');
+        walls.create(110, 210, 'vertical');
+        walls.create(110, 240, 'vertical');
+        walls.create(110, 270, 'vertical');
+        
+        walls.create(110, 330, 'vertical');
+        walls.create(110, 360, 'vertical');
+        
+        walls.create(100, 50, 'horizontal');
+        walls.create(130, 50, 'horizontal');
+        
+        walls.create(135, 110, 'horizontal');
+        walls.create(170, 110, 'horizontal');
+        walls.create(200, 110, 'horizontal');
+        walls.create(230, 110, 'horizontal');
+        
+        walls.create(320, 110, 'horizontal');
+        walls.create(350, 110, 'horizontal');
+        walls.create(380, 110, 'horizontal');
+        walls.create(410, 110, 'horizontal');
+        walls.create(440, 110, 'horizontal');
+        walls.create(470, 110, 'horizontal');
+        walls.create(500, 110, 'horizontal');
+        walls.create(530, 110, 'horizontal');
+        walls.create(560, 110, 'horizontal');
+        walls.create(590, 110, 'horizontal');
+        
+        walls.create(380, 160, 'horizontal');
+        walls.create(410, 160, 'horizontal');
+        walls.create(440, 160, 'horizontal');
+        walls.create(470, 160, 'horizontal');
+        walls.create(500, 160, 'horizontal');
+        walls.create(530, 160, 'horizontal');
+        walls.create(560, 160, 'horizontal');
+        walls.create(590, 160, 'horizontal');
+        
+        walls.create(135, 170, 'horizontal');
+        walls.create(210, 170, 'horizontal');
+        walls.create(235, 170, 'horizontal');
+        walls.create(235, 170, 'horizontal');
+        
+        walls.create(135, 370, 'horizontal');
+        
+        walls.create(145, 30, 'vertical');
+        
+        walls.create(155, 240, 'vertical');
+        walls.create(155, 270, 'vertical');
+        walls.create(155, 300, 'vertical');
+        
+        walls.create(175, 110, 'horizontal');
+        walls.create(175, 170, 'horizontal');
+        walls.create(175, 230, 'horizontal');
+        
+        walls.create(175, 320, 'horizontal');
+        walls.create(200, 320, 'horizontal');
+        walls.create(230, 320, 'horizontal');
+        walls.create(260, 320, 'horizontal');
+        walls.create(290, 320, 'horizontal');
+        walls.create(320, 320, 'horizontal');
+        walls.create(350, 320, 'horizontal');
+        
+        walls.create(175, 370, 'horizontal');
+        walls.create(200, 370, 'horizontal');
+        walls.create(230, 370, 'horizontal');
+        walls.create(260, 370, 'horizontal');
+        
+        walls.create(200, 240, 'vertical');
+        walls.create(200, 270, 'vertical');
+
+        walls.create(260, 180, 'vertical');
+        walls.create(260, 210, 'vertical');
+        walls.create(260, 240, 'vertical');
+        walls.create(260, 270, 'vertical');
+        
+        walls.create(275, 390, 'vertical');
+        walls.create(275, 420, 'vertical');
+        
+        walls.create(365, 340, 'vertical');
+        walls.create(365, 370, 'vertical');
+        walls.create(365, 400, 'vertical');
+        walls.create(365, 420, 'vertical');
+
+        walls.create(230, 50, 'horizontal');
+        walls.create(260, 50, 'horizontal');
+        walls.create(290, 50, 'horizontal');
+        walls.create(320, 50, 'horizontal');
+        walls.create(350, 50, 'horizontal');
+        walls.create(370, 50, 'horizontal');
+        walls.create(400, 50, 'horizontal');
+        walls.create(430, 50, 'horizontal');
+        walls.create(460, 50, 'horizontal');
+        walls.create(490, 50, 'horizontal');
+        walls.create(520, 50, 'horizontal');
+        walls.create(550, 50, 'horizontal');
+        walls.create(580, 50, 'horizontal');
+        walls.create(610, 50, 'horizontal');
+        walls.create(640, 50, 'horizontal');
+        walls.create(670, 50, 'horizontal');
+        walls.create(670, 50, 'horizontal');
+
+        walls.create(700, 75, 'vertical');
+        walls.create(700, 100, 'vertical');
+        walls.create(700, 130, 'vertical');
+        walls.create(700, 160, 'vertical');
+        walls.create(700, 190, 'vertical');
+        walls.create(700, 220, 'vertical');
+        walls.create(700, 250, 'vertical');
+        
+        walls.create(700, 350, 'vertical');
+        walls.create(700, 380, 'vertical');
+
+        walls.create(675, 390, 'horizontal');
+        walls.create(650, 390, 'horizontal');
+        walls.create(625, 390, 'horizontal');
+        walls.create(600, 390, 'horizontal');
+        walls.create(575, 390, 'horizontal');
+        walls.create(550, 390, 'horizontal');
+        walls.create(525, 390, 'horizontal');
+        walls.create(500, 390, 'horizontal');
+        walls.create(475, 390, 'horizontal');
+        walls.create(450, 390, 'horizontal');
+        walls.create(425, 390, 'horizontal');
+        walls.create(400, 390, 'horizontal');
+        walls.create(390, 390, 'horizontal');
+
+        walls.create(465, 220, 'horizontal');
+        walls.create(495, 220, 'horizontal');
+        walls.create(525, 220, 'horizontal');
+        walls.create(555, 220, 'horizontal');
+        walls.create(585, 220, 'horizontal');
+        walls.create(615, 220, 'horizontal');
+        walls.create(645, 220, 'horizontal');
+        walls.create(675, 220, 'horizontal');
+
+        walls.create(640, 240, 'vertical');
+        walls.create(640, 270, 'vertical');
+        walls.create(640, 300, 'vertical');
+        walls.create(640, 310, 'vertical');
+
+        walls.create(550, 320, 'horizontal');
+        walls.create(580, 320, 'horizontal');
+        walls.create(610, 320, 'horizontal');
+        walls.create(550, 270, 'horizontal');
+
+        walls.create(530, 300, 'vertical');
+        walls.create(530, 280, 'vertical');
+        
+        walls.create(450, 320, 'vertical');
+        walls.create(450, 300, 'vertical');
+
+        walls.create(430, 280, 'horizontal');
+        walls.create(400, 280, 'horizontal');
+        walls.create(370, 280, 'horizontal');
+        walls.create(340, 280, 'horizontal');
+        walls.create(310, 280, 'horizontal');
+        walls.create(280, 280, 'horizontal');
+        
+        walls.create(355, 170, 'vertical');
+        walls.create(355, 200, 'vertical');
+        walls.create(355, 230, 'vertical');
+        walls.create(355, 260, 'vertical');
+
+        walls.create(605, 140, 'vertical');
+        walls.create(605, 130, 'vertical');
+        
+        //Añadir físicas a los bordes
+        this.physics.add.collider(this.rat, walls);
     }
     
     
