@@ -35,9 +35,10 @@ class LoadingScene extends Phaser.Scene {
             progressBar.destroy();
             progressBox.destroy();
         });
-
+		
+		
         //aqui cargamos los recursos del juego
-        this.load.setPath('assets/');
+        this.load.setPath('../assets/');
 
         //TODO LO QUE SE VA A UTILIZAR
         //IMAGENES
@@ -57,7 +58,7 @@ class LoadingScene extends Phaser.Scene {
         this.load.image('trapdoor', 'trapdoor.png');
         this.load.image('creditos', 'btnCréditos.png');
         this.load.image('salir', 'btnSalir.png');
-        this.load.image('creditsBg', 'creditsBackground.png');
+		this.load.image('creditsBg', 'creditsBackground.png');
         this.load.image('loseBg', 'loseBackground.png');
         this.load.image('menuTuto', 'menuTutorial.png');
         this.load.image('plantilla', 'plantilla.png');

@@ -6,7 +6,7 @@ class Credits extends Phaser.Scene {
 
     preload() {
 
-        this.load.setPath('assets/');
+        this.load.setPath('../assets/');
         this.load.image('creditsBackground', 'creditsBackground.png');
         this.load.image('backBtn', 'btnSalir.png'); //cambiar el boton (.png)
         this.load.audio('mainMenuMusic', 'mainMenuMusic.ogg');
