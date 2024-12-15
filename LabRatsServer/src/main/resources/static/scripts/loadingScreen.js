@@ -88,6 +88,6 @@ class LoadingScene extends Phaser.Scene {
 
     create() {
         //cuando esta todo cargado pasamos al menu
-        this.scene.start('MenuScene');
+        this.scene.start('UserScene');
     }
 }
