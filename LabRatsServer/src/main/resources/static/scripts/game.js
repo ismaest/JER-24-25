@@ -230,7 +230,9 @@ class GameScene extends Phaser.Scene {
         
         this.handleRatMovement(this.ratSpeed);
 
-        this.physics.add.overlap(this.rat, this.exit, this.changeScene, null, this);
+        this.physics.add.overlap(this.rat, this.exit, () => {
+            this.changeScene(); //si se detecta el "overlap" de la rata con la salid se cambia de escena
+        }, null, this);
         
         if (this.cheeseCollider == false) {
 
@@ -308,9 +310,38 @@ class GameScene extends Phaser.Scene {
 
 
     changeScene() {
-        this.scene.start('WinScene');
+        //datos que enviamos al servidor
+        const eventData = {
+            event: 'RAT_EXIT',
+            playerId: this.playerId, //asignamos un identificador único al jugador
+            timestamp: new Date().toISOString(),
+        };
+
+        //fetch para solicitud HTTP
+        fetch('http://localhost:8080/api/game/rat-exit', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json', //tipo datos enviado (es decir, JSON)
+            },
+            body: JSON.stringify(eventData), //convierte datos a JSON
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Error en la solicitud: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Evento enviado al servidor:', data);
+                this.scene.start('WinScene'); //cambiamos a la escena de victoria
+            })
+            .catch(error => {
+                console.error('Error al enviar el evento:', error); //si no da error
+            });
+        
     }
-    
+
+
     //MANEJO DE LA RATA
     
     //Maneja el movimiento de la rata según la velocidad.
@@ -366,29 +397,42 @@ class GameScene extends Phaser.Scene {
     
     //Manejo de la mano
     handleHandMovement(time) {
-
         if (this.index === undefined || this.index < 0) {
-            this.index = 0; //valor inicial
+            this.index = 0; // Valor inicial
         }
-        
-        //Moverse a la izquierda
+
+        const previousIndex = this.index; // Guardar el índice previo
+
+        // Moverse a la izquierda
         if (this.cursors.left.isDown) {
             if (this.index > 0 && time - this.lastMove > 150) {
                 this.index--;
                 this.hand.x = this.handcoords[this.index];
                 this.lastMove = time;
                 this.game.handMoving.play();
+
+                // Enviar evento de movimiento
+                sendHandMovementEvent('player123', -1); // -1 significa izquierda
             }
         }
-        
-        //Moverse a la derecha
+
+        // Moverse a la derecha
         if (this.cursors.right.isDown) {
             if (this.index < this.handcoords.length - 1 && time - this.lastMove > 150) {
                 this.index++;
                 this.hand.x = this.handcoords[this.index];
                 this.lastMove = time;
                 this.game.handMoving.play();
+
+                // Enviar evento de movimiento
+                sendHandMovementEvent('player123', 1); // 1 significa derecha
             }
+        }
+
+        // Verificar si está en el centro (opcional)
+        if (this.index === Math.floor(this.handcoords.length / 2) && previousIndex !== this.index) {
+            // Enviar evento de posición central
+            sendHandMovementEvent('player123', 0); // 0 significa centro
         }
     }
     
@@ -723,4 +767,26 @@ class GameScene extends Phaser.Scene {
         this[name] = this.add.image(x, y, texture).setScale(0.3);
         this[name] = false;
     }
+}
+
+//FUNCIONES
+function sendHandMovementEvent(playerId, movementDirection) {
+    fetch('https://localhost:8080/api/game/hand-movement', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            playerId: playerId,
+            direction: movementDirection, // -1 (izquierda), 0 (centro), 1 (derecha)
+            timestamp: new Date().toISOString()
+        }),
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Error al enviar movimiento: ${response.statusText}`);
+            }
+            console.log(`Movimiento enviado: ${movementDirection}`);
+        })
+        .catch(error => {
+            console.error('Error al enviar el movimiento:', error);
+        });
 }
