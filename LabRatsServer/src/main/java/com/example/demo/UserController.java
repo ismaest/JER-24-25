@@ -4,17 +4,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.beans.factory.annotation.Autowired;
-import java.lang.*;
 
 @Controller
 public class UserController {
-	
-	//VARIABLES
-	
-	BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(16);
 	
 	@Autowired
 	private User user;
@@ -24,7 +18,7 @@ public class UserController {
 	
 	
 	//Method called when trying to access an existing user. The method requires a password and a name to find said user
-	@GetMapping
+	@GetMapping("/user")
 	public User GetUser(String name, String password) {
 		
 		User userToFind = new User(name, password);
@@ -39,7 +33,7 @@ public class UserController {
 	
 	
 	//Method called when trying to create a new User. The method needs a password and a name to create a user
-	@PostMapping
+	@PostMapping("/user")
 	public User CreateUser(String name, String password) {
 		
 		User newUser = new User(name, password);
@@ -55,7 +49,7 @@ public class UserController {
 	
 	
 	//Method called when trying to update a player with a new user name and password
-	@PutMapping
+	@PutMapping("/user")
 	public User UpdateUser(String oldName, String oldPass, String newName, String newPass) {
 		
 		User oldUser = new User(oldName, oldPass);
@@ -73,7 +67,7 @@ public class UserController {
 	
 	
 	//Method called when trying to delete a user
-	@DeleteMapping
+	@DeleteMapping("/user")
 	public void DeleteUser(String name, String password) {
 		
 		user.DeleteUser(new User(name, password)); //Calls to the deletion method with the specified user to delete
