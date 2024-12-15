@@ -23,13 +23,15 @@ public class User {
 	
 	//Main method
 	public static void main(String[] args) {
-		
+		/*
 		//Read and split all elements in the array of users by commas and spaces
 		String[] documentElements = ReadUsers().split(",\\s");
 		
 		//Create the user array with the already existing users in the UserList.txt document, this way this information is persistent
 		arrayCount = documentElements.length * 2; //Set the arrayCount to the amount of user already existing times two
 		userArray = new User[arrayCount]; //Create the array of users with the previously specified length
+		
+		System.out.println(arrayCount);
 		
 		//variables to specify which line to read in order to get the proper names and passwords
 		int nameInt = 0;
@@ -45,6 +47,9 @@ public class User {
 			passInt += 3;
 			
 		}
+		*/
+		
+		WriteUsers();
 		
 	}
 	
@@ -113,7 +118,7 @@ public class User {
 			
 			for(int i = 0; i < arrayCount; i++) { //Check the whole user array for a coincidence
 				
-				if(UserExists(oldUser)) { //If the user name to replace has been identified...
+				if(userArray[i] == oldUser) { //If the user name to replace has been identified...
 					
 					userArray[i] = newUser; //Replace the user in that position to the new User
 					
@@ -121,7 +126,7 @@ public class User {
 			}
 			
 		}
-
+		
 	}
 	
 	
@@ -156,10 +161,11 @@ public class User {
 	}
 	
 	
+	/*
 	//Method called to Read the UserList document in order to get all the users saved 
 	public static String ReadUsers() {
 		
-		try(BufferedReader br =  new BufferedReader(new FileReader("UserList.txt"))){
+		try(BufferedReader br =  new BufferedReader(new FileReader("/LabRatsServer/src/main/java/com/example/demo/UserList"))){
 			
 			StringBuilder sb = new StringBuilder();
 			String line = br.readLine();
@@ -182,12 +188,12 @@ public class User {
 		return "NULL";
 		
 	}
-	
+	*/
 	
 	//Method called to save all of the users in the array list into the UserList text document for the next time the server is opened
 	public static void WriteUsers() {
 		
-		try(BufferedWriter wr = new BufferedWriter(new FileWriter("UserList.txt"))) {
+		try(BufferedWriter wr = new BufferedWriter(new FileWriter("/LabRatsServer/src/main/java/com/example/demo/UserList"))) {
 			
 			for(int i = 0; i < arrayCount; i++) {
 				wr.write(userArray[i].name + "," + userArray[i].password + " ");

@@ -56,12 +56,14 @@ public class UserController {
 	
 	//Method called when trying to update a player with a new user name and password
 	@PutMapping
-	public User UpdateUser(String name, String password) {
+	public User UpdateUser(String oldName, String oldPass, String newName, String newPass) {
 		
-		User newUser = new User(name, password);
+		User oldUser = new User(oldName, oldPass);
+		User newUser = new User(newName, newPass);
+		
+		user.UpdateUser(user.GetUser(oldUser), newUser); //It takes the old user and updates it with the new one
 		
 		if(user.UserExists(newUser)) {
-			user.UpdateUser(user.GetUser(newUser), newUser); //It takes the old user and updates it with the new one
 			return user.GetUser(newUser); //It returns the newly updated user
 		}
 		
