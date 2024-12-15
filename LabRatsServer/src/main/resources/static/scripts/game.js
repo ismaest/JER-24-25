@@ -241,9 +241,11 @@ class GameScene extends Phaser.Scene {
                 if (this.checkCollision(this.rat, cheese, 50)) {
                     this.ratSpeed = 50;
                     cheese.destroy(); // Desactiva el queso del juego
+                    console.log("Queso recogido");
                     this.cheeseCollider = true;
                     this.cheeseTime = time;
                     this.game.eatSound.play();
+                    deleteCollectedItem(this.playerId, cheese.id);
                 }
             });
             
@@ -291,6 +293,7 @@ class GameScene extends Phaser.Scene {
 
             this.clon.destroy();
 
+            sendLifeChangeEvent('player123', 'add', this.lives); //este caso es para la suma de vedas dentro del mismo evento
         }
         
         //TP ENTRE LAS ALCANTARILLAS
@@ -336,6 +339,7 @@ class GameScene extends Phaser.Scene {
                 this.scene.start('WinScene'); //cambiamos a la escena de victoria
             })
             .catch(error => {
+                alert('Error de conexión. Intenta más tarde.');
                 console.error('Error al enviar el evento:', error); //si no da error
             });
         
@@ -346,25 +350,41 @@ class GameScene extends Phaser.Scene {
     
     //Maneja el movimiento de la rata según la velocidad.
     handleRatMovement(speed) {
-        
-        //Movimiento vertical
+        let positionChanged = false; // Flag para rastrear si hubo movimiento
+
+        // Movimiento vertical
         if (this.keys.W.isDown) {
             this.rat.setVelocityY(-speed); // Arriba
+            positionChanged = true;
         } else if (this.keys.S.isDown) {
             this.rat.setVelocityY(speed); // Abajo
+            positionChanged = true;
         } else {
-           this.rat.setVelocityY(0); // Detener en Y si no hay input
+            this.rat.setVelocityY(0); // Detener en Y si no hay input
         }
-        
-        //Movimiento horizontal
+
+        // Movimiento horizontal
         if (this.keys.A.isDown) {
             this.rat.setVelocityX(-speed); // Izquierda
+            positionChanged = true;
         } else if (this.keys.D.isDown) {
             this.rat.setVelocityX(speed); // Derecha
+            positionChanged = true;
         } else {
             this.rat.setVelocityX(0); // Detener en X si no hay input
         }
+
+        // Actualizar posición del jugador si cambió
+        if (positionChanged) {
+            const player = {
+                id: 'player123', // Hay que cambiar esto al id del jugador que le pongamos
+                x: this.rat.x,
+                y: this.rat.y,
+            };
+            updatePlayerPosition(player);
+        }
     }
+
 
     //Manejo de perder vidas y de morir
     LifeDown(){
@@ -374,10 +394,9 @@ class GameScene extends Phaser.Scene {
         this.rat.y = 140; 
         
         this.lives--; //Restar la variable de vidas
-        
         this.lifeIcons[this.lives].setVisible(false); //Quitar el icono de corazones
-
         this.game.hitSound.play();
+        sendLifeChangeEvent('player123', 'subtract', this.lives); //el segundo es una resta
         
         //COMPROBAR SI EL JUGADOR HA MUERTO
         if (this.lives === 0) {
@@ -501,6 +520,8 @@ class GameScene extends Phaser.Scene {
         
         //Crear el grupo estático "Paredes"
         const walls = this.physics.add.staticGroup();
+
+        fetchLabyrinthConfig(walls);
         
         //Añadir los bordes
         walls.create(400, 7.5, 'top');    //pared superior
@@ -787,6 +808,128 @@ function sendHandMovementEvent(playerId, movementDirection) {
             console.log(`Movimiento enviado: ${movementDirection}`);
         })
         .catch(error => {
+            alert('Error de conexión. Intenta más tarde.');
             console.error('Error al enviar el movimiento:', error);
+        });
+}
+
+function sendLifeChangeEvent(playerId, changeType, newLives) {
+    fetch('https://localhost:8080/api/game/life-change', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            playerId: playerId,
+            changeType: changeType, // "add" o "subtract"
+            lives: newLives,       // Número de vidas actual
+            timestamp: new Date().toISOString()
+        }),
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Error al enviar cambio de vidas: ${response.statusText}`);
+            }
+            console.log(`Cambio de vidas enviado: ${changeType}, Vidas: ${newLives}`);
+        })
+        .catch(error => {
+            console.error('Error al enviar el cambio de vidas:', error);
+        });
+}
+
+function fetchPlayerStats(playerId) {
+    fetch(`https://localhost:8080/api/game/player-stats/${playerId}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Error al obtener estadísticas: ${response.statusText}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Estadísticas del jugador:', data);
+            // Usa los datos en el juego (por ejemplo, actualiza HUD o lógica de juego).
+        })
+        .catch(error => {
+            console.error('Error al obtener estadísticas del jugador:', error);
+        });
+}
+
+function updatePlayerPosition(playerId, x, y) {
+    fetch(`https://localhost:8080/api/game/player-position`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            playerId: playerId,
+            position: { x, y },
+            timestamp: new Date().toISOString(),
+        }),
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Error al actualizar posición: ${response.statusText}`);
+            }
+            console.log('Posición del jugador actualizada:', { x, y });
+        })
+        .catch(error => {
+            console.error('Error al actualizar posición del jugador:', error);
+        });
+}
+
+function deleteCollectedItem(playerId, itemId) {
+    fetch(`https://localhost:8080/api/game/collected-item/${itemId}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            playerId: playerId,
+            timestamp: new Date().toISOString(),
+        }),
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Error al eliminar objeto: ${response.statusText}`);
+            }
+            console.log(`Objeto eliminado: ${itemId}`);
+        })
+        .catch(error => {
+            console.error('Error al eliminar el objeto:', error);
+        });
+}
+
+function updateLives(playerId, newLives) {
+    fetch(`https://localhost:8080/api/game/lives`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            playerId: playerId,
+            lives: newLives,
+            timestamp: new Date().toISOString(),
+        }),
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Error al actualizar vidas: ${response.statusText}`);
+            }
+            console.log(`Vidas actualizadas a: ${newLives}`);
+        })
+        .catch(error => {
+            console.error('Error al actualizar las vidas:', error);
+        });
+}
+
+function fetchLabyrinthConfig(walls) {
+    fetch('https://localhost:8080/api/game/labyrinth-config', {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+    })
+        .then(response => response.json())
+        .then(config => {
+            config.walls.forEach(wall => {
+                walls.create(wall.x, wall.y, wall.type);
+            });
+            console.log('Laberinto cargado');
+        })
+        .catch(error => {
+            console.error('Error al cargar el laberinto:', error);
         });
 }
