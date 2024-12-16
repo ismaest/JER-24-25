@@ -38,6 +38,7 @@ class UserScene extends Phaser.Scene {
         
         let user = document.createElement('input');
         user.type = 'text';  // Entrada para texto
+		user.id = "userID";
         user.name = 'username';
         user.placeholder = 'Introduce el nombre de usuario';
         user.value = '';
@@ -53,6 +54,7 @@ class UserScene extends Phaser.Scene {
         
         let password = document.createElement('input');
         password.type = 'password';  // Entrada para contraseña
+		password.id = "passwordID";
         password.name = 'password';
         password.placeholder = 'Introduce la contraseña';
         password.value = '';
@@ -104,6 +106,13 @@ class UserScene extends Phaser.Scene {
                 console.log('Has iniciado sesión');
                 this.form.style.display = 'none';
                 this.scene.start('MenuScene');
+				$.ajax({
+					method: "POST",
+					url: "http://localhost:8080/user",
+					data: "user: " + document.getElementById("userID").value + ", pasword: " + document.getElementById("passwordID").value,
+				}).done(function() {
+					console.log("WORKED")
+				})
             };
         }
     

@@ -7,6 +7,10 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import org.springframework.stereotype.Component;
+
+
+@Component
 public class User {
 	
 	//Class VARIABLES
@@ -23,7 +27,7 @@ public class User {
 	
 	//Main method
 	public static void main(String[] args) {
-		/*
+		
 		//Read and split all elements in the array of users by commas and spaces
 		String[] documentElements = ReadUsers().split(",\\s");
 		
@@ -47,18 +51,19 @@ public class User {
 			passInt += 3;
 			
 		}
-		*/
 		
-		WriteUsers();
 		
 	}
 	
 	
-	//Class constructor
+	//Class constructor with two strings
 	public User(String name, String password) {
 		this.name = name;
 		this.password = password;
 	}
+	
+	//Empty class constructor
+	public User() {}
 	
 	
 	//Method called when trying to add a new user to the userArray. If it already exists, it stops. If the array is full, it extends
@@ -161,11 +166,10 @@ public class User {
 	}
 	
 	
-	/*
 	//Method called to Read the UserList document in order to get all the users saved 
 	public static String ReadUsers() {
 		
-		try(BufferedReader br =  new BufferedReader(new FileReader("/LabRatsServer/src/main/java/com/example/demo/UserList"))){
+		try(BufferedReader br =  new BufferedReader(new FileReader("/UserList.txt"))){
 			
 			StringBuilder sb = new StringBuilder();
 			String line = br.readLine();
@@ -188,12 +192,12 @@ public class User {
 		return "NULL";
 		
 	}
-	*/
+	
 	
 	//Method called to save all of the users in the array list into the UserList text document for the next time the server is opened
 	public static void WriteUsers() {
 		
-		try(BufferedWriter wr = new BufferedWriter(new FileWriter("/LabRatsServer/src/main/java/com/example/demo/UserList"))) {
+		try(BufferedWriter wr = new BufferedWriter(new FileWriter("/UserList.txt"))) {
 			
 			for(int i = 0; i < arrayCount; i++) {
 				wr.write(userArray[i].name + "," + userArray[i].password + " ");
