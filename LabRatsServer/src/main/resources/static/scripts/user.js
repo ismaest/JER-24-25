@@ -25,7 +25,7 @@ class UserScene extends Phaser.Scene {
         
             // Crear el formulario
         this.form = document.createElement('form');
-        this.form.action = 'http://127.0.0.1:8080/user';  // URL a la que se envia el formulario
+        this.form.action = '/user';  // URL a la que se envia el formulario
         this.form.method = 'POST';
         this.form.style.position = 'absolute';
         this.form.style.top = '40%';  // Posición vertical 

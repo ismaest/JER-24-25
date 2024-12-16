@@ -44,7 +44,7 @@ class GameScene extends Phaser.Scene {
         
         //cargamos aquí las imágenes o sprites necesarios
 
-        this.load.setPath('assets/');
+        this.load.setPath('../assets/');
 
         this.load.image('scenery', 'gameBackground.png');
 
@@ -69,6 +69,15 @@ class GameScene extends Phaser.Scene {
         this.load.image('trapdoorOpen', 'trapdoorOpen.png');
         this.load.image('trapdoorClosed', 'trapdoorClosed.png');
 
+
+        //Paredes
+        this.load.image('closedDown', 'closedDown.png');
+        this.load.image('closedLeft', 'closedLeft.png');
+        this.load.image('closedRight', 'closedRight.png');
+        this.load.image('closedUp', 'closedUp.png');
+        this.load.image('vertical', 'verical.png');
+        this.load.image('horizontal', 'Horizontal.png');
+        
         //cargamos aquí los efectos de sonido necesarios
         
         this.load.audio('mainMenuMusic', 'mainMenuMusic.ogg');
@@ -88,14 +97,6 @@ class GameScene extends Phaser.Scene {
         this.load.image('left', 'Left.png');
         this.load.image('right', 'Right.png');
         this.load.image('bot', 'Bot.png');
-        
-        //Paredes
-        this.load.image('closedDown', 'closedDown.png');
-        this.load.image('closedLeft', 'closedLeft.png');
-        this.load.image('closedRight', 'closedRight.png');
-        this.load.image('closedUp', 'closedUp.png');
-        this.load.image('vertical', 'verical.png');
-        this.load.image('horizontal', 'Horizontal.png');
 
         this.load.image('exit', 'exit.png');
     }
@@ -376,12 +377,12 @@ class GameScene extends Phaser.Scene {
 
         // Actualizar posición del jugador si cambió
         if (positionChanged) {
-            const player = {
-                id: 'player123', // Hay que cambiar esto al id del jugador que le pongamos
-                x: this.rat.x,
-                y: this.rat.y,
-            };
-            updatePlayerPosition(player);
+            const playerId = 'player123';  // O el ID que corresponda al jugador
+            const x = this.rat.x;          // Coordenada X de la rata
+            const y = this.rat.y;          // Coordenada Y de la rata
+            const timestamp = new Date().toISOString();  // Obtener el timestamp
+
+            updatePlayerPosition(playerId, x, y);  // Pasar los valores correctamente
         }
     }
 
@@ -814,14 +815,19 @@ class GameScene extends Phaser.Scene {
 //}
 async function sendHandMovementEvent(playerId, movementDirection) {
     try {
+        const dataToSend = {
+            playerId: playerId,
+            direction: movementDirection,
+            timestamp: new Date().toISOString()
+        };
+
+        // Mostrar los datos que se van a enviar
+        console.log('Datos enviados:', JSON.stringify(dataToSend));
+
         const response = await fetch('/api/game/hand-movement', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                playerId: playerId,
-                direction: movementDirection,
-                timestamp: new Date().toISOString()
-            })
+            body: JSON.stringify(dataToSend)
         });
 
         if (!response.ok) {
@@ -832,6 +838,7 @@ async function sendHandMovementEvent(playerId, movementDirection) {
         console.error('Error al enviar el movimiento:', error);
     }
 }
+
 
 
 function sendLifeChangeEvent(playerId, changeType, newLives) {
@@ -877,25 +884,29 @@ function fetchPlayerStats(playerId) {
 }
 
 function updatePlayerPosition(playerId, x, y) {
-    fetch(`/api/game/player-position`, {
+    fetch('/api/game/player-position', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
             playerId: playerId,
-            position: { x, y },
+            x: x,
+            y: y,
             timestamp: new Date().toISOString(),
         }),
     })
         .then(response => {
             if (!response.ok) {
-                throw new Error(`Error al actualizar posición: ${response.statusText}`);
+                return response.text().then(errorMessage => {
+                    throw new Error(`Error al actualizar posición: ${errorMessage}`);
+                });
             }
-            console.log('Posición del jugador actualizada:', { x, y });
+            console.log('Posición del jugador actualizada:', { playerId, x, y });
         })
         .catch(error => {
             console.error('Error al actualizar posición del jugador:', error);
         });
 }
+
 
 function deleteCollectedItem(playerId, itemId) {
     fetch(`/api/game/collected-item/${itemId}`, {
