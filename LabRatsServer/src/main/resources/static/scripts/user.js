@@ -25,7 +25,7 @@ class UserScene extends Phaser.Scene {
         
             // Crear el formulario
         this.form = document.createElement('form');
-        this.form.action = 'http://127.0.0.1:8080/user';  // URL a la que se envia el formulario
+        this.form.action = '/user';  // URL a la que se envia el formulario
         this.form.method = 'POST';
         this.form.style.position = 'absolute';
         this.form.style.top = '40%';  // Posición vertical 
@@ -75,7 +75,7 @@ class UserScene extends Phaser.Scene {
         
         let submitButton = document.createElement('button');
         submitButton.type = 'submit';
-        submitButton.innerText = 'Iniciar sesión';
+        submitButton.innerText = 'Registrarse';
             // estilo
         submitButton.style.width = '320px';  
         submitButton.style.height = '50px';  
@@ -100,20 +100,37 @@ class UserScene extends Phaser.Scene {
             
             document.body.appendChild(this.form);
 
-            
-            this.form.onsubmit = (event) => {
-                event.preventDefault();  
-                console.log('Has iniciado sesión');
-                this.form.style.display = 'none';
-                this.scene.start('MenuScene');
-				$.ajax({
-					method: "POST",
-					url: "http://localhost:8080/user",
-					data: "user: " + document.getElementById("userID").value + ", pasword: " + document.getElementById("passwordID").value,
-				}).done(function() {
-					console.log("WORKED")
-				})
+
+        this.form.onsubmit = (event) => {
+            event.preventDefault();
+            console.log('Has iniciado sesión');
+            this.form.style.display = 'none';
+            this.scene.start('MenuScene');
+
+            //crear objeto JSON con los datos del usuario
+            const userData = {
+                name: document.getElementById("userID").value,
+                password: document.getElementById("passwordID").value
             };
-        }
+
+            console.log("Informacion a enviar:", JSON.stringify(userData));
+
+            //realizar la petición POST usando AJAX con jQuery
+            $.ajax({
+                method: "POST",
+                url: "/user",
+                contentType: "application/json", //especifica que el contenido es JSON
+                data: JSON.stringify(userData),  //convierte el objeto JS a JSON
+                success: function(response) {
+                    console.log("Respuesta del servidor:", response);
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error al enviar los datos:", xhr.responseText);
+                }
+            });
+        };
+
+
+    }
     
 }
