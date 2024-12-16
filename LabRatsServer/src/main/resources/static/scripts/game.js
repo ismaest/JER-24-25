@@ -791,27 +791,48 @@ class GameScene extends Phaser.Scene {
 }
 
 //FUNCIONES
-function sendHandMovementEvent(playerId, movementDirection) {
-    fetch('https://localhost:8080/api/game/hand-movement', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            playerId: playerId,
-            direction: movementDirection, // -1 (izquierda), 0 (centro), 1 (derecha)
-            timestamp: new Date().toISOString()
-        }),
-    })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`Error al enviar movimiento: ${response.statusText}`);
-            }
-            console.log(`Movimiento enviado: ${movementDirection}`);
-        })
-        .catch(error => {
-            alert('Error de conexión. Intenta más tarde.');
-            console.error('Error al enviar el movimiento:', error);
+//function sendHandMovementEvent(playerId, movementDirection) {
+//    fetch('https://localhost:8080/api/game/hand-movement', {
+//        method: 'POST',
+//        headers: { 'Content-Type': 'application/json' },
+//        body: JSON.stringify({
+//            playerId: playerId,
+//            direction: movementDirection, // -1 (izquierda), 0 (centro), 1 (derecha)
+//            timestamp: new Date().toISOString()
+//        }),
+//    })
+//        .then(response => {
+//            if (!response.ok) {
+//                throw new Error(`Error al enviar movimiento: ${response.statusText}`);
+//            }
+//            console.log(`Movimiento enviado: ${movementDirection}`);
+//        })
+//        .catch(error => {
+//            alert('Error de conexión. Intenta más tarde.');
+//            console.error('Error al enviar el movimiento:', error);
+//        });
+//}
+async function sendHandMovementEvent(playerId, movementDirection) {
+    try {
+        const response = await fetch('http://localhost:8080/api/game/hand-movement', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                playerId: playerId,
+                direction: movementDirection,
+                timestamp: new Date().toISOString()
+            })
         });
+
+        if (!response.ok) {
+            throw new Error(`Error: ${response.statusText}`);
+        }
+        console.log('Movimiento enviado exitosamente');
+    } catch (error) {
+        console.error('Error al enviar el movimiento:', error);
+    }
 }
+
 
 function sendLifeChangeEvent(playerId, changeType, newLives) {
     fetch('https://localhost:8080/api/game/life-change', {
