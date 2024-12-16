@@ -11,13 +11,13 @@ import java.util.Map;
 @RequestMapping("/api/game")
 public class RatPositionController {
 
-    // Mapa para almacenar las posiciones de los jugadores
+    //Mapa para almacenar las posiciones de los jugadores
     private Map<String, PlayerPosition> playerPositions = new HashMap<>();
 
-    // Endpoint para actualizar la posición de un jugador
+    //endpoint para actualizar la posición de un jugador
     @PutMapping("/player-position")
     public ResponseEntity<String> updatePlayerPosition(@RequestBody PlayerPosition position) {
-        // Validar que la posición sea válida
+        //validar que la posición sea válida
         if (position.getPlayerId() == null || position.getPlayerId().isEmpty()) {
             return new ResponseEntity<>("El playerId es obligatorio", HttpStatus.BAD_REQUEST);
         }
@@ -28,14 +28,14 @@ public class RatPositionController {
             return new ResponseEntity<>("El timestamp es obligatorio", HttpStatus.BAD_REQUEST);
         }
 
-        // Actualizar la posición del jugador
+        //actualizar la posición del jugador
         playerPositions.put(position.getPlayerId(), position);
 
-        // Confirmar que la posición se ha actualizado
+        //confirmar que la posición se ha actualizado
         return new ResponseEntity<>("Posición actualizada con éxito", HttpStatus.OK);
     }
 
-    // Endpoint para obtener la posición de un jugador
+    //endpoint para obtener la posición de un jugador
     @GetMapping("/player-position/{playerId}")
     public ResponseEntity<PlayerPosition> getPlayerPosition(@PathVariable String playerId) {
         PlayerPosition position = playerPositions.get(playerId);

@@ -7,12 +7,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
-// Controlador REST
+//controlador REST
 @RestController
 @RequestMapping("/api/game")
 public class LabyrinthConfigController {
 
-    // Clase interna para representar las paredes del laberinto
+    //clase interna para representar las paredes del laberinto
     public static class Wall {
         private double x;
         private double y;
@@ -24,7 +24,7 @@ public class LabyrinthConfigController {
             this.type = type;
         }
         
-        // Getters y Setters
+        //getters y Setters
         public double getX() { return x; }
         public void setX(double x) { this.x = x; }
 
@@ -35,7 +35,7 @@ public class LabyrinthConfigController {
         public void setType(String type) { this.type = type; }
     }
 
-    // Clase para representar la configuración del laberinto
+    //clase para representar la configuración del laberinto
     public static class LabyrinthConfig {
         private List<Wall> walls;
 
@@ -46,7 +46,7 @@ public class LabyrinthConfigController {
         public List<Wall> getWalls() { return walls; }
         public void setWalls(List<Wall> walls) { this.walls = walls; }
 
-        // Agregar una pared
+        //agregar una pared
         public void addWall(Wall wall) {
             this.walls.add(wall);
         }
@@ -56,14 +56,14 @@ public class LabyrinthConfigController {
     public ResponseEntity<LabyrinthConfig> getLabyrinthConfig() {
         LabyrinthConfig config = new LabyrinthConfig();
         
-        // Agregar todas las paredes del laberinto al objeto
+        //agregar todas las paredes del laberinto al objeto
         addWalls(config);
         
         return new ResponseEntity<>(config, HttpStatus.OK);
     }
 
     private void addWalls(LabyrinthConfig config) {
-        // Paredes exteriores
+        //paredes exteriores
         config.addWall(new Wall(400, 7.5, "top"));
         config.addWall(new Wall(6, 220, "left"));
         config.addWall(new Wall(792, 220, "right"));
@@ -71,7 +71,7 @@ public class LabyrinthConfigController {
         config.addWall(new Wall(6, 665, "right"));
         config.addWall(new Wall(792, 665, "right"));
 
-        // Paredes del laberinto
+        //paredes del laberinto
         config.addWall(new Wall(30, 115, "horizontal"));
         config.addWall(new Wall(60, 60, "vertical"));
         

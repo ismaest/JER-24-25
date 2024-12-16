@@ -7,7 +7,7 @@ public class PlayerPosition {
     private double y;
     private String timestamp;
 
-    // Getters y Setters
+    //Getters y Setters
     public String getPlayerId() { return playerId; }
     public void setPlayerId(String playerId) { this.playerId = playerId; }
 
