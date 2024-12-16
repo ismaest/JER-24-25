@@ -3,9 +3,18 @@ package com.example.demo;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+import com.fasterxml.jackson.databind.JsonNode;
+
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.stereotype.Controller;
+import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.jackson.JsonObjectSerializer;
+import org.springframework.http.HttpStatus;
 
 @Controller
 public class UserController {
@@ -34,8 +43,16 @@ public class UserController {
 	
 	//Method called when trying to create a new User. The method needs a password and a name to create a user
 	@PostMapping("/user")
-	public User CreateUser(String name, String password) {
+	@ResponseStatus(HttpStatus.CREATED)
+	public void CreateUser(@RequestBody String userInfo) {
 		
+		String regex = "[%\\+\\\\=]";
+		String[] info = userInfo.split(regex);
+		
+		String name = info[2];
+		String password = info[6];
+		
+		/*
 		User newUser = new User(name, password);
 		
 		if(!user.UserExists(newUser)) {
@@ -44,7 +61,7 @@ public class UserController {
 		}
 		
 		return new User("", ""); //Returns an empty user, meaning there was already a user name with the same name
-		
+		*/
 	}
 	
 	
