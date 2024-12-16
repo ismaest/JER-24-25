@@ -118,7 +118,7 @@ class UserScene extends Phaser.Scene {
             //realizar la petición POST usando AJAX con jQuery
             $.ajax({
                 method: "POST",
-                url: "http://localhost:8080/user",
+                url: "/user",
                 contentType: "application/json", //especifica que el contenido es JSON
                 data: JSON.stringify(userData),  //convierte el objeto JS a JSON
                 success: function(response) {

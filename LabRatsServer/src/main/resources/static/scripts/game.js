@@ -814,7 +814,7 @@ class GameScene extends Phaser.Scene {
 //}
 async function sendHandMovementEvent(playerId, movementDirection) {
     try {
-        const response = await fetch('http://localhost:8080/api/game/hand-movement', {
+        const response = await fetch('/api/game/hand-movement', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -835,7 +835,7 @@ async function sendHandMovementEvent(playerId, movementDirection) {
 
 
 function sendLifeChangeEvent(playerId, changeType, newLives) {
-    fetch('https://localhost:8080/api/game/life-change', {
+    fetch('/api/game/life-change', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -857,7 +857,7 @@ function sendLifeChangeEvent(playerId, changeType, newLives) {
 }
 
 function fetchPlayerStats(playerId) {
-    fetch(`https://localhost:8080/api/game/player-stats/${playerId}`, {
+    fetch(`/api/game/player-stats/${playerId}`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
     })
@@ -877,7 +877,7 @@ function fetchPlayerStats(playerId) {
 }
 
 function updatePlayerPosition(playerId, x, y) {
-    fetch(`https://localhost:8080/api/game/player-position`, {
+    fetch(`/api/game/player-position`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -898,7 +898,7 @@ function updatePlayerPosition(playerId, x, y) {
 }
 
 function deleteCollectedItem(playerId, itemId) {
-    fetch(`https://localhost:8080/api/game/collected-item/${itemId}`, {
+    fetch(`/api/game/collected-item/${itemId}`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -918,7 +918,7 @@ function deleteCollectedItem(playerId, itemId) {
 }
 
 function updateLives(playerId, newLives) {
-    fetch(`https://localhost:8080/api/game/lives`, {
+    fetch(`/api/game/lives`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -939,7 +939,7 @@ function updateLives(playerId, newLives) {
 }
 
 function fetchLabyrinthConfig(walls) {
-    fetch('https://localhost:8080/api/game/labyrinth-config', {
+    fetch('/api/game/labyrinth-config', {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
     })
