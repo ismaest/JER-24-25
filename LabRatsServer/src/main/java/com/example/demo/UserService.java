@@ -2,14 +2,23 @@ package com.example.demo;
 
 import org.springframework.stereotype.Service;
 
+import jakarta.annotation.PostConstruct;
+
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class UserService {
 
+	private Map<String, Instant> connectedUsers = new ConcurrentHashMap<>();
+	
     private List<User> userList = new ArrayList<>(); // Simulamos la base de datos en memoria
     private Map<String, Boolean> playerConnections = new HashMap<>(); // Mapa para gestionar el estado de conexión de los jugadores
 
@@ -77,5 +86,23 @@ public class UserService {
     //Obtener cuantos usuarios estan conectados al MAP para saber cuantos usuarios hay ximultaneos
     public int getConnectedPlayersAmmount() {
     	return playerConnections.size();
+    }
+    
+ // Actualizar el tiempo de actividad del usuario
+    public void updateUserHeartbeat(String userId) {
+        connectedUsers.put(userId, Instant.now());
+    }
+
+    // Eliminar usuarios inactivos (timeout: 30 segundos)
+    private void removeInactiveUsers() {
+        Instant now = Instant.now();
+        connectedUsers.entrySet().removeIf(entry ->
+                now.minusSeconds(30).isAfter(entry.getValue())
+        );
+    }
+    @PostConstruct
+    private void startCleanupTask() {
+        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+        scheduler.scheduleAtFixedRate(this::removeInactiveUsers, 0, 10, TimeUnit.SECONDS);
     }
 }
