@@ -356,9 +356,11 @@ class GameScene extends Phaser.Scene {
         // Movimiento vertical
         if (this.keys.W.isDown) {
             this.rat.setVelocityY(-speed); // Arriba
+            this.rat.rotation=-1.5708;
             positionChanged = true;
         } else if (this.keys.S.isDown) {
             this.rat.setVelocityY(speed); // Abajo
+            this.rat.rotation=1.5708;
             positionChanged = true;
         } else {
             this.rat.setVelocityY(0); // Detener en Y si no hay input
@@ -367,9 +369,11 @@ class GameScene extends Phaser.Scene {
         // Movimiento horizontal
         if (this.keys.A.isDown) {
             this.rat.setVelocityX(-speed); // Izquierda
+            this.rat.rotation=3.14159;
             positionChanged = true;
         } else if (this.keys.D.isDown) {
             this.rat.setVelocityX(speed); // Derecha
+            this.rat.rotation=0;
             positionChanged = true;
         } else {
             this.rat.setVelocityX(0); // Detener en X si no hay input
