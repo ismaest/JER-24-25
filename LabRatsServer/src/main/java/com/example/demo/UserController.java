@@ -86,4 +86,11 @@ public class UserController {
     public ResponseEntity<Integer> getConnectedUsers() {
     	return new ResponseEntity<Integer>(userService.getConnectedPlayersAmmount(), HttpStatus.OK);
     }
+    
+    @PostMapping("/heartbeat")
+    public ResponseEntity<String> heartbeat(@RequestParam String userId) {
+        System.out.println("Heartbeat recibido de: " + userId); // Log en la consola del servidor
+        userService.updateUserHeartbeat(userId);
+        return ResponseEntity.ok("Heartbeat recibido");
+    }
 }

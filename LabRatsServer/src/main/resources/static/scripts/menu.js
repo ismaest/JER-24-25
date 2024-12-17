@@ -2,6 +2,8 @@ class MenuScene extends Phaser.Scene {
 	
     constructor() {
         super({ key: "MenuScene" });
+        this.userId = `user_${Math.floor(Math.random() * 10000)}`; // Generar un ID único temporal
+        this.usersConnectedContainer = null; // Contenedor del texto
     }
 
     preload() {
@@ -27,30 +29,50 @@ class MenuScene extends Phaser.Scene {
         this.buttonAnims();
 		
 		//Creamos el texto donde apareceran los jugadores conectados al server
-		var usersConnectedTextContainer = document.createElement("h3");
-		var pUsersConnectedText = document.createTextNode("USUARIOS CONECTADOS:");
-		usersConnectedTextContainer.appendChild(pUsersConnectedText);
-		document.body.appendChild(usersConnectedTextContainer);
-		
+        this.usersConnectedContainer = document.createElement("h3");
+        this.usersConnectedContainer.id = "users-connected"; // Asignar un ID para referencia
+        //this.usersConnectedContainer.textContent = "USUARIOS CONECTADOS: 0";
+        document.body.appendChild(this.usersConnectedContainer);
+
+        // Iniciar actualización periódica de usuarios conectados
+        this.setupUsersConnectedContainer();
+        this.sendHeartbeat(); // Enviar heartbeat periódicamente
+        this.updateConnectedUsers(); // Actualizar usuarios conectados periódicamente
     }
 
-    update() {
-		
-		$.ajax({	
-			method: "GET",
-			url: "/user/connected-users"
-		}).done(function(data) {
-			if(!document.body.hasChildNodes(usersConnectedCointainer)){
-				var usersConnectedCointainer = document.createElement("p");
-				var pUsersConnected = document.createTextNode(data);
-				usersConnectedCointainer.appendChild(pUsersConnected);
-				document.body.appendChild(usersConnectedCointainer);
-			} else {
-				pUsersConnected.nodeValue = data;
-			}
-			
-		}
-	)}
+
+    setupUsersConnectedContainer() {
+        // Crear el texto donde se mostrarán los usuarios conectados
+        this.usersConnectedContainer = document.createElement("p");
+        //this.usersConnectedContainer.textContent = "USUARIOS CONECTADOS: 0";
+        document.body.appendChild(this.usersConnectedContainer);
+    }
+
+    sendHeartbeat() {
+        setInterval(() => {
+            console.log(`Enviando heartbeat para el usuario: ${this.userId}`);
+            fetch(`/user/heartbeat?userId=${this.userId}`, { method: "POST" })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Error al enviar heartbeat");
+                    }
+                    console.log("Heartbeat enviado correctamente");
+                })
+                .catch(error => console.error("Error en heartbeat:", error));
+        }, 10000); // Cada 10 segundos
+    }
+
+    updateConnectedUsers() {
+        // Actualizar usuarios conectados cada 5 segundos
+        setInterval(() => {
+            fetch("/user/connected-users")
+                .then(response => response.json())
+                .then(data => {
+                    this.usersConnectedContainer.textContent = `USUARIOS CONECTADOS: ${data}`;
+                })
+                .catch(error => console.error("Error al obtener usuarios conectados:", error));
+        }, 1000); // 1 segundos
+    }
 	
 	
     //CARGA DE ASSETS
