@@ -299,7 +299,7 @@ class GameScene extends Phaser.Scene {
         
         //TP ENTRE LAS ALCANTARILLAS
         this.tps.forEach(tp => {
-            if (this.checkCollision(this.rat, tp, 50) && this.exitCollider) {
+            if (this.checkCollision(this.rat, tp, 25) && this.exitCollider) {
                 this.rat.x = tp.targetX;
                 this.rat.y = tp.targetY;
                 this.exitCollider = false;
