@@ -4,11 +4,9 @@ import org.springframework.stereotype.Service;
 
 import jakarta.annotation.PostConstruct;
 
+import java.io.*;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -17,10 +15,46 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class UserService {
 
-	private Map<String, Instant> connectedUsers = new ConcurrentHashMap<>();
-	
+    private static final String FILE_NAME = "UserList.txt";
+
+    private Map<String, Instant> connectedUsers = new ConcurrentHashMap<>();
     private List<User> userList = new ArrayList<>(); // Simulamos la base de datos en memoria
     private Map<String, Boolean> playerConnections = new HashMap<>(); // Mapa para gestionar el estado de conexión de los jugadores
+
+    // Cargar usuarios desde el archivo al iniciar el servidor
+    @PostConstruct
+    private void loadUsersFromFile() {
+        try (BufferedReader reader = new BufferedReader(new FileReader(FILE_NAME))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] userParts = line.split(",");
+                if (userParts.length == 2) {
+                    userList.add(new User(userParts[0], userParts[1]));
+                }
+            }
+            System.out.println("Usuarios cargados desde " + FILE_NAME);
+        } catch (FileNotFoundException e) {
+            System.out.println(FILE_NAME + " no encontrado. Se creará uno nuevo al guardar usuarios.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // Iniciar limpieza de usuarios inactivos
+        startCleanupTask();
+    }
+
+    // Guardar usuarios en el archivo
+    private void saveUsersToFile() {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME))) {
+            for (User user : userList) {
+                writer.write(user.getName() + "," + user.getPassword());
+                writer.newLine();
+            }
+            System.out.println("Usuarios guardados en " + FILE_NAME);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     // Obtener todos los usuarios
     public List<User> getAllUsers() {
@@ -39,6 +73,7 @@ public class UserService {
     public boolean addUser(User newUser) {
         if (getUser(newUser.getName(), newUser.getPassword()) == null) {
             userList.add(newUser);
+            saveUsersToFile();
             return true;
         }
         return false;
@@ -50,6 +85,7 @@ public class UserService {
         if (existingUser != null) {
             existingUser.setName(updatedUser.getName());
             existingUser.setPassword(updatedUser.getPassword());
+            saveUsersToFile();
             return true;
         }
         return false;
@@ -57,7 +93,11 @@ public class UserService {
 
     // Eliminar un usuario
     public boolean deleteUser(String name, String password) {
-        return userList.removeIf(user -> user.getName().equals(name) && user.getPassword().equals(password));
+        boolean removed = userList.removeIf(user -> user.getName().equals(name) && user.getPassword().equals(password));
+        if (removed) {
+            saveUsersToFile();
+        }
+        return removed;
     }
 
     // Conectar un jugador (marcar como conectado)
@@ -82,13 +122,13 @@ public class UserService {
     public Boolean getPlayerConnectionStatus(String playerId) {
         return playerConnections.get(playerId);
     }
-    
-    //Obtener cuantos usuarios estan conectados al MAP para saber cuantos usuarios hay ximultaneos
+
+    // Obtener cuántos usuarios están conectados simultáneamente
     public int getConnectedPlayersAmmount() {
-    	return playerConnections.size();
+        return playerConnections.size();
     }
-    
- // Actualizar el tiempo de actividad del usuario
+
+    // Actualizar el tiempo de actividad del usuario
     public void updateUserHeartbeat(String userId) {
         connectedUsers.put(userId, Instant.now());
     }
@@ -100,7 +140,8 @@ public class UserService {
                 now.minusSeconds(30).isAfter(entry.getValue())
         );
     }
-    @PostConstruct
+
+    // Tarea programada para limpiar usuarios inactivos
     private void startCleanupTask() {
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
         scheduler.scheduleAtFixedRate(this::removeInactiveUsers, 0, 10, TimeUnit.SECONDS);

@@ -1,0 +1,7 @@
+a,a
+b,b
+c,c
+123,123
+hola,juan
+pablo,pedro
+juan,pablo

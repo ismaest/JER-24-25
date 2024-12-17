@@ -59,7 +59,7 @@ class MenuScene extends Phaser.Scene {
                     console.log("Heartbeat enviado correctamente");
                 })
                 .catch(error => console.error("Error en heartbeat:", error));
-        }, 10000); // Cada 10 segundos
+        }, 2000); // Cada 2 segundos
     }
 
     updateConnectedUsers() {
