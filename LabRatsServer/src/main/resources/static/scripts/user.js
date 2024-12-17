@@ -101,9 +101,7 @@ class UserScene extends Phaser.Scene {
         // Manejar el submit del formulario
         this.form.onsubmit = (event) => {
             event.preventDefault();
-            console.log('Has iniciado sesión');
-            this.form.style.display = 'none';
-            this.scene.start('MenuScene');
+            console.log('Te has registrado');
 
             // Crear objeto JSON con los datos del usuario
             const userData = {
@@ -111,7 +109,10 @@ class UserScene extends Phaser.Scene {
                 password: document.getElementById("passwordID").value
             };
 
-            console.log("Informacion a enviar:", JSON.stringify(userData));
+            console.log("Información a enviar:", JSON.stringify(userData));
+
+            // Guardamos una referencia al contexto del formulario
+            const self = this;
 
             // Realizar la petición POST usando AJAX con jQuery
             $.ajax({
@@ -123,16 +124,38 @@ class UserScene extends Phaser.Scene {
                     console.log("Respuesta del servidor:", response);
 
                     // Si la respuesta indica que el jugador se conectó correctamente
-                    if (response.connectionStatus) {
-                        // Cambiar el indicador de conexión a verde
-                        document.getElementById('connection-indicator').style.backgroundColor = 'green';
+                    if (response === "User created and connected successfully") {
+                        // Cambiar la escena a MenuScene solo si se creó el usuario
+                        console.log("Usuario creado, cambiando a la escena de menú...");
+                        self.form.style.display = 'none';
+                        self.scene.start('MenuScene');
                     }
                 },
                 error: function(xhr, status, error) {
-                    console.error("Error al enviar los datos:", xhr.responseText);
+                    if (xhr.status === 409) {
+                        // Si el servidor responde con un código de conflicto (usuario ya existe)
+                        console.log("El usuario ya existe, prueba a iniciar sesión.");
+
+                        // Mostrar mensaje de error en la interfaz (por encima del cuadro de texto del nombre de usuario)
+                        const errorMessage = document.createElement('div');
+                        errorMessage.textContent = "El usuario que has intentado registrar ya existe, prueba a iniciar sesión con las mismas credenciales.";
+                        errorMessage.style.color = 'black';  // Cambiar color a negro
+                        errorMessage.style.fontSize = '12px';  // Ajustar el tamaño de fuente (opcional)
+                        errorMessage.style.marginBottom = '10px'; // Espaciado para que no esté pegado al cuadro del usuario
+
+                        // Colocar el mensaje de error justo encima del cuadro de texto del nombre de usuario
+                        const userInput = document.getElementById('userID');
+                        userInput.parentNode.insertBefore(errorMessage, userInput);  // Insertamos el mensaje antes del cuadro de texto del usuario
+
+                        // Asegurarse de que no se cambie la escena
+                        // No hacemos nada más, permanecemos en la misma pantalla
+                    } else {
+                        console.error("Error al enviar los datos:", xhr.responseText);
+                    }
                 }
             });
         };
     }
-    
+
 }
+

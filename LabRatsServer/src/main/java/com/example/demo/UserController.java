@@ -27,8 +27,8 @@ public class UserController {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("User already exists");
             }
 
-            // Conectar al jugador después de crear el usuario, usando el nombre
-            boolean connectionStatus = userService.connectPlayer(newUser.getName());  // Usamos el nombre en lugar del id
+            // Conectar al jugador después de crear el usuario
+            boolean connectionStatus = userService.connectPlayer(newUser.getName());
             if (connectionStatus) {
                 return ResponseEntity.status(HttpStatus.CREATED).body("User created and connected successfully");
             } else {
@@ -38,6 +38,30 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while processing the request");
         }
     }
+    
+    @PostMapping("/login")
+    public ResponseEntity<String> loginUser(@RequestBody User loginUser) {
+        try {
+            // Verificar si el usuario existe con el nombre y contraseña proporcionados
+            User existingUser = userService.getUser(loginUser.getName(), loginUser.getPassword());
+            
+            if (existingUser != null) {
+                // El usuario existe, iniciar sesión (se podría marcar como conectado, por ejemplo)
+                boolean connectionStatus = userService.connectPlayer(existingUser.getName());
+                if (connectionStatus) {
+                    return ResponseEntity.ok("User logged in successfully");
+                } else {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error connecting the player");
+                }
+            } else {
+                // El usuario no existe o la contraseña es incorrecta
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while processing the request");
+        }
+    }
+
 
     @PutMapping
     public ResponseEntity<String> updateUser(@RequestParam String oldName, @RequestParam String oldPass,
