@@ -73,4 +73,9 @@ public class UserService {
     public Boolean getPlayerConnectionStatus(String playerId) {
         return playerConnections.get(playerId);
     }
+    
+    //Obtener cuantos usuarios estan conectados al MAP para saber cuantos usuarios hay ximultaneos
+    public int getConnectedPlayersAmmount() {
+    	return playerConnections.size();
+    }
 }

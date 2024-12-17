@@ -81,4 +81,9 @@ public class UserController {
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
     }
+    
+    @GetMapping("/connected-users")
+    public ResponseEntity<Integer> getConnectedUsers() {
+    	return new ResponseEntity<Integer>(userService.getConnectedPlayersAmmount(), HttpStatus.OK);
+    }
 }
