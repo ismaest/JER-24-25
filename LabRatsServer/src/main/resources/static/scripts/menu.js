@@ -1,5 +1,5 @@
 class MenuScene extends Phaser.Scene {
-
+	
     constructor() {
         super({ key: "MenuScene" });
     }
@@ -9,7 +9,7 @@ class MenuScene extends Phaser.Scene {
         //Cargamos los assets necesarios
         this.loadAssets();
     }
-
+	
     create() {
         
         //Configuramos los sonidos
@@ -25,10 +25,33 @@ class MenuScene extends Phaser.Scene {
         
         //Configuramos los botones
         this.buttonAnims();
+		
+		//Creamos el texto donde apareceran los jugadores conectados al server
+		var usersConnectedTextContainer = document.createElement("h3");
+		var pUsersConnectedText = document.createTextNode("USUARIOS CONECTADOS:");
+		usersConnectedTextContainer.appendChild(pUsersConnectedText);
+		document.body.appendChild(usersConnectedTextContainer);
+		
+		var usersConnectedCointainer = document.createElement("p");
+		this.pUsersConnected = document.createTextNode("X");
+		usersConnectedCointainer.appendChild(this.pUsersConnected);
+		document.body.appendChild(usersConnectedCointainer);
+		
     }
 
-    update() {}
-    
+    update() {
+		
+		$.ajax({	
+			method: "GET",
+			url: "/user/connected-users",
+			async: false
+		}).done(function(data) {
+			this.pUsersConnected.nodeValue = data;
+		})
+
+	}
+
+	
     //CARGA DE ASSETS
     
     loadAssets() {
