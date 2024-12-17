@@ -32,25 +32,26 @@ class MenuScene extends Phaser.Scene {
 		usersConnectedTextContainer.appendChild(pUsersConnectedText);
 		document.body.appendChild(usersConnectedTextContainer);
 		
-		var usersConnectedCointainer = document.createElement("p");
-		this.pUsersConnected = document.createTextNode("X");
-		usersConnectedCointainer.appendChild(this.pUsersConnected);
-		document.body.appendChild(usersConnectedCointainer);
-		
     }
 
     update() {
 		
 		$.ajax({	
 			method: "GET",
-			url: "/user/connected-users",
-			async: false
+			url: "/user/connected-users"
 		}).done(function(data) {
-			this.pUsersConnected.nodeValue = data;
-		})
-
-	}
-
+			if(!document.body.hasChildNodes(usersConnectedCointainer)){
+				var usersConnectedCointainer = document.createElement("p");
+				var pUsersConnected = document.createTextNode(data);
+				usersConnectedCointainer.appendChild(pUsersConnected);
+				document.body.appendChild(usersConnectedCointainer);
+			} else {
+				pUsersConnected.nodeValue = data;
+			}
+			
+		}
+	)}
+	
 	
     //CARGA DE ASSETS
     
