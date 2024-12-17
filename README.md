@@ -415,6 +415,17 @@ Aquí se recogen los diferentes concepts arts previos al desarrollo del juego:
 ![JUEGO](https://github.com/user-attachments/assets/1741e759-afd5-468b-9c68-839305c35039)
 > Escena de juego
 
+	4.3 NOVEDADES ARTÍSTICAS
+![rata](https://github.com/user-attachments/assets/7d707ebb-7589-496d-a621-7e32515bf6bf)
+> Actualización del sprite de La Rata para mayor visibilidad
+
+![btnVolver](https://github.com/user-attachments/assets/43d225cc-ecb5-4378-adbd-be2ded942929)
+![btnAceptar](https://github.com/user-attachments/assets/35804070-39b7-4585-ae9d-3c9db4cbad61)
+![btnMenu](https://github.com/user-attachments/assets/c61a0e23-f01e-405d-b74b-a6b1c3d876f5)
+> Nuevos botones para nuevas funcionalidades en el juego
+
+
+
 > ## 5. Equipo Autor
 
 > ## **5.1 Javier San Juan Ledesma**
@@ -472,8 +483,12 @@ Se ha ocupado del análisis DAFO, los estados y parte de las interfaces. Dentro 
  Por escribir
 
 > ## 6. Funciones de red
-Por redactar
 
+- Crear un usuario (en caso de crear un usuario ya existente, el cliente da un aviso).
+- Información sobre el estado de la partida (posición del ratón, posición de la mano...).
+- Mostrar cuántos jugadores están conectados al servidor en ese momento.
+- Información persistente sobre los usuarios creados en sesiones anteriores. Se almacenan en un .txt para ser recuperados más adelante.
+ 
 > ## 7. Créditos
 
 Aquí se listan los créditos del juego, como personas que han apoyado el desarrollo o assets de uso externos que deban de ser apropiadamente acreditados.
