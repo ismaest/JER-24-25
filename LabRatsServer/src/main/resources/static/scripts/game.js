@@ -56,7 +56,9 @@ class GameScene extends Phaser.Scene {
         this.load.image('vacuna', 'vacuna.png');
         this.load.image('trapdoor', 'trapdoor.png');
         
-        this.load.image("roleInfo", "btnOpciones.png") //cambiar a btn de menu
+        this.load.image("roleInfo", "btnOpciones.png"); //cambiar a btn de menu
+
+        this.load.image("menu", "btnMenu.png");
         
         this.load.image('lifeIcon', 'lifeIcon.png');
 
@@ -214,7 +216,7 @@ class GameScene extends Phaser.Scene {
         this.createLabyritnh();
         
         //Crear el botón de arriba de opciones
-        this.btnOpt = this.add.image(745, 30, 'roleInfo').setScale(0.3);
+        this.btnOpt = this.add.image(745, 30, 'menu').setScale(0.3);
         this.btnOpt.setInteractive();
         this.btnOpt.on('pointerdown', () => {
             this.game.click.play();
@@ -294,7 +296,7 @@ class GameScene extends Phaser.Scene {
 
             this.clon.destroy();
 
-            sendLifeChangeEvent('player123', 'add', this.lives); //este caso es para la suma de vedas dentro del mismo evento
+            //sendLifeChangeEvent('player123', 'add', this.lives); //este caso es para la suma de vedas dentro del mismo evento
         }
         
         //TP ENTRE LAS ALCANTARILLAS
@@ -314,36 +316,11 @@ class GameScene extends Phaser.Scene {
 
 
     changeScene() {
-        //datos que enviamos al servidor
-        const eventData = {
-            event: 'RAT_EXIT',
-            playerId: this.playerId, //asignamos un identificador único al jugador
-            timestamp: new Date().toISOString(),
-        };
+        // Llama a la función sendRatExitEvent con el playerId
+        //sendRatExitEvent(this.playerId);
 
-        //fetch para solicitud HTTP
-        fetch('http://localhost:8080/api/game/rat-exit', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json', //tipo datos enviado (es decir, JSON)
-            },
-            body: JSON.stringify(eventData), //convierte datos a JSON
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`Error en la solicitud: ${response.statusText}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log('Evento enviado al servidor:', data);
-                this.scene.start('WinScene'); //cambiamos a la escena de victoria
-            })
-            .catch(error => {
-                alert('Error de conexión. Intenta más tarde.');
-                console.error('Error al enviar el evento:', error); //si no da error
-            });
-        
+        // Cambia a la escena de victoria después de enviar el evento
+        this.scene.start('WinScene');
     }
 
 
@@ -792,27 +769,33 @@ class GameScene extends Phaser.Scene {
 }
 
 //FUNCIONES
-//function sendHandMovementEvent(playerId, movementDirection) {
-//    fetch('https://localhost:8080/api/game/hand-movement', {
+//function sendRatExitEvent(playerId) {
+//    fetch('/api/game/rat-exit', {
 //        method: 'POST',
-//        headers: { 'Content-Type': 'application/json' },
+//        headers: {
+//            'Content-Type': 'application/json' // Indicamos que el cuerpo es JSON
+//        },
 //        body: JSON.stringify({
-//            playerId: playerId,
-//            direction: movementDirection, // -1 (izquierda), 0 (centro), 1 (derecha)
-//            timestamp: new Date().toISOString()
+//            playerId: playerId,                // Identificador único del jugador
+//            timestamp: new Date().toISOString() // Fecha y hora actual en formato ISO
 //        }),
 //    })
 //        .then(response => {
 //            if (!response.ok) {
-//                throw new Error(`Error al enviar movimiento: ${response.statusText}`);
+//                throw new Error(`Error al enviar evento RAT_EXIT: ${response.statusText}`);
 //            }
-//            console.log(`Movimiento enviado: ${movementDirection}`);
+//            return response.json(); // Convertimos la respuesta a JSON
+//        })
+//        .then(data => {
+//            console.log('Evento RAT_EXIT enviado al servidor:', data);
+//            // Aquí cambiaríamos la escena a WinScene, como en tu función original
 //        })
 //        .catch(error => {
 //            alert('Error de conexión. Intenta más tarde.');
-//            console.error('Error al enviar el movimiento:', error);
+//            console.error('Error al enviar el evento RAT_EXIT:', error);
 //        });
 //}
+
 async function sendHandMovementEvent(playerId, movementDirection) {
     try {
         const dataToSend = {
@@ -841,47 +824,47 @@ async function sendHandMovementEvent(playerId, movementDirection) {
 
 
 
-function sendLifeChangeEvent(playerId, changeType, newLives) {
-    fetch('/api/game/life-change', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            playerId: playerId,
-            changeType: changeType, // "add" o "subtract"
-            lives: newLives,       // Número de vidas actual
-            timestamp: new Date().toISOString()
-        }),
-    })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`Error al enviar cambio de vidas: ${response.statusText}`);
-            }
-            console.log(`Cambio de vidas enviado: ${changeType}, Vidas: ${newLives}`);
-        })
-        .catch(error => {
-            console.error('Error al enviar el cambio de vidas:', error);
-        });
-}
+//function sendLifeChangeEvent(playerId, changeType, newLives) {
+//    fetch('/api/game/life-change', {
+//        method: 'POST',
+//        headers: { 'Content-Type': 'application/json' },
+//        body: JSON.stringify({
+//            playerId: playerId,
+//            changeType: changeType, // "add" o "subtract"
+//            lives: newLives,       // Número de vidas actual
+//            timestamp: new Date().toISOString()
+//        }),
+//    })
+//        .then(response => {
+//            if (!response.ok) {
+//                throw new Error(`Error al enviar cambio de vidas: ${response.statusText}`);
+//            }
+//            console.log(`Cambio de vidas enviado: ${changeType}, Vidas: ${newLives}`);
+//        })
+//        .catch(error => {
+//            console.error('Error al enviar el cambio de vidas:', error);
+//        });
+//}
 
-function fetchPlayerStats(playerId) {
-    fetch(`/api/game/player-stats/${playerId}`, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-    })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`Error al obtener estadísticas: ${response.statusText}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log('Estadísticas del jugador:', data);
-            // Usa los datos en el juego (por ejemplo, actualiza HUD o lógica de juego).
-        })
-        .catch(error => {
-            console.error('Error al obtener estadísticas del jugador:', error);
-        });
-}
+//function fetchPlayerStats(playerId) {
+//    fetch(`/api/game/player-stats/${playerId}`, {
+//        method: 'GET',
+//        headers: { 'Content-Type': 'application/json' },
+//    })
+//        .then(response => {
+//            if (!response.ok) {
+//                throw new Error(`Error al obtener estadísticas: ${response.statusText}`);
+//            }
+//            return response.json();
+//        })
+//        .then(data => {
+//            console.log('Estadísticas del jugador:', data);
+//            // Usa los datos en el juego (por ejemplo, actualiza HUD o lógica de juego).
+//        })
+//        .catch(error => {
+//            console.error('Error al obtener estadísticas del jugador:', error);
+//        });
+//}
 
 function updatePlayerPosition(playerId, x, y) {
     fetch('/api/game/player-position', {
@@ -928,26 +911,26 @@ function deleteCollectedItem(playerId, itemId) {
         });
 }
 
-function updateLives(playerId, newLives) {
-    fetch(`/api/game/lives`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            playerId: playerId,
-            lives: newLives,
-            timestamp: new Date().toISOString(),
-        }),
-    })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`Error al actualizar vidas: ${response.statusText}`);
-            }
-            console.log(`Vidas actualizadas a: ${newLives}`);
-        })
-        .catch(error => {
-            console.error('Error al actualizar las vidas:', error);
-        });
-}
+//function updateLives(playerId, newLives) {
+//    fetch(`/api/game/lives`, {
+//        method: 'PUT',
+//        headers: { 'Content-Type': 'application/json' },
+//        body: JSON.stringify({
+//            playerId: playerId,
+//            lives: newLives,
+//            timestamp: new Date().toISOString(),
+//        }),
+//    })
+//        .then(response => {
+//            if (!response.ok) {
+//                throw new Error(`Error al actualizar vidas: ${response.statusText}`);
+//            }
+//            console.log(`Vidas actualizadas a: ${newLives}`);
+//        })
+//        .catch(error => {
+//            console.error('Error al actualizar las vidas:', error);
+//        });
+//}
 
 function fetchLabyrinthConfig(walls) {
     fetch('/api/game/labyrinth-config', {
