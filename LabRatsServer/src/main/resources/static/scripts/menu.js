@@ -40,6 +40,9 @@ class MenuScene extends Phaser.Scene {
         this.load.image('startBtn', 'ejemplo.png');
         this.load.image('optionsBtn', 'btnOpciones.png');
         this.load.image('creditsBtn', 'btnCréditos.png');
+        this.load.image('acceptBtn', 'btnAceptar.png');
+        this.load.image('menuBtn', 'btnMenu.png');
+        this.load.image('backButton', 'btnVolver.png');
         
         //Audio
         this.load.audio('mainMenuMusic', 'mainMenuMusic.ogg');
@@ -60,7 +63,7 @@ class MenuScene extends Phaser.Scene {
     //CREACIÓN DE BOTONES
     
     createStartButton() {
-        this.startBtn = this.add.image(400, 300, 'startBtn').setScale(0.5).setInteractive();
+        this.startBtn = this.add.image(400, 300, 'acceptBtn').setScale(0.5).setInteractive();
         this.startBtn.on('pointerdown', () => {
             this.game.click.play();
             this.scene.stop("MenuScene");
