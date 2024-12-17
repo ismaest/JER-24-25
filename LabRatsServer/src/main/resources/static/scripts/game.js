@@ -378,7 +378,7 @@ class GameScene extends Phaser.Scene {
         this.lives--; //Restar la variable de vidas
         this.lifeIcons[this.lives].setVisible(false); //Quitar el icono de corazones
         this.game.hitSound.play();
-        sendLifeChangeEvent('player123', 'subtract', this.lives); //el segundo es una resta
+        //sendLifeChangeEvent('player123', 'subtract', this.lives); //el segundo es una resta
         
         //COMPROBAR SI EL JUGADOR HA MUERTO
         if (this.lives === 0) {
