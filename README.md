@@ -10,6 +10,25 @@ LABRATS es un juego arcade 1vs1 en el que ambos jugadores tomarán el rol de una
   - Javier San Juan Ledesma, j.sanjuan.2021@alumnos.urjc.es, @KaZeRHD
   - Xabier López Aguilera, x.lopez.2022@alumnos.urjc.es, @ReibaxL
 
+> ## Guía de instalación para Windows
+Por redactar
+
+ 	Descarga
+Redactar
+ 	
+	Dependencias
+Redactar
+  	
+   	Compilación
+Redactar
+ 	
+  	Ejecución
+Redactar
+ 	
+  	Ejecución del juego
+Redactar
+
+
 ## ÍNDICE
 
 ```
@@ -56,20 +75,26 @@ LABRATS es un juego arcade 1vs1 en el que ambos jugadores tomarán el rol de una
   5.1 Javier San Juan Ledesma
     5.1.1. Primera fase de desarrollo: Javier
     5.1.2. Segunda fase de desarrollo: Javier
+    5.1.3. Tercera fase de desarrollo: Javier
   5.2 Iván De Castilla Guitián
     5.2.1. Primera fase de desarrollo: Iván
     5.2.2. Segunda fase de desarrollo: Iván
+    5.2.3. Tercera fase de desarrollo: Iván
   5.3 Ismael Esteban Liberal
     5.3.1. Primera fase de desarrollo: Ismael
     5.3.2. Segunda fase de desarrollo: Ismael
+    5.3.3. Tercera fase de desarrollo: Ismael
   5.4 Xabier López Aguilera
     5.4.1. Primera fase de desarrollo: Xabier
     5.4.2. Segunda fase de desarrollo: Xabier
+    5.4.3. Tercera fase de desarrollo: Xabier
 
-6. Créditos
+6. Funciones de red
 
-7. Anexos
-  7.1. Futuras Características
+7. Créditos
+
+8. Anexos
+  8.1. Futuras Características
 
 ```
 
@@ -401,6 +426,9 @@ Se ha encargado de detallar el aspecto visual y conceptual del videojuego, entre
 	
  	5.1.2. Segunda fase de desarrollo: Javier
 Ha dibujado todo el arte del juego. Se ha encargado de la implementación de dicho arte, de la programación de la pantalla de créditos y de las pantallas de victoria/derrota.
+	
+	5.1.3. Tercera fase de desarrollo: Javier
+ Por escribir
 
 > ##  **5.2 Iván De Castilla Guitián**
 
@@ -412,6 +440,10 @@ Se ha encargado de diferentes aspectos dentro del gdd, entre ellos las metas, de
 	5.2.2. Segunda fase de desarrollo: Iván
 Se ha encargado de la programación de interfaces, gestión de escenas, implementación de sonidos y música. Por otro lado, ha reescrito código para mayor legibilidad y optimización. También ha elaborado la presentación. 
 
+	5.2.3. Tercera fase de desarrollo: Iván
+ Por escribir
+
+
 > ## **5.3 Ismael Esteban Liberal**
 
 Game Designer y programación.
@@ -422,6 +454,10 @@ Ha sido el autor de la idea principal del juego, y se ha centrado en gran parte 
 	5.3.2. Segunda fase de desarrollo: Ismael
 Se ha encargado de programar las mecánicas del juego, movimiento de la mano y otras funciones como detectores de colisiones. También ha sido el encargado de actualizar el archivo 'readme.md' del proyecto y del diseño del nivel.
 
+	5.3.3. Tercera fase de desarrollo: Ismael
+ Por escribir
+
+
 > ## **5.4 Xabier López Aguilera**
 
 Game Designer y programación.
@@ -431,15 +467,21 @@ Se ha ocupado del análisis DAFO, los estados y parte de las interfaces. Dentro 
 
 	5.4.2. Segunda fase de desarrollo: Xabier
  Ha programado las mecánicas del juego, reorganizado y reescrito código. También ha sido el encargado de colocar todos los elementos del escenario y comprobar su finalidad.
+ 
+ 	5.4.3. Tercera fase de desarrollo: Xabier
+ Por escribir
 
-> ## 6. Créditos
+> ## 6. Funciones de red
+Por redactar
+
+> ## 7. Créditos
 
 Aquí se listan los créditos del juego, como personas que han apoyado el desarrollo o assets de uso externos que deban de ser apropiadamente acreditados.
 
-> ## 7. Anexos
+> ## 8. Anexos
 
 En este apartado se mostrarán los anexos.
 
-> ## **7.1. Futuras Características**
+> ## **8.1. Futuras Características**
 
 Para futuras fases de desarrollo se plantea diseñar más niveles para el juego, cumpliendo con la idea inicial. También se añadirá la función de multijugador en línea.
