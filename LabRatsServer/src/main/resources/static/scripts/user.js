@@ -195,7 +195,7 @@ class UserScene extends Phaser.Scene {
                 
                 $.ajax({
                     method: "GET",
-                    url: "/user",
+                    url: "/user/signin",
                     contentType: "application/json",  // Especifica que el contenido es JSON
                     data: {name: document.getElementById("userID").value,
                         password: document.getElementById("passwordID").value},  // Convierte el objeto JS a JSON

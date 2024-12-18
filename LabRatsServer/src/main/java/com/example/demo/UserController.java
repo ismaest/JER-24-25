@@ -17,6 +17,13 @@ public class UserController {
         User user = userService.getUser(name, password);
         return (user != null) ? ResponseEntity.ok(user) : ResponseEntity.notFound().build();
     }
+    
+    @GetMapping("/signin")
+    public ResponseEntity<User> getUserSigned(@RequestParam String name, @RequestParam String password) {
+        User user = userService.getUser(name, password);
+        userService.connectPlayer(user.getName());
+        return (user != null) ? ResponseEntity.ok(user) : ResponseEntity.notFound().build();
+    }
 
     @PostMapping
     public ResponseEntity<String> createUser(@RequestBody User newUser) {

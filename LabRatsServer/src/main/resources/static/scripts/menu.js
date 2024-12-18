@@ -28,24 +28,9 @@ class MenuScene extends Phaser.Scene {
         //Configuramos los botones
         this.buttonAnims();
 		
-		//Creamos el texto donde apareceran los jugadores conectados al server
-        this.usersConnectedContainer = document.createElement("h3");
-        this.usersConnectedContainer.id = "users-connected"; // Asignar un ID para referencia
-        //this.usersConnectedContainer.textContent = "USUARIOS CONECTADOS: 0";
-        document.body.appendChild(this.usersConnectedContainer);
-
         // Iniciar actualización periódica de usuarios conectados
-        this.setupUsersConnectedContainer();
         this.sendHeartbeat(); // Enviar heartbeat periódicamente
         this.updateConnectedUsers(); // Actualizar usuarios conectados periódicamente
-    }
-
-
-    setupUsersConnectedContainer() {
-        // Crear el texto donde se mostrarán los usuarios conectados
-        this.usersConnectedContainer = document.createElement("p");
-        //this.usersConnectedContainer.textContent = "USUARIOS CONECTADOS: 0";
-        document.body.appendChild(this.usersConnectedContainer);
     }
 
     sendHeartbeat() {
@@ -68,7 +53,7 @@ class MenuScene extends Phaser.Scene {
             fetch("/user/connected-users")
                 .then(response => response.json())
                 .then(data => {
-                    this.usersConnectedContainer.textContent = `USUARIOS CONECTADOS: ${data}`;
+                    document.getElementById("UsuariosConectados").innerHTML = `USUARIOS CONECTADOS: ${data}`;
                 })
                 .catch(error => console.error("Error al obtener usuarios conectados:", error));
         }, 1000); // 1 segundos
