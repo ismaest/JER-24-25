@@ -11,22 +11,27 @@ LABRATS es un juego arcade 1vs1 en el que ambos jugadores tomarán el rol de una
   - Xabier López Aguilera, x.lopez.2022@alumnos.urjc.es, @ReibaxL
 
 > ## Guía de instalación para Windows
-Por redactar
+Aquí se recogen los pasos para la instalación del proyecto en Windows.
 
  	Descarga
-Redactar
+Descarga LabRats-fase3.zip en la [pestaña de releases](https://github.com/ismaest/JER-24-25/releases).
  	
 	Dependencias
-Redactar
-  	
-   	Compilación
-Redactar
+- [Java 8](https://www.java.com/en/download/) (o una versión superior).
+
+- [Java JDK 17](https://www.oracle.com/es/java/technologies/downloads/#jdk23-windows) (o una versión superior).
+
+‎ 
+	
+ 	Compilación
+  Es necesario extraer el .zip en una carpeta y acceder a la carpeta "target" del proyecto, donde se encuentra el archivo "labrats.jar". 
+  Allí, se debe copiar la ruta del explorador de archivos.
+  Posteriormente, abrir Símbolo del sistema y escribir cd en la terminal, seguido de la ruta previamente copiada.
+  Tras esto, copiar el siguiente código en la consola: java -jar labrats.jar
  	
   	Ejecución
-Redactar
- 	
-  	Ejecución del juego
-Redactar
+Para ejecutar el juego debemos conocer la IP del dispositivo que actuará como servidor. Para ello, escribimos "ipconfig" en la misma consola.
+Al obtenerla, la escribiremos como enlace en nuestro navegador, seguida de :8080. De esta forma, el juego se ejecutará en nuestro navegador.
 
 
 ## ÍNDICE
@@ -347,6 +352,10 @@ Aquí se recogen los diferentes objetos presentes en el juego.
 
   - Victor Frank: Acaba con todas las ratas.
 
+> ## **3.5 Diagrama UML**
+![UML_JER drawio](https://github.com/user-attachments/assets/98b287cd-f24e-4665-ada3-130b980c9e8c)
+> Diagrama de clases
+
 
 > ## 4. Apartado Artístico
 
@@ -394,6 +403,9 @@ Para el diseño de menús, se ha decidido usar la siguiente paleta que mantiene 
 	4.2.3 Concept art
 Aquí se recogen los diferentes concepts arts previos al desarrollo del juego: 
 
+![image](https://github.com/user-attachments/assets/2ee79e9d-9a6b-4bfc-8698-e28f74db81a0)
+>Pantalla de inicio de sesión/registro
+
 ![MENU PRINCIPAL](https://github.com/user-attachments/assets/33678f96-d86a-4faf-b8e9-fdc64a9d1270)
 > Menú Principal
 
@@ -439,7 +451,7 @@ Se ha encargado de detallar el aspecto visual y conceptual del videojuego, entre
 Ha dibujado todo el arte del juego. Se ha encargado de la implementación de dicho arte, de la programación de la pantalla de créditos y de las pantallas de victoria/derrota.
 	
 	5.1.3. Tercera fase de desarrollo: Javier
- Por escribir
+Se ha encargado de preparar nuevos assets, así como crear y manejar la pantalla de inicio de sesión y las peticiones que hace el cliente al servidor en dicha pantalla. También ha creado el diagrama UML.
 
 > ##  **5.2 Iván De Castilla Guitián**
 
@@ -452,7 +464,7 @@ Se ha encargado de diferentes aspectos dentro del gdd, entre ellos las metas, de
 Se ha encargado de la programación de interfaces, gestión de escenas, implementación de sonidos y música. Por otro lado, ha reescrito código para mayor legibilidad y optimización. También ha elaborado la presentación. 
 
 	5.2.3. Tercera fase de desarrollo: Iván
- Por escribir
+Se ha encargado de programar la parte del servidor, manejando los controladores que reciben información de la partida, así como mostrar los usuarios conectados simultaneamente, así como la persistencia de datos. Además también ha modificado algunos elementos de la fase anterior.
 
 
 > ## **5.3 Ismael Esteban Liberal**
@@ -466,7 +478,8 @@ Ha sido el autor de la idea principal del juego, y se ha centrado en gran parte 
 Se ha encargado de programar las mecánicas del juego, movimiento de la mano y otras funciones como detectores de colisiones. También ha sido el encargado de actualizar el archivo 'readme.md' del proyecto y del diseño del nivel.
 
 	5.3.3. Tercera fase de desarrollo: Ismael
- Por escribir
+Se ha encargado de implementar mejoras y arreglos con respecto a la práctica anterior, y de ayudar en la parte del cliente. Además de redactar el readme y preparar la presentación.
+
 
 
 > ## **5.4 Xabier López Aguilera**
@@ -480,7 +493,7 @@ Se ha ocupado del análisis DAFO, los estados y parte de las interfaces. Dentro 
  Ha programado las mecánicas del juego, reorganizado y reescrito código. También ha sido el encargado de colocar todos los elementos del escenario y comprobar su finalidad.
  
  	5.4.3. Tercera fase de desarrollo: Xabier
- Por escribir
+Se ha encargado de programar la parte del servidor, creando y manejando las clases UserService y User controller. Ha programado la lógica de calcular cuántos jugadores hay de forma simultánea, así como ayudar también en la persistencia de datos.
 
 > ## 6. Funciones de red
 
