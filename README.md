@@ -24,10 +24,10 @@ Descarga LabRats-fase3.zip en la [pestaña de releases](https://github.com/ismae
 ‎ 
 	
  	Compilación
-  Es necesario extraer el .zip en una carpeta y acceder a la carpeta "target" del proyecto, donde se encuentra el archivo "labrats.jar". 
+  Es necesario extraer el .zip en una carpeta y acceder a la carpeta "target" del proyecto, donde se encuentra el archivo **"labrats.jar"**. 
   Allí, se debe copiar la ruta del explorador de archivos.
   Posteriormente, abrir Símbolo del sistema y escribir cd en la terminal, seguido de la ruta previamente copiada.
-  Tras esto, copiar el siguiente código en la consola: java -jar labrats.jar
+  Tras esto, copiar el siguiente código en la consola: **java -jar labrats.jar**
  	
   	Ejecución
 Para ejecutar el juego debemos conocer la IP del dispositivo que actuará como servidor. Para ello, escribimos "ipconfig" en la misma consola.
