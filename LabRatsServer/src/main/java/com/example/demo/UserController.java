@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+//
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -23,6 +23,15 @@ public class UserController {
         User user = userService.getUser(name, password);
         userService.connectPlayer(user.getName());
         return (user != null) ? ResponseEntity.ok(user) : ResponseEntity.notFound().build();
+    }
+    
+    @GetMapping("/check-server-status")
+    public ResponseEntity<String> checkServerStatus() {
+        try {
+            return ResponseEntity.ok("Servidor activo");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al verificar el estado del servidor");
+        }
     }
 
     @PostMapping

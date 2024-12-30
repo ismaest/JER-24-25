@@ -113,12 +113,12 @@ class UserScene extends Phaser.Scene {
         document.body.appendChild(this.form);
 
         // Añadir indicador de conexión
-        let connectionIndicator = document.createElement('div');
-        connectionIndicator.id = 'connection-indicator';
-        connectionIndicator.style.width = '20px';
-        connectionIndicator.style.height = '20px';
-        connectionIndicator.style.backgroundColor = 'red'; // Estado inicial (desconectado)
-        document.body.appendChild(connectionIndicator);
+        //let connectionIndicator = document.createElement('div');
+        //connectionIndicator.id = 'connection-indicator';
+        //connectionIndicator.style.width = '20px';
+        //connectionIndicator.style.height = '20px';
+        //connectionIndicator.style.backgroundColor = 'red'; // Estado inicial (desconectado)
+        //document.body.appendChild(connectionIndicator);
 
         // Manejar el submit del formulario
         document.body.addEventListener("click", event => {
@@ -147,6 +147,9 @@ class UserScene extends Phaser.Scene {
 
                         // Si la respuesta indica que el jugador se conectó correctamente
                         if (response === "User created and connected successfully") {
+							
+							// Guardar el nombre del usuario en sessionStorage
+							sessionStorage.setItem('userName', userData.name);
                             // Cambiar la escena a MenuScene solo si se creó el usuario
                             console.log("Usuario creado, cambiando a la escena de menú...");
                             self.form.style.display = 'none';
@@ -201,6 +204,9 @@ class UserScene extends Phaser.Scene {
                         password: document.getElementById("passwordID").value},  // Convierte el objeto JS a JSON
                     success: function(response) {
                         console.log("Respuesta del servidor:", response);
+						
+						// Guardar el nombre del usuario en sessionStorage
+						sessionStorage.setItem('userName', userData.name);
                         // Cambiar la escena a MenuScene solo si se creó el usuario
                         console.log("Usuario iniciado, cambiando a la escena de menú...");
                         self.form.style.display = 'none';

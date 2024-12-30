@@ -16,6 +16,7 @@ import java.util.concurrent.TimeUnit;
 public class UserService {
 
     private static final String FILE_NAME = "UserList.txt";
+    private static final String CONNECTIONS_FILE = "connections.txt";
 
     private Map<String, Instant> connectedUsers = new ConcurrentHashMap<>();
     private List<User> userList = new ArrayList<>(); // Simulamos la base de datos en memoria
@@ -56,6 +57,39 @@ public class UserService {
         }
     }
 
+    // Guardar el estado de las conexiones en un archivo
+    private void saveConnectionsToFile() {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(CONNECTIONS_FILE))) {
+            for (Map.Entry<String, Boolean> entry : playerConnections.entrySet()) {
+                writer.write(entry.getKey() + "," + entry.getValue());
+                writer.newLine();
+            }
+            System.out.println("Estado de las conexiones guardado en " + CONNECTIONS_FILE);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    // Cargar el estado de las conexiones desde un archivo
+    private void loadConnectionsFromFile() {
+        try (BufferedReader reader = new BufferedReader(new FileReader(CONNECTIONS_FILE))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length == 2) {
+                    String playerId = parts[0];
+                    Boolean isConnected = Boolean.parseBoolean(parts[1]);
+                    playerConnections.put(playerId, isConnected);
+                }
+            }
+            System.out.println("Estado de las conexiones cargado desde " + CONNECTIONS_FILE);
+        } catch (FileNotFoundException e) {
+            System.out.println(CONNECTIONS_FILE + " no encontrado. Se creará uno nuevo al guardar el estado de las conexiones.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
     // Obtener todos los usuarios
     public List<User> getAllUsers() {
         return userList;
@@ -106,6 +140,7 @@ public class UserService {
             return false; // El jugador ya está conectado
         }
         playerConnections.put(playerId, true);
+        saveConnectionsToFile();  // Guardamos el estado de las conexiones
         return true;
     }
 
@@ -115,6 +150,7 @@ public class UserService {
             return false; // El jugador no está conectado
         }
         playerConnections.put(playerId, false);
+        saveConnectionsToFile();
         return true;
     }
 
@@ -125,7 +161,7 @@ public class UserService {
 
     // Obtener cuántos usuarios están conectados simultáneamente
     public int getConnectedPlayersAmmount() {
-        return playerConnections.size();
+    	return (int) playerConnections.values().stream().filter(Boolean::booleanValue).count();
     }
 
     // Actualizar el tiempo de actividad del usuario
