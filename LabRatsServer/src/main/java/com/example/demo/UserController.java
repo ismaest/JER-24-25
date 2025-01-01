@@ -33,7 +33,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al verificar el estado del servidor");
         }
     }
-
+    
     @PostMapping
     public ResponseEntity<String> createUser(@RequestBody User newUser) {
         try {
