@@ -9,8 +9,11 @@ class OptionsMenu extends Phaser.Scene {
         this.load.setPath('assets/');
         this.load.image('background', 'MenuBackground.png');
         this.load.image('backBtn', 'btnSalir.png'); //cambiar el boton (.png)
+        this.load.image ('chillmode', 'modochill.png');
+        this.load.image ('chillbtn', 'chillbtn.png');
         this.load.audio('mainMenuMusic', 'mainMenuMusic.ogg');
         this.load.audio('click', 'click.wav');
+        this.load.audio('chill', 'modochill.mp3');
         
     }
 
@@ -33,6 +36,22 @@ class OptionsMenu extends Phaser.Scene {
         });
         this.backBtn.on('pointerout', () => {
             this.backBtn.setScale(0.5);
+        });
+
+        this.chillBtn = this.add.image(400, 220, 'chillbtn');
+        this.chillBtn.setScale(0.5);
+        this.chillBtn.setInteractive();
+        this.chillBtn.on('pointerdown', () => {
+            this.game.click.play();
+            this.chillmode = this.add.image(400, 200, 'chillmode').setScale(0.6);
+            this.game.chill = this.sound.add('chill');
+            this.game.chill.play();
+        });
+        this.chillBtn.on('pointerover', () => {
+            this.chillBtn.setScale(0.55);
+        });
+        this.chillBtn.on('pointerout', () => {
+            this.chillBtn.setScale(0.5);
         });
         
         //VOLUMEN (Y máximo 550)

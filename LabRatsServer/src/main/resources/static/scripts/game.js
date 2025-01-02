@@ -92,6 +92,7 @@ class GameScene extends Phaser.Scene {
         this.load.audio('click', 'click.wav');
         this.load.audio('tpSound', 'tpSound.wav');
         this.load.audio('pipe', 'metalpipe.mp3');
+        this.load.audio('chill', 'modochill.mp3');
         
         //Elementos del laberinto
         this.load.setPath('assets/laberinto/');
