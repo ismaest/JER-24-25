@@ -1,6 +1,7 @@
 class GameScene extends Phaser.Scene {
     constructor() {
         super({ key: "GameScene" });
+        this.socket = null;
     }
 
     preload() {
@@ -104,6 +105,19 @@ class GameScene extends Phaser.Scene {
     }
 
     create() {
+
+		const host = window.location.hostname;
+        this.socket = new WebSocket(`ws://${host}:8080/echo`);
+
+        this.socket.onopen = () => {
+            console.log('Connected to WebSocket server');
+            this.socket.send(JSON.stringify({ type: 'test', content: '¿Servidor, estás ahí?' }));
+            this.socket.send(JSON.stringify({ type: 'join', playerId: sessionStorage.getItem('userName') }));
+        };
+
+        this.socket.onmessage = (event) => {
+            console.log('Mensaje recibido del servidor:', event.data);
+        };
         
         //Añadir escenario
         this.add.image(400, 300, 'scenery');
@@ -248,7 +262,7 @@ class GameScene extends Phaser.Scene {
                     this.cheeseCollider = true;
                     this.cheeseTime = time;
                     this.game.eatSound.play();
-                    deleteCollectedItem(this.playerId, cheese.id);
+                    //deleteCollectedItem(this.playerId, cheese.id);
                 }
             });
             
