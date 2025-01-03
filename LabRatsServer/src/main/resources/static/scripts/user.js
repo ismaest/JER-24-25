@@ -28,7 +28,7 @@ class UserScene extends Phaser.Scene {
         this.form.action = '/user';  // URL a la que se envia el formulario
         this.form.method = 'POST';
         this.form.style.position = 'absolute';
-        this.form.style.top = '40%';  // Posición vertical 
+        this.form.style.top = '45%';  // Posición vertical 
         this.form.style.left = '50%'; // Posición horizontal
         this.form.style.transform = 'translateX(-50%)'; // Centrado horizontal
         this.form.style.zIndex = '10';  // posicion z

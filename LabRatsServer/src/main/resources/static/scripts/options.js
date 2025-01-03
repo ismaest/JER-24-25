@@ -24,7 +24,7 @@ class OptionsMenu extends Phaser.Scene {
         
         this.add.image(400, 300, 'background');
         
-        this.backBtn = this.add.image(400, 500, 'backBtn');
+        this.backBtn = this.add.image(380, 500, 'backBtn');
         this.backBtn.setScale(0.5);
         this.backBtn.setInteractive();
         this.backBtn.on('pointerdown', () => {
@@ -37,15 +37,25 @@ class OptionsMenu extends Phaser.Scene {
         this.backBtn.on('pointerout', () => {
             this.backBtn.setScale(0.5);
         });
-
-        this.chillBtn = this.add.image(400, 220, 'chillbtn');
+        let modochill=false;
+        this.chillBtn = this.add.image(380, 240, 'chillbtn');
         this.chillBtn.setScale(0.5);
         this.chillBtn.setInteractive();
         this.chillBtn.on('pointerdown', () => {
+            if (!modochill) {
             this.game.click.play();
-            this.chillmode = this.add.image(400, 200, 'chillmode').setScale(0.6);
+            this.chillmode = this.add.image(400, 430, 'chillmode').setScale(0.5);
             this.game.chill = this.sound.add('chill');
             this.game.chill.play();
+            this.game.mainMenuMusic.setVolume(0);
+            modochill = true;
+        } else {
+                this.game.click.play();
+                this.chillmode.setScale(0);
+                this.game.chill.setVolume(0);
+                this.game.mainMenuMusic.setVolume(0.5);
+                modochill = false; 
+            }
         });
         this.chillBtn.on('pointerover', () => {
             this.chillBtn.setScale(0.55);
