@@ -15,6 +15,7 @@ class MenuScene extends Phaser.Scene {
     }
 
     create() {
+		this.setupWebSocket();
 		this.userName = sessionStorage.getItem('userName');
         //Configuramos los sonidos
         this.setupSounds();
@@ -47,6 +48,40 @@ class MenuScene extends Phaser.Scene {
         this.startPolling();
     }
 	
+	setupWebSocket() {
+	    this.socket = new WebSocket(`ws://${window.location.host}/echo`);
+
+	    this.socket.addEventListener('open', () => {
+	        console.log('Conectado al servidor WebSocket');
+	    });
+
+	    this.socket.addEventListener('message', (event) => {
+	        const message = JSON.parse(event.data);
+	        console.log('Mensaje recibido:', message);
+
+	        switch (message.type) {
+	            case 'CONNECTED':
+	                this.userId = message.userId;
+	                console.log(`Usuario registrado con ID: ${this.userId}`);
+	                break;
+
+	            case 'CHAT':
+	                this.displayMessage(`${message.sender}: ${message.content}`);
+	                break;
+
+	            default:
+	                console.error('Tipo de mensaje desconocido:', message.type);
+	        }
+	    });
+
+	    this.socket.addEventListener('close', () => {
+	        console.error('Conexión cerrada con el servidor WebSocket');
+	    });
+
+	    this.socket.addEventListener('error', (error) => {
+	        console.error('Error en el WebSocket:', error);
+	    });
+	}
 	// Crear el indicador de conexión
 	    createConnectionIndicator() {
 	        // Crear el cuadrado verde (inicialmente desconectado)
@@ -95,7 +130,7 @@ class MenuScene extends Phaser.Scene {
 		                    console.error('Error al comprobar la conexión:', error);
 		                    this.updateConnectionStatus(false);  // En caso de error, asumimos que el servidor está desconectado
 		                });
-		        }, 500);  // Verificar cada 500 milisegundos
+		        }, 10000);  // Verificar cada 500 milisegundos
 		    }
 
 
