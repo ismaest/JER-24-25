@@ -343,7 +343,7 @@ class MenuScene extends Phaser.Scene {
         this.startBtn.on('pointerdown', () => {
             this.game.click.play();
             this.scene.stop("MenuScene");
-            this.scene.start('GameScene');
+            this.scene.start('GameScene', { socket: this.socket });
             this.scene.launch("RoleInfo");
         });
     }

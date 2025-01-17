@@ -56,39 +56,6 @@ public class UserService {
             e.printStackTrace();
         }
     }
-
-    // Guardar el estado de las conexiones en un archivo
-    //private void saveConnectionsToFile() {
-    //    try (BufferedWriter writer = new BufferedWriter(new FileWriter(CONNECTIONS_FILE))) {
-    //      for (Map.Entry<String, Boolean> entry : playerConnections.entrySet()) {
-    //          writer.write(entry.getKey() + "," + entry.getValue());
-    //          writer.newLine();
-    //      }
-    //      System.out.println("Estado de las conexiones guardado en " + CONNECTIONS_FILE);
-    //  } catch (IOException e) {
-    //      e.printStackTrace();
-    //  }
-    //}
-    
-    // Cargar el estado de las conexiones desde un archivo
-    //private void loadConnectionsFromFile() {
-    //  try (BufferedReader reader = new BufferedReader(new FileReader(CONNECTIONS_FILE))) {
-    //      String line;
-    //      while ((line = reader.readLine()) != null) {
-    //          String[] parts = line.split(",");
-    //          if (parts.length == 2) {
-    //              String playerId = parts[0];
-    //              Boolean isConnected = Boolean.parseBoolean(parts[1]);
-    //              playerConnections.put(playerId, isConnected);
-    //          }
-    //      }
-    //      System.out.println("Estado de las conexiones cargado desde " + CONNECTIONS_FILE);
-    //  } catch (FileNotFoundException e) {
-    //      System.out.println(CONNECTIONS_FILE + " no encontrado. Se creará uno nuevo al guardar el estado de las conexiones.");
-    //  } catch (IOException e) {
-    //      e.printStackTrace();
-    //  }
-    //}
     
     // Obtener todos los usuarios
     public List<User> getAllUsers() {

@@ -15,6 +15,7 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
 	// Map para gestionar usuarios conectados
     private static final ConcurrentMap<String, WebSocketSession> activeSessions = new ConcurrentHashMap<>();
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private static final ConcurrentMap<String, PlayerPosition> playerPositions = new ConcurrentHashMap<>();
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -39,8 +40,9 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
                 broadcastMessage(gameMessage, session);
                 break;
 
-            case "ACTION":
-                // Lógica para manejar acciones de juego
+            case "POSITION_	":
+            	updatePlayerPosition(gameMessage);
+            	broadcastMessage(gameMessage, session);
                 break;
 
             default:
@@ -66,17 +68,34 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
     // Clase auxiliar para manejar mensajes
     private static class GameMessage {
         private String type;
-        private String content;
-        private String sender;
+        private String playerId;
+        private double x;
+        private double y;
+        private String timestamp;
 
         // Getters y setters
         public String getType() { return type; }
         public void setType(String type) { this.type = type; }
 
-        public String getContent() { return content; }
-        public void setContent(String content) { this.content = content; }
+        public String getPlayerId() { return playerId; }
+        public void setPlayerId(String playerId) { this.playerId = playerId; }
 
-        public String getSender() { return sender; }
-        public void setSender(String sender) { this.sender = sender; }
+        public double getX() { return x; }
+        public void setX(double x) { this.x = x; }
+
+        public double getY() { return y; }
+        public void setY(double y) { this.y = y; }
+
+        public String getTimestamp() { return timestamp; }
+        public void setTimestamp(String timestamp) { this.timestamp = timestamp; }
+    }
+    private void updatePlayerPosition(GameMessage message) {
+        PlayerPosition position = new PlayerPosition();
+        position.setPlayerId(message.getPlayerId());
+        position.setX(message.getX());
+        position.setY(message.getY());
+        position.setTimestamp(message.getTimestamp());
+
+        playerPositions.put(message.getPlayerId(), position);
     }
 }
