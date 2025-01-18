@@ -1,6 +1,8 @@
 class GameScene extends Phaser.Scene {
-    constructor() {
+    constructor(socket) {
         super({ key: "GameScene" });
+		this.socket = socket;
+		this.updatePlayerPosition = this.updatePlayerPosition.bind(this);
     }
 	
 	init(data) {
@@ -278,7 +280,7 @@ class GameScene extends Phaser.Scene {
                     this.cheeseCollider = true;
                     this.cheeseTime = time;
                     this.game.eatSound.play();
-                    deleteCollectedItem(this.playerId, cheese.id);
+                    //deleteCollectedItem(this.playerId, cheese.id);
                 }
             });
             
@@ -353,7 +355,20 @@ class GameScene extends Phaser.Scene {
         this.scene.start('WinScene');
     }
 
-
+	updatePlayerPosition(playerId, x, y) {
+	        console.log(this.socket); // Asegúrate de que aquí esté definido
+	        if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+	            this.socket.send(JSON.stringify({
+	                type: "POSITION_UPDATE",
+	                playerId: playerId,
+	                x: x,
+	                y: y,
+	                timestamp: new Date().toISOString()
+	            }));
+	        } else {
+	            console.error('El WebSocket no está conectado');
+	        }
+	}
     //MANEJO DE LA RATA
     
     //Maneja el movimiento de la rata según la velocidad.
@@ -393,7 +408,7 @@ class GameScene extends Phaser.Scene {
             const y = this.rat.y;          // Coordenada Y de la rata
             const timestamp = new Date().toISOString();  // Obtener el timestamp
 
-            updatePlayerPosition(playerId, x, y);  // Pasar los valores correctamente
+            this.updatePlayerPosition(playerId, x, y);  // Pasar los valores correctamente
         }
     }
 

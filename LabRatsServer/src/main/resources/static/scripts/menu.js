@@ -49,38 +49,53 @@ class MenuScene extends Phaser.Scene {
     }
 	
 	setupWebSocket() {
-	    this.socket = new WebSocket(`ws://${window.location.host}/echo`);
+		this.socket = new WebSocket(`ws://${window.location.host}/echo`);
 
-	    this.socket.addEventListener('open', () => {
-	        console.log('Conectado al servidor WebSocket');
-	    });
+		    this.socket.addEventListener('open', () => {
+		        console.log('Conectado al servidor WebSocket');
+		        // Ahora que el WebSocket está abierto, crear el botón
+		        this.createStartButton();
+		    });
 
-	    this.socket.addEventListener('message', (event) => {
-	        const message = JSON.parse(event.data);
-	        console.log('Mensaje recibido:', message);
+		    this.socket.addEventListener('message', (event) => {
+		        const message = JSON.parse(event.data);
+		        console.log('Mensaje recibido:', message);
 
-	        switch (message.type) {
-	            case 'CONNECTED':
-	                this.userId = message.userId;
-	                console.log(`Usuario registrado con ID: ${this.userId}`);
-	                break;
+		        switch (message.type) {
+		            case 'CONNECTED':
+		                this.userId = message.userId;
+		                console.log(`Usuario registrado con ID: ${this.userId}`);
+		                break;
 
-	            case 'CHAT':
-	                this.displayMessage(`${message.sender}: ${message.content}`);
-	                break;
+		            case 'CHAT':
+		                this.displayMessage(`${message.sender}: ${message.content}`);
+		                break;
 
-	            default:
-	                console.error('Tipo de mensaje desconocido:', message.type);
-	        }
-	    });
+						case 'POSITION_UPDATE':
+						    // Asegúrate de que el mensaje contiene la información necesaria
+						    if (message.playerId !== this.userId) {
+						        // Si el mensaje no es para este jugador, actualizamos la posición del otro jugador
+						        const player = this.getPlayerById(message.playerId); // Función para obtener al jugador por ID
 
-	    this.socket.addEventListener('close', () => {
-	        console.error('Conexión cerrada con el servidor WebSocket');
-	    });
+						        if (player) {
+						            // Actualizamos la posición del jugador
+						            player.setPosition(message.x, message.y); // O cualquier método que uses para mover al jugador
+						        }
+						    }
+						    break;
 
-	    this.socket.addEventListener('error', (error) => {
-	        console.error('Error en el WebSocket:', error);
-	    });
+		            default:
+		                console.error('Tipo de mensaje desconocido:', message.type);
+		        }
+		    });
+
+		    this.socket.addEventListener('close', () => {
+		        console.error('Conexión cerrada con el servidor WebSocket');
+		    });
+
+		    this.socket.addEventListener('error', (error) => {
+		        console.error('Error en el WebSocket:', error);
+		    });
 	}
 	// Crear el indicador de conexión
 	    createConnectionIndicator() {
