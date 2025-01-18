@@ -110,7 +110,9 @@ class GameScene extends Phaser.Scene {
         this.load.audio('handMoving', 'handMoving.mp3');
         this.load.audio('click', 'click.wav');
         this.load.audio('tpSound', 'tpSound.wav');
-
+        this.load.audio('pipe', 'metalpipe.mp3');
+        this.load.audio('chill', 'modochill.mp3');
+        
         //Elementos del laberinto
         this.load.setPath('assets/laberinto/');
         
@@ -119,10 +121,10 @@ class GameScene extends Phaser.Scene {
         this.load.image('left', 'Left.png');
         this.load.image('right', 'Right.png');
         this.load.image('bot', 'Bot.png');
-
+        this.load.image('metalpipe', 'metalpipe.png');
         this.load.image('exit', 'exit.png');
     }
-
+  
     create() {  
 		// Escuchar el WebSocket para recibir mensajes
 		        this.socket.addEventListener('message', (event) => {
@@ -138,6 +140,7 @@ class GameScene extends Phaser.Scene {
 		                }
 		            }
 		        });
+      
         //Añadir escenario
         this.add.image(400, 300, 'scenery');
         
@@ -247,6 +250,7 @@ class GameScene extends Phaser.Scene {
         
         //Creación del laberinto
         this.createLabyritnh();
+        this.createMetalPipe();
         
         //Crear el botón de arriba de opciones
         this.btnOpt = this.add.image(745, 30, 'menu').setScale(0.3);
@@ -580,6 +584,14 @@ class GameScene extends Phaser.Scene {
         this.cheeses.push(this.createCheese(250, 100));
         this.cheeses.push(this.createCheese(300, 300));
         this.cheeses.push(this.createCheese(700, 400));
+    }
+    
+    createMetalPipe() {
+        this.metalpipe = this.add.image(30, 420, 'metalpipe').setScale(0.1).setInteractive();
+        this.metalpipe.on('pointerdown', () => {
+            this.game.pipe = this.sound.add('pipe');
+            this.game.pipe.play();
+        })
     }
     
     //CREAR EL LABERINTO

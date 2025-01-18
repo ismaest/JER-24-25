@@ -21,6 +21,7 @@ class RoleInfo extends Phaser.Scene {
         //Creamos botones
         this.createAcceptButton();
         this.createExitButton();
+        this.createMetalPipe();
         
         //Configuramos botones
         this.buttonAnims();
@@ -34,11 +35,12 @@ class RoleInfo extends Phaser.Scene {
         this.load.setPath('assets/');
 
         this.load.image('tutorialBackground', 'menuTutorial.png'); // Cambiar assets
-
+        this.load.image('metalpipe', 'metalpipe.png');
         this.load.image('acceptBtn', 'btnJugar.png'); // Botón de aceptar (esconde escena)
         this.load.image('exitBtn', 'btnSalir.png');
         this.load.audio('mainMenuMusic', 'mainMenuMusic.ogg');
         this.load.audio('click', 'click.wav');
+        this.load.audio('pipe', 'metalpipe.mp3');
     }
 
     //CONFIGURACIÓN 
@@ -76,6 +78,14 @@ class RoleInfo extends Phaser.Scene {
             this.scene.stop('GameScene'); // Detenemos la escena del juego
             this.scene.start('MenuScene'); // Cambiamos a la escena del menú
         });
+    }
+
+    createMetalPipe() {
+        this.metalpipe = this.add.image(400, 200, 'metalpipe').setScale(0.1).setInteractive();
+        this.metalpipe.on('pointerdown', () => {
+            this.game.pipe = this.sound.add('pipe');
+            this.game.pipe.play();
+        })
     }
     
     //CONFIGURACIÓN DE OTONES

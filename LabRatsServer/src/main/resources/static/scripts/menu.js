@@ -33,6 +33,8 @@ class MenuScene extends Phaser.Scene {
         this.createOptionsButton();
         this.createCreditsButton();
         this.createChatButton();
+        this.createMetalPipe();
+        this.campeonesinvierno();
         
         //Configuramos los botones
         this.buttonAnims();
@@ -330,9 +332,14 @@ class MenuScene extends Phaser.Scene {
         this.load.image('acceptBtn', 'btnAceptar.png');
         this.load.image('menuBtn', 'btnMenu.png');
         this.load.image('backButton', 'btnVolver.png');
+        this.load.image('metalpipe', 'metalpipe.png');
+        this.load.image('interrogacion', 'interrogacion.png');
+        this.load.image ('secreto', 'secreto.png');
         this.load.audio('mainMenuMusic', 'mainMenuMusic.ogg');
         this.load.audio('deathMusic', 'deathMusic.ogg');
         this.load.audio('click', 'click.wav');
+        this.load.audio('pipe', 'metalpipe.mp3');
+        this.load.audio('atleti', 'himnoatletico.mp3');
     }
 
     //CONFIGURACIÓN DE SONIDOS
@@ -370,6 +377,31 @@ class MenuScene extends Phaser.Scene {
             this.scene.start('Credits');
         });
     }
+    
+    createMetalPipe() {
+        this.metalpipe = this.add.image(750, 400, 'metalpipe').setScale(0.1).setInteractive();
+        this.metalpipe.on('pointerdown', () => {
+            this.game.pipe = this.sound.add('pipe');
+           this.game.pipe.play(); 
+        })
+    }
+    
+    campeonesinvierno() {
+        let primerclick=true; 
+        this.interrogacion = this.add.image(750, 100, 'interrogacion').setScale(0.2).setInteractive();
+            this.interrogacion.on('pointerdown', () => {
+                if (primerclick==true) {
+                    this.secreto = this.add.image(400, 400, 'secreto').setScale(1);
+                    this.game.atleti = this.sound.add('atleti');
+                    this.game.atleti.play();
+                    primerclick=false;
+                } else {
+                        this.secreto.setScale(0);
+                        this.interrogacion.setScale(0);
+                        this.game.atleti.setVolume(0);
+            } 
+            })
+        }
 
     //CONFIGURACIÓN DE BOTONES
     buttonAnims(){
