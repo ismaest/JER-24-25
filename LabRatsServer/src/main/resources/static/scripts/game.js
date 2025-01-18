@@ -7,6 +7,7 @@ class GameScene extends Phaser.Scene {
 	
 	init(data) {
 		this.players = {};
+		this.targetPositions = {};
 	        // Asegúrate de que el socket esté disponible
 	        if (data && data.socket instanceof WebSocket) {
 	            this.socket = data.socket;
@@ -262,6 +263,17 @@ class GameScene extends Phaser.Scene {
 
     update(time, delta) {
 
+		Object.keys(this.targetPositions).forEach(playerId => {
+		        const otherPlayer = this.getPlayerById(playerId);
+		        const target = this.targetPositions[playerId];
+
+		        if (otherPlayer && target) {
+		            const lerpSpeed = 0.1; // Ajusta este valor para controlar la suavidad
+		            otherPlayer.x = Phaser.Math.Linear(otherPlayer.x, target.x, lerpSpeed);
+		            otherPlayer.y = Phaser.Math.Linear(otherPlayer.y, target.y, lerpSpeed);
+		        }
+		    });
+		
         //MOVIMIENTO DE LA RATA
         
         this.handleRatMovement(this.ratSpeed);
@@ -376,7 +388,8 @@ class GameScene extends Phaser.Scene {
 
 	    if (message.playerId === this.userId) {
 	        // Actualizar la posición del jugador local (si aplica)
-	        this.rat.setPosition(message.x, message.y);
+	        //this.rat.setPosition(message.x, message.y);
+			this.targetPositions[message.playerId] = { x: message.x, y: message.y };
 	    } else {
 	        // Buscar o crear al otro jugador
 	        let otherPlayer = this.getPlayerById(message.playerId);

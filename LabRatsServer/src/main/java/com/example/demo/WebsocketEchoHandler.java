@@ -19,13 +19,25 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        // Añadir usuario con un ID único
         String userId = "user_" + session.getId();
         activeSessions.put(userId, session);
         System.out.println("Usuario conectado: " + userId);
 
-        // Enviar un mensaje al cliente para confirmar la conexión
+        // Enviar mensaje de conexión al cliente
         session.sendMessage(new TextMessage("{\"type\": \"CONNECTED\", \"userId\": \"" + userId + "\"}"));
+
+        // Enviar las posiciones actuales de todos los jugadores al cliente recién conectado
+        for (PlayerPosition position : playerPositions.values()) {
+            GameMessage positionMessage = new GameMessage();
+            positionMessage.setType("POSITION_UPDATE");
+            positionMessage.setPlayerId(position.getPlayerId());
+            positionMessage.setX(position.getX());
+            positionMessage.setY(position.getY());
+            positionMessage.setTimestamp(position.getTimestamp());
+
+            String serializedMessage = objectMapper.writeValueAsString(positionMessage);
+            session.sendMessage(new TextMessage(serializedMessage));
+        }
     }
 
     @Override
