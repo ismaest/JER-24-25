@@ -40,7 +40,7 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
                 broadcastMessage(gameMessage, session);
                 break;
 
-            case "POSITION_	":
+            case "POSITION_UPDATE":
             	updatePlayerPosition(gameMessage);
             	broadcastMessage(gameMessage, session);
                 break;

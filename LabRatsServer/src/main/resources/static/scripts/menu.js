@@ -70,19 +70,11 @@ class MenuScene extends Phaser.Scene {
 		            case 'CHAT':
 		                this.displayMessage(`${message.sender}: ${message.content}`);
 		                break;
-
-						case 'POSITION_UPDATE':
-						    // Asegúrate de que el mensaje contiene la información necesaria
-						    if (message.playerId !== this.userId) {
-						        // Si el mensaje no es para este jugador, actualizamos la posición del otro jugador
-						        const player = this.getPlayerById(message.playerId); // Función para obtener al jugador por ID
-
-						        if (player) {
-						            // Actualizamos la posición del jugador
-						            player.setPosition(message.x, message.y); // O cualquier método que uses para mover al jugador
-						        }
-						    }
-						    break;
+					case 'POSITION_UPDATE':
+						console.log(`Jugador ${message.playerId} se movió a (${message.x}, ${message.y})`);
+						// Emitir un evento global
+						this.game.events.emit('positionUpdate', message);
+					break;	
 
 		            default:
 		                console.error('Tipo de mensaje desconocido:', message.type);

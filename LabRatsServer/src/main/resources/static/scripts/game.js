@@ -6,6 +6,7 @@ class GameScene extends Phaser.Scene {
     }
 	
 	init(data) {
+		this.players = {};
 	        // Asegúrate de que el socket esté disponible
 	        if (data && data.socket instanceof WebSocket) {
 	            this.socket = data.socket;
@@ -256,7 +257,7 @@ class GameScene extends Phaser.Scene {
         this.btnOpt.on('pointerover', () => {this.btnOpt.setScale(0.35)});
         this.btnOpt.on('pointerout', () => {this.btnOpt.setScale(0.3)});
        
-		
+		this.game.events.on('positionUpdate', this.handlePositionUpdate, this);
     }
 
     update(time, delta) {
@@ -368,6 +369,34 @@ class GameScene extends Phaser.Scene {
 	        } else {
 	            console.error('El WebSocket no está conectado');
 	        }
+	}
+	
+	handlePositionUpdate(message) {
+	    console.log(`Actualizando posición para ${message.playerId} a (${message.x}, ${message.y})`);
+
+	    if (message.playerId === this.userId) {
+	        // Actualizar la posición del jugador local (si aplica)
+	        this.rat.setPosition(message.x, message.y);
+	    } else {
+	        // Buscar o crear al otro jugador
+	        let otherPlayer = this.getPlayerById(message.playerId);
+	        if (!otherPlayer) {
+	            otherPlayer = this.addOtherPlayer(message.playerId, message.x, message.y);
+	        } else {
+	            otherPlayer.setPosition(message.x, message.y);
+	        }
+	    }
+	}
+
+	
+	getPlayerById(playerId) {
+	    return this.players[playerId] || null;
+	}
+
+	addOtherPlayer(playerId, x, y) {
+	    const newPlayer = this.add.sprite(x, y, 'playerSprite'); // Cambia 'playerSprite' por tu recurso gráfico
+	    this.players[playerId] = newPlayer;
+	    return newPlayer;
 	}
     //MANEJO DE LA RATA
     
