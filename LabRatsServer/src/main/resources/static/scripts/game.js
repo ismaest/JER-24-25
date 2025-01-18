@@ -1,11 +1,30 @@
 class GameScene extends Phaser.Scene {
-    constructor() {
+    constructor(socket) {
         super({ key: "GameScene" });
-        this.socket = null;
+		this.socket = socket;
+		this.updatePlayerPosition = this.updatePlayerPosition.bind(this);
     }
+	
+	init(data) {
+		this.players = {};
+		this.targetPositions = {};
+	        // Asegúrate de que el socket esté disponible
+	        if (data && data.socket instanceof WebSocket) {
+	            this.socket = data.socket;
+
+	            // Verificar si el WebSocket está abierto antes de hacer algo
+	            if (this.socket.readyState !== WebSocket.OPEN) {
+	                console.error("El WebSocket no está conectado.");
+	                return;
+	            }
+	        } else {
+	            console.error("Socket no válido en GameScene");
+	            return;
+	        }
+	    }
 
     preload() {
-
+		
         //color del fondo
         this.cameras.main.setBackgroundColor(0xe6e1be); //amarillo estandar de nuestro juego
         
@@ -105,22 +124,23 @@ class GameScene extends Phaser.Scene {
         this.load.image('metalpipe', 'metalpipe.png');
         this.load.image('exit', 'exit.png');
     }
+  
+    create() {  
+		// Escuchar el WebSocket para recibir mensajes
+		        this.socket.addEventListener('message', (event) => {
+		            const data = JSON.parse(event.data);
+		            console.log("Mensaje recibido:", data);
 
-    create() {
-
-		const host = window.location.hostname;
-        this.socket = new WebSocket(`ws://${host}:8080/echo`);
-
-        this.socket.onopen = () => {
-            console.log('Connected to WebSocket server');
-            this.socket.send(JSON.stringify({ type: 'test', content: '¿Servidor, estás ahí?' }));
-            this.socket.send(JSON.stringify({ type: 'join', playerId: sessionStorage.getItem('userName') }));
-        };
-
-        this.socket.onmessage = (event) => {
-            console.log('Mensaje recibido del servidor:', event.data);
-        };
-        
+		            // Aquí podrías manejar los mensajes recibidos
+		            if (data.type === "POSITION_UPDATE") {
+		                // Actualizar la posición de otro jugador
+		                if (data.playerId !== 'player123') {
+		                    // Actualiza la posición del otro jugador
+		                    this.otherRat.setPosition(data.x, data.y);
+		                }
+		            }
+		        });
+      
         //Añadir escenario
         this.add.image(400, 300, 'scenery');
         
@@ -241,11 +261,23 @@ class GameScene extends Phaser.Scene {
         });
         this.btnOpt.on('pointerover', () => {this.btnOpt.setScale(0.35)});
         this.btnOpt.on('pointerout', () => {this.btnOpt.setScale(0.3)});
-        
+       
+		this.game.events.on('positionUpdate', this.handlePositionUpdate, this);
     }
 
     update(time, delta) {
 
+		Object.keys(this.targetPositions).forEach(playerId => {
+		        const otherPlayer = this.getPlayerById(playerId);
+		        const target = this.targetPositions[playerId];
+
+		        if (otherPlayer && target) {
+		            const lerpSpeed = 0.1; // Ajusta este valor para controlar la suavidad
+		            otherPlayer.x = Phaser.Math.Linear(otherPlayer.x, target.x, lerpSpeed);
+		            otherPlayer.y = Phaser.Math.Linear(otherPlayer.y, target.y, lerpSpeed);
+		        }
+		    });
+		
         //MOVIMIENTO DE LA RATA
         
         this.handleRatMovement(this.ratSpeed);
@@ -340,7 +372,49 @@ class GameScene extends Phaser.Scene {
         this.scene.start('WinScene');
     }
 
+	updatePlayerPosition(playerId, x, y) {
+	        console.log(this.socket); // Asegúrate de que aquí esté definido
+	        if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+	            this.socket.send(JSON.stringify({
+	                type: "POSITION_UPDATE",
+	                playerId: playerId,
+	                x: x,
+	                y: y,
+	                timestamp: new Date().toISOString()
+	            }));
+	        } else {
+	            console.error('El WebSocket no está conectado');
+	        }
+	}
+	
+	handlePositionUpdate(message) {
+	    console.log(`Actualizando posición para ${message.playerId} a (${message.x}, ${message.y})`);
 
+	    if (message.playerId === this.userId) {
+	        // Actualizar la posición del jugador local (si aplica)
+	        //this.rat.setPosition(message.x, message.y);
+			this.targetPositions[message.playerId] = { x: message.x, y: message.y };
+	    } else {
+	        // Buscar o crear al otro jugador
+	        let otherPlayer = this.getPlayerById(message.playerId);
+	        if (!otherPlayer) {
+	            otherPlayer = this.addOtherPlayer(message.playerId, message.x, message.y);
+	        } else {
+	            otherPlayer.setPosition(message.x, message.y);
+	        }
+	    }
+	}
+
+	
+	getPlayerById(playerId) {
+	    return this.players[playerId] || null;
+	}
+
+	addOtherPlayer(playerId, x, y) {
+	    const newPlayer = this.add.sprite(x, y, 'playerSprite'); // Cambia 'playerSprite' por tu recurso gráfico
+	    this.players[playerId] = newPlayer;
+	    return newPlayer;
+	}
     //MANEJO DE LA RATA
     
     //Maneja el movimiento de la rata según la velocidad.
@@ -380,10 +454,9 @@ class GameScene extends Phaser.Scene {
             const y = this.rat.y;          // Coordenada Y de la rata
             const timestamp = new Date().toISOString();  // Obtener el timestamp
 
-            updatePlayerPosition(playerId, x, y);  // Pasar los valores correctamente
+            this.updatePlayerPosition(playerId, x, y);  // Pasar los valores correctamente
         }
     }
-
 
     //Manejo de perder vidas y de morir
     LifeDown(){
@@ -797,34 +870,6 @@ class GameScene extends Phaser.Scene {
     }
 }
 
-//FUNCIONES
-//function sendRatExitEvent(playerId) {
-//    fetch('/api/game/rat-exit', {
-//        method: 'POST',
-//        headers: {
-//            'Content-Type': 'application/json' // Indicamos que el cuerpo es JSON
-//        },
-//        body: JSON.stringify({
-//            playerId: playerId,                // Identificador único del jugador
-//            timestamp: new Date().toISOString() // Fecha y hora actual en formato ISO
-//        }),
-//    })
-//        .then(response => {
-//            if (!response.ok) {
-//                throw new Error(`Error al enviar evento RAT_EXIT: ${response.statusText}`);
-//            }
-//            return response.json(); // Convertimos la respuesta a JSON
-//        })
-//        .then(data => {
-//            console.log('Evento RAT_EXIT enviado al servidor:', data);
-//            // Aquí cambiaríamos la escena a WinScene, como en tu función original
-//        })
-//        .catch(error => {
-//            alert('Error de conexión. Intenta más tarde.');
-//            console.error('Error al enviar el evento RAT_EXIT:', error);
-//        });
-//}
-
 async function sendHandMovementEvent(playerId, movementDirection) {
     try {
         const dataToSend = {
@@ -851,72 +896,21 @@ async function sendHandMovementEvent(playerId, movementDirection) {
     }
 }
 
-
-
-//function sendLifeChangeEvent(playerId, changeType, newLives) {
-//    fetch('/api/game/life-change', {
-//        method: 'POST',
-//        headers: { 'Content-Type': 'application/json' },
-//        body: JSON.stringify({
-//            playerId: playerId,
-//            changeType: changeType, // "add" o "subtract"
-//            lives: newLives,       // Número de vidas actual
-//            timestamp: new Date().toISOString()
-//        }),
-//    })
-//        .then(response => {
-//            if (!response.ok) {
-//                throw new Error(`Error al enviar cambio de vidas: ${response.statusText}`);
-//            }
-//            console.log(`Cambio de vidas enviado: ${changeType}, Vidas: ${newLives}`);
-//        })
-//        .catch(error => {
-//            console.error('Error al enviar el cambio de vidas:', error);
-//        });
-//}
-
-//function fetchPlayerStats(playerId) {
-//    fetch(`/api/game/player-stats/${playerId}`, {
-//        method: 'GET',
-//        headers: { 'Content-Type': 'application/json' },
-//    })
-//        .then(response => {
-//            if (!response.ok) {
-//                throw new Error(`Error al obtener estadísticas: ${response.statusText}`);
-//            }
-//            return response.json();
-//        })
-//        .then(data => {
-//            console.log('Estadísticas del jugador:', data);
-//            // Usa los datos en el juego (por ejemplo, actualiza HUD o lógica de juego).
-//        })
-//        .catch(error => {
-//            console.error('Error al obtener estadísticas del jugador:', error);
-//        });
-//}
-
 function updatePlayerPosition(playerId, x, y) {
-    fetch('/api/game/player-position', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+    // Verificar que el WebSocket esté abierto antes de enviar la posición
+    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+        // Enviar la posición usando this.socket
+        this.socket.send(JSON.stringify({
+            type: "POSITION_UPDATE",
             playerId: playerId,
             x: x,
             y: y,
-            timestamp: new Date().toISOString(),
-        }),
-    })
-        .then(response => {
-            if (!response.ok) {
-                return response.text().then(errorMessage => {
-                    throw new Error(`Error al actualizar posición: ${errorMessage}`);
-                });
-            }
-            console.log('Posición del jugador actualizada:', { playerId, x, y });
-        })
-        .catch(error => {
-            console.error('Error al actualizar posición del jugador:', error);
-        });
+            timestamp: new Date().toISOString()
+        }));
+        console.log('Posición enviada:', { playerId, x, y });
+    } else {
+        console.error('El WebSocket no está conectado');
+    }
 }
 
 
