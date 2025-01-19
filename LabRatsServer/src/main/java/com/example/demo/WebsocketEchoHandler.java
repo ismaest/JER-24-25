@@ -16,6 +16,9 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
     private static final ConcurrentMap<String, WebSocketSession> activeSessions = new ConcurrentHashMap<>();
     private final ObjectMapper objectMapper = new ObjectMapper();
     private static final ConcurrentMap<String, PlayerPosition> playerPositions = new ConcurrentHashMap<>();
+ // Mapa para almacenar las posiciones de las manos de cada jugador
+    private static final ConcurrentMap<String, HandPosition> handPositions = new ConcurrentHashMap<>();
+
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -56,7 +59,11 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
             	updatePlayerPosition(gameMessage);
             	broadcastMessage(gameMessage, session);
                 break;
-
+                
+            case "HAND_POSITION_UPDATE":
+                updateHandPosition(gameMessage); // Actualiza el estado del servidor
+                broadcastMessage(gameMessage, session); // Retransmite el mensaje a los demás
+                break;
             default:
                 System.out.println("Tipo de mensaje desconocido: " + gameMessage.getType());
         }
@@ -83,6 +90,7 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
         private String playerId;
         private double x;
         private double y;
+        private Integer handIndex;
         private String timestamp;
 
         // Getters y setters
@@ -100,6 +108,14 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
 
         public String getTimestamp() { return timestamp; }
         public void setTimestamp(String timestamp) { this.timestamp = timestamp; }
+        
+        public Integer getHandIndex() {
+            return handIndex;
+        }
+
+        public void setHandIndex(Integer handIndex) {
+            this.handIndex = handIndex;
+        }
     }
     private void updatePlayerPosition(GameMessage message) {
         PlayerPosition position = new PlayerPosition();
@@ -107,7 +123,19 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
         position.setX(message.getX());
         position.setY(message.getY());
         position.setTimestamp(message.getTimestamp());
+        
 
         playerPositions.put(message.getPlayerId(), position);
+    }
+    private void updateHandPosition(GameMessage message) {
+        HandPosition handPosition = new HandPosition();
+        handPosition.setPlayerId(message.getPlayerId());
+        handPosition.setX(message.getX());
+        handPosition.setY(message.getY());
+        handPosition.setHandIndex(message.getHandIndex()); // Nuevo campo para el índice de la mano
+        handPosition.setTimestamp(message.getTimestamp());
+
+        // Guardar la posición de la mano
+        handPositions.put(message.getPlayerId(), handPosition);
     }
 }

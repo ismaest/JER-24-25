@@ -77,7 +77,13 @@ class MenuScene extends Phaser.Scene {
 						// Emitir un evento global
 						this.game.events.emit('positionUpdate', message);
 					break;	
-
+					
+					case 'HAND_POSITION_UPDATE':
+					    console.log(`Jugador ${message.playerId} movió la mano al índice ${message.handIndex}`);
+					    // Emitir un evento global para que el juego lo maneje
+					    this.game.events.emit('handPositionUpdate', message);
+					    break;
+								
 		            default:
 		                console.error('Tipo de mensaje desconocido:', message.type);
 		        }
