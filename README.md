@@ -1,9 +1,9 @@
 # GDD - LABRATS
 
-VIDEO EXPLICATIVO CÓMO USAR EL JUEGO -> https://www.youtube.com/watch?v=FAvfSkwJzWI
-
 ![PORTADA](https://github.com/user-attachments/assets/6f8a6e2c-2bb6-4277-863f-e4bb4e89a232)
 > Portada del juego
+
+VIDEO EXPLICATIVO CÓMO USAR EL JUEGO -> https://www.youtube.com/watch?v=FAvfSkwJzWI
 
 LABRATS es un juego arcade 1vs1 en el que ambos jugadores tomarán el rol de una rata o un científico. La rata deberá sobrevivir a los intentos del científico por acabar con ella.
 
