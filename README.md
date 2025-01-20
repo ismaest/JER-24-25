@@ -5,8 +5,7 @@
 
 PINCHA EN LA IMAGEN PARA CARGAR EL VIDEO EXPLICATIVO CÓMO USAR EL JUEGO
 
-[![ALT TEXT](https://github.com/user-attachments/assets/508febf5-bcb2-456d-b67f-cf9b7d565adc)](https://www.youtube.com/watch?v=FAvfSkwJzWI)
-
+[![ALT TEXT](https://github.com/user-attachments/assets/3bc07232-cfbd-435f-bc43-e1c85379cc70)](https://www.youtube.com/watch?v=FAvfSkwJzWI)
 
 LABRATS es un juego arcade 1vs1 en el que ambos jugadores tomarán el rol de una rata o un científico. La rata deberá sobrevivir a los intentos del científico por acabar con ella.
 
@@ -460,6 +459,7 @@ Ha dibujado todo el arte del juego. Se ha encargado de la implementación de dic
 Se ha encargado de preparar nuevos assets, así como crear y manejar la pantalla de inicio de sesión y las peticiones que hace el cliente al servidor en dicha pantalla. También ha creado el diagrama UML.
 
 	5.1.4. Cuarta fase de desarrollo: Javier
+ha creado nuevos assets para la entrega y ha creado la clase "matchmaking".
 
 > ##  **5.2 Iván De Castilla Guitián**
 
@@ -475,6 +475,7 @@ Se ha encargado de la programación de interfaces, gestión de escenas, implemen
 Se ha encargado de programar la parte del servidor, manejando los controladores que reciben información de la partida, así como mostrar los usuarios conectados simultaneamente, así como la persistencia de datos. Además también ha modificado algunos elementos de la fase anterior.
 
 	5.1.4. Cuarta fase de desarrollo: Iván
+Se ha encargado de la implementación de los websockets y del traspaso de información entre clientes y servidor.
 
 
 > ## **5.3 Ismael Esteban Liberal**
@@ -491,7 +492,7 @@ Se ha encargado de programar las mecánicas del juego, movimiento de la mano y o
 Se ha encargado de implementar mejoras y arreglos con respecto a la práctica anterior, y de ayudar en la parte del cliente. Además de redactar el readme y preparar la presentación.
 
 	5.1.4. Cuarta fase de desarrollo: Ismael
-
+Ha implementado las insignias y ha creado la pantalla de selección de rol.
 
 
 > ## **5.4 Xabier López Aguilera**
@@ -508,8 +509,8 @@ Se ha ocupado del análisis DAFO, los estados y parte de las interfaces. Dentro 
 Se ha encargado de programar la parte del servidor, creando y manejando las clases UserService y User controller. Ha programado la lógica de calcular cuántos jugadores hay de forma simultánea, así como ayudar también en la persistencia de datos.
 
 	5.1.4. Cuarta fase de desarrollo: Xabier
+Se ha encargado de actualizar el README.
 
- 
 
 > ## 6. Funciones de red
 
