@@ -18,6 +18,7 @@
         <script src="scripts/roleInfo.js"></script>
         <script src="scripts/gameOver.js"></script>
         <script src="scripts/winScene.js"></script>
+        <script src="scripts/matchmaking.js"></script>
         <script src="scripts/loadingScreen.js"></script>
         <script src="scripts/credits.js"></script>
         <script src="scripts/testScript.js"></script>
@@ -46,7 +47,7 @@
                     }
                     
                 },
-                scene: [LoadingScene, UserScene, MenuScene, GameScene, RoleInfo, OptionsMenu, GameOverScene, WinScene, Credits]
+                scene: [LoadingScene, UserScene, MatchmakingScene, MenuScene, GameScene, RoleInfo, OptionsMenu, GameOverScene, WinScene, Credits]
             };
             const game = new Phaser.Game(config);
             
