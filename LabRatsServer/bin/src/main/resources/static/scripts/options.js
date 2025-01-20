@@ -9,8 +9,11 @@ class OptionsMenu extends Phaser.Scene {
         this.load.setPath('assets/');
         this.load.image('background', 'MenuBackground.png');
         this.load.image('backBtn', 'btnSalir.png'); //cambiar el boton (.png)
+        this.load.image ('chillmode', 'modochill.png');
+        this.load.image ('chillbtn', 'chillbtn.png');
         this.load.audio('mainMenuMusic', 'mainMenuMusic.ogg');
         this.load.audio('click', 'click.wav');
+        this.load.audio('chill', 'modochill.mp3');
         
     }
 
@@ -21,7 +24,7 @@ class OptionsMenu extends Phaser.Scene {
         
         this.add.image(400, 300, 'background');
         
-        this.backBtn = this.add.image(400, 500, 'backBtn');
+        this.backBtn = this.add.image(380, 500, 'backBtn');
         this.backBtn.setScale(0.5);
         this.backBtn.setInteractive();
         this.backBtn.on('pointerdown', () => {
@@ -33,6 +36,32 @@ class OptionsMenu extends Phaser.Scene {
         });
         this.backBtn.on('pointerout', () => {
             this.backBtn.setScale(0.5);
+        });
+        let modochill=false;
+        this.chillBtn = this.add.image(380, 240, 'chillbtn');
+        this.chillBtn.setScale(0.5);
+        this.chillBtn.setInteractive();
+        this.chillBtn.on('pointerdown', () => {
+            if (!modochill) {
+            this.game.click.play();
+            this.chillmode = this.add.image(400, 430, 'chillmode').setScale(0.5);
+            this.game.chill = this.sound.add('chill');
+            this.game.chill.play();
+            this.game.mainMenuMusic.setVolume(0);
+            modochill = true;
+        } else {
+                this.game.click.play();
+                this.chillmode.setScale(0);
+                this.game.chill.setVolume(0);
+                this.game.mainMenuMusic.setVolume(0.5);
+                modochill = false; 
+            }
+        });
+        this.chillBtn.on('pointerover', () => {
+            this.chillBtn.setScale(0.55);
+        });
+        this.chillBtn.on('pointerout', () => {
+            this.chillBtn.setScale(0.5);
         });
         
         //VOLUMEN (Y máximo 550)

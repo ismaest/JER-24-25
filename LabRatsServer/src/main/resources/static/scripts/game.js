@@ -280,6 +280,7 @@ class GameScene extends Phaser.Scene {
        
 		this.game.events.on('positionUpdate', this.handlePositionUpdate, this);
 		this.game.events.on('handPositionUpdate', (message) => {
+            console.log("Entra al evento");
 		    const playerId = message.playerId;
 		    const handIndex = message.handIndex;
 

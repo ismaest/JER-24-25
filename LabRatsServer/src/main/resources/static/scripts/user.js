@@ -7,6 +7,7 @@ class UserScene extends Phaser.Scene {
     preload() {
         this.load.setPath('assets/');
         this.load.image('background', 'MenuBackground.png');
+        this.load.image('backBtn', 'btnVolver.png');
         this.load.audio('mainMenuMusic', 'mainMenuMusic.ogg');
         this.load.audio('click', 'click.wav');
     }
@@ -15,10 +16,17 @@ class UserScene extends Phaser.Scene {
         
         this.add.image(400, 300, 'background');
 
+        this.SignUp();
         
         this.game.click = this.sound.add('click');
+        this.backBtn = this.add.image(680, 550, 'backBtn').setScale(0.5).setInteractive();
+        this.backBtn.on('pointerdown', () => {
+            this.game.click.play();
+            this.scene.stop('UserScene');
+            this.scene.start('ChooseNetType');
+        });
         
-        this.SignUp();
+        
     }
 
     SignUp() {
