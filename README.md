@@ -509,7 +509,7 @@ Se ha ocupado del análisis DAFO, los estados y parte de las interfaces. Dentro 
 Se ha encargado de programar la parte del servidor, creando y manejando las clases UserService y User controller. Ha programado la lógica de calcular cuántos jugadores hay de forma simultánea, así como ayudar también en la persistencia de datos.
 
 	5.1.4. Cuarta fase de desarrollo: Xabier
-Se ha encargado de actualizar el README.
+Se ha encargado de actualizar el README y preparar las presentaciones.
 
 
 > ## 6. Funciones de red
