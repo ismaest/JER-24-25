@@ -1,5 +1,7 @@
 # GDD - LABRATS
 
+VIDEO EXPLICATIVO CÓMO USAR EL JUEGO -> https://www.youtube.com/watch?v=FAvfSkwJzWI
+
 ![PORTADA](https://github.com/user-attachments/assets/6f8a6e2c-2bb6-4277-863f-e4bb4e89a232)
 > Portada del juego
 
