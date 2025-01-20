@@ -96,10 +96,12 @@ Al obtenerla, la escribiremos como enlace en nuestro navegador, seguida de :8080
 
 6. Funciones de red
 
-7. Créditos
+7. Protocolo de comunicación Websocket
 
-8. Anexos
-  8.1. Futuras Características
+8. Créditos
+
+9. Anexos
+  9.1. Futuras Características
 
 ```
 
@@ -353,7 +355,7 @@ Aquí se recogen los diferentes objetos presentes en el juego.
   - Victor Frank: Acaba con todas las ratas.
 
 > ## **3.5 Diagrama UML**
-![UML_JER drawio](https://github.com/user-attachments/assets/98b287cd-f24e-4665-ada3-130b980c9e8c)
+![UML_JER drawio](https://github.com/user-attachments/assets/69ce28c1-466b-4c1c-a24f-2f0e02aae105)
 > Diagrama de clases
 
 
@@ -386,7 +388,6 @@ Estilo comiquero y de esbozo como si estuviera dibujado en un cuaderno, basándo
  Se ha decidido que el juego cuente con una perspectiva cenital que muestre el mapa por completo para proporcionar a ambos jugadores toda la información presente en el juego en todo momento.
 
 	4.2.2 Paleta de colores
-
 
 > Paleta de colores principal
 
@@ -453,6 +454,8 @@ Ha dibujado todo el arte del juego. Se ha encargado de la implementación de dic
 	5.1.3. Tercera fase de desarrollo: Javier
 Se ha encargado de preparar nuevos assets, así como crear y manejar la pantalla de inicio de sesión y las peticiones que hace el cliente al servidor en dicha pantalla. También ha creado el diagrama UML.
 
+	5.1.4. Cuarta fase de desarrollo: Javier
+
 > ##  **5.2 Iván De Castilla Guitián**
 
 Guionista, programación.
@@ -465,6 +468,8 @@ Se ha encargado de la programación de interfaces, gestión de escenas, implemen
 
 	5.2.3. Tercera fase de desarrollo: Iván
 Se ha encargado de programar la parte del servidor, manejando los controladores que reciben información de la partida, así como mostrar los usuarios conectados simultaneamente, así como la persistencia de datos. Además también ha modificado algunos elementos de la fase anterior.
+
+	5.1.4. Cuarta fase de desarrollo: Iván
 
 
 > ## **5.3 Ismael Esteban Liberal**
@@ -479,6 +484,8 @@ Se ha encargado de programar las mecánicas del juego, movimiento de la mano y o
 
 	5.3.3. Tercera fase de desarrollo: Ismael
 Se ha encargado de implementar mejoras y arreglos con respecto a la práctica anterior, y de ayudar en la parte del cliente. Además de redactar el readme y preparar la presentación.
+
+	5.1.4. Cuarta fase de desarrollo: Ismael
 
 
 
@@ -495,21 +502,27 @@ Se ha ocupado del análisis DAFO, los estados y parte de las interfaces. Dentro 
  	5.4.3. Tercera fase de desarrollo: Xabier
 Se ha encargado de programar la parte del servidor, creando y manejando las clases UserService y User controller. Ha programado la lógica de calcular cuántos jugadores hay de forma simultánea, así como ayudar también en la persistencia de datos.
 
+	5.1.4. Cuarta fase de desarrollo: Xabier
+
+ 
+
 > ## 6. Funciones de red
 
 - Crear un usuario (en caso de crear un usuario ya existente, el cliente da un aviso).
 - Información sobre el estado de la partida (posición del ratón, posición de la mano...).
 - Mostrar cuántos jugadores están conectados al servidor en ese momento.
 - Información persistente sobre los usuarios creados en sesiones anteriores. Se almacenan en un .txt para ser recuperados más adelante.
+
+> ## 7. Protocolo de comunicación Websocket
+
+- La información sobre la posición de la rata se pasa a través de la variable playerPosition, que recibe los datos enviados por el servidor al cliente con los ejes X e Y de la rata
+
+- La información sobre la posición de la mano se pasa a través de la variable handCoord, que recibe los datos enviados por el servidor al cliente con la posición de la mano (izquierda, centro o derecha).
  
-> ## 7. Créditos
+> ## 8. Créditos
 
 Aquí se listan los créditos del juego, como personas que han apoyado el desarrollo o assets de uso externos que deban de ser apropiadamente acreditados.
 
-> ## 8. Anexos
+> ## 9. Anexos
 
 En este apartado se mostrarán los anexos.
-
-> ## **8.1. Futuras Características**
-
-Para futuras fases de desarrollo se plantea diseñar más niveles para el juego, cumpliendo con la idea inicial. También se añadirá la función de multijugador en línea.
