@@ -56,7 +56,7 @@ class MenuScene extends Phaser.Scene {
 		    this.socket.addEventListener('open', () => {
 		        console.log('Conectado al servidor WebSocket');
 		        // Ahora que el WebSocket está abierto, crear el botón
-		        this.createStartButton();
+		        //this.createStartButton();
 		    });
 
 		    this.socket.addEventListener('message', (event) => {
@@ -193,7 +193,7 @@ class MenuScene extends Phaser.Scene {
 
     // Crear botón para abrir el chat
     createChatButton() {
-        const chatButton = this.add.image(740, 575, 'acceptBtn').setScale(0.5).setInteractive();
+        const chatButton = this.add.image(740, 575, 'chat').setScale(0.5).setInteractive();
         chatButton.on('pointerdown', () => {
             this.toggleChat();
         });
@@ -240,7 +240,7 @@ class MenuScene extends Phaser.Scene {
         });
 
         // Botón para enviar mensajes (fuera del cuadro de texto)
-        this.sendButton = this.add.image(460, 265, 'acceptBtn') // Botón fuera del cuadro
+        this.sendButton = this.add.image(460, 265, 'enviar') // Botón fuera del cuadro
             .setScale(0.5)
             .setInteractive()
             .on('pointerdown', () => this.sendMessage());
@@ -341,6 +341,8 @@ class MenuScene extends Phaser.Scene {
         this.load.image('metalpipe', 'metalpipe.png');
         this.load.image('interrogacion', 'interrogacion.png');
         this.load.image ('secreto', 'secreto.png');
+		this.load.image('chat', 'chat.png');
+		this.load.image('enviar', 'enviar.png');
         this.load.audio('mainMenuMusic', 'mainMenuMusic.ogg');
         this.load.audio('deathMusic', 'deathMusic.ogg');
         this.load.audio('click', 'click.wav');
