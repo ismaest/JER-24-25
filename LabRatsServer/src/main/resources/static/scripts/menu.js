@@ -43,7 +43,7 @@ class MenuScene extends Phaser.Scene {
         this.createChatContainer();
         
         // Iniciar actualización periódica de usuarios conectados
-        this.sendHeartbeat(); // Enviar heartbeat periódicamente
+        //this.sendHeartbeat(); // Enviar heartbeat periódicamente
         this.updateConnectedUsers(); // Actualizar usuarios conectados periódicamente
         
         // Iniciar polling para obtener mensajes cada 1 segundo
@@ -365,8 +365,8 @@ class MenuScene extends Phaser.Scene {
         this.startBtn.on('pointerdown', () => {
             this.game.click.play();
             this.scene.stop("MenuScene");
-            this.scene.start('GameScene', { socket: this.socket });
-            this.scene.launch("RoleInfo");
+            this.scene.start('MatchmakingScene', { socket: this.socket });
+            //this.scene.launch("RoleInfo");
         });
     }
 
