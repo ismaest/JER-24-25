@@ -156,28 +156,30 @@ class UserScene extends Phaser.Scene {
                             self.scene.start('MenuScene');
                         }
                     },
-                    error: function(xhr, status, error) {
-                        if (xhr.status === 409) {
-                            // Si el servidor responde con un código de conflicto (usuario ya existe)
-                            console.log("El usuario ya existe, prueba a iniciar sesión.");
+					error: (xhr, status, error) => {
+					    if (xhr.status === 409) {
+					        // Si el servidor responde con un código de conflicto (usuario ya existe)
+					        console.log("El usuario ya existe, prueba a iniciar sesión.");
 
-                            // Mostrar mensaje de error en la interfaz (por encima del cuadro de texto del nombre de usuario)
-                            const errorMessage = document.createElement('div');
-                            errorMessage.textContent = "El usuario que has intentado registrar ya existe, prueba a iniciar sesión con las mismas credenciales.";
-                            errorMessage.style.color = 'black';  // Cambiar color a negro
-                            errorMessage.style.fontSize = '12px';  // Ajustar el tamaño de fuente (opcional)
-                            errorMessage.style.marginBottom = '10px'; // Espaciado para que no esté pegado al cuadro del usuario
+					        // Mostrar mensaje de error en la interfaz usando Phaser
+					        const errorMessage = this.add.text(400, 238, 
+					            "El usuario que has intentado registrar ya existe, prueba a iniciar sesión con las mismas credenciales.", 
+					            {
+					                fontSize: '16px',
+					                fill: '#FF0000',  // Color rojo
+					                wordWrap: { width: 800, useAdvancedWrap: true },  // Ajustar el texto al ancho deseado
+					                align: 'center'
+					            });
 
-                            // Colocar el mensaje de error justo encima del cuadro de texto del nombre de usuario
-                            const userInput = document.getElementById('userID');
-                            userInput.parentNode.insertBefore(errorMessage, userInput);  // Insertamos el mensaje antes del cuadro de texto del usuario
+					        // Centrar el mensaje de error en la pantalla (ajustar la posición según sea necesario)
+					        errorMessage.setOrigin(0.5, 0.5); // Centrado en la pantalla
 
-                            // Asegurarse de que no se cambie la escena
-                            // No hacemos nada más, permanecemos en la misma pantalla
-                        } else {
-                            console.error("Error al enviar los datos:", xhr.responseText);
-                        }
-                    }
+					        // Asegurarse de que no se cambie la escena
+					        // No hacemos nada más, permanecemos en la misma pantalla
+					    } else {
+					        console.error("Error al enviar los datos:", xhr.responseText);
+					    }
+					}
                 });
             };
             
