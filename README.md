@@ -370,8 +370,7 @@ Las ratas harán ruidos característicos con su movimiento, y, las trampas y los
 
 Se han utilizado sonidos externos con licencia "Creative Commons 0" para los siguientes eventos del juego: <br>
 	- Movimiento de la mano <br>
- 	- Muerte de la rata <br>![UML_JER drawio](https://github.com/user-attachments/assets/42769cf8-13c3-451a-a787-93502e19ab00)
-
+ 	- Muerte de la rata <br>
   	- Teletransporte entre alcantarillas <br>
         - Click en los botones <br>
 	- Comer queso <br>
