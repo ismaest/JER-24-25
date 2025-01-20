@@ -83,6 +83,12 @@ class MenuScene extends Phaser.Scene {
 					    // Emitir un evento global para que el juego lo maneje
 					    this.game.events.emit('handPositionUpdate', message);
 					    break;
+					case 'START_GAME':
+						console.log("Iniciando el juego...");
+						// Cambiar a la escena de GameScene cuando todos los jugadores reciban el mensaje
+						this.scene.stop("MatchmakingScene");
+						this.scene.start('GameScene', {socket:this.socket});
+						break;
 								
 		            default:
 		                console.error('Tipo de mensaje desconocido:', message.type);

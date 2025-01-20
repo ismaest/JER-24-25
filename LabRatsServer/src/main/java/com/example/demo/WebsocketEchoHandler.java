@@ -185,14 +185,14 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
         playerPositions.put(message.getPlayerId(), position);
     }
     private void updateHandPosition(GameMessage message) {
+        // Guardar o procesar la información de la mano (como la posición) en el servidor
+        // Puedes hacer esto de forma similar al manejo de la posición de la rata
         HandPosition handPosition = new HandPosition();
         handPosition.setPlayerId(message.getPlayerId());
-        handPosition.setX(message.getX());
-        handPosition.setY(message.getY());
-        handPosition.setHandIndex(message.getHandIndex()); // Nuevo campo para el índice de la mano
+        handPosition.setHandIndex(message.getHandIndex());
         handPosition.setTimestamp(message.getTimestamp());
 
-        // Guardar la posición de la mano
+        // Guardar la información en el servidor (si es necesario)
         handPositions.put(message.getPlayerId(), handPosition);
     }
 }

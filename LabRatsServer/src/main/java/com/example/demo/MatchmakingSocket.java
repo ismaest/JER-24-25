@@ -6,6 +6,7 @@ import java.util.Set;
 
 import jakarta.websocket.CloseReason;
 import jakarta.websocket.OnClose;
+import jakarta.websocket.OnMessage;
 import jakarta.websocket.OnOpen;
 import jakarta.websocket.Session;
 import jakarta.websocket.server.ServerEndpoint;
@@ -45,4 +46,27 @@ public class MatchmakingSocket {
             }
         }
     }
+    
+    @OnMessage
+    public void onMessage(Session session, String message) {
+        try {
+            // Comprobar si el mensaje recibido es de tipo "START_GAME"
+            if ("START_GAME".equals(message)) {
+                // Crear el mensaje de inicio de juego que se enviará a todos los jugadores
+                String startGameMessage = "START_GAME";
+
+                // Enviar el mensaje a todos los jugadores conectados
+                for (Session player : players) {
+                    try {
+                        player.getBasicRemote().sendText(startGameMessage);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
 }

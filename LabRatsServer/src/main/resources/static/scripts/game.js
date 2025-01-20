@@ -267,11 +267,7 @@ class GameScene extends Phaser.Scene {
 			            // Actualizar la posición de la mano de otro jugador
 			            const x = data.x;
 			            const y = data.y;
-
-			            // Si el otro jugador ya tiene la mano, actualizar la posición
-			            if (this.otherHand) {
-			                this.otherHand.setPosition(x, y);  // Mover la mano
-			            }
+						this.otherHand.setPosition(x, y)
 			        }
 			    } else if (data.type === "POSITION_UPDATE") {
 			        // Asegúrate de que el mensaje no sea del jugador local
@@ -283,7 +279,17 @@ class GameScene extends Phaser.Scene {
 			});
        
 		this.game.events.on('positionUpdate', this.handlePositionUpdate, this);
-		this.game.events.on('handPositionUpdate', this.handleHandPositionUpdate, this);
+		this.game.events.on('handPositionUpdate', (message) => {
+		    const playerId = message.playerId;
+		    const handIndex = message.handIndex;
+
+		    // Encontrar el jugador y actualizar la posición de la mano
+		    let player = this.getPlayerById(playerId);
+		    if (player) {
+		        // Actualiza la posición de la mano (por ejemplo, usando el índice)
+		        player.hand.x = this.handcoords[handIndex]; // Suponiendo que `handcoords` es un arreglo de posiciones
+		    }
+		});
     }
 
     update(time, delta) {
@@ -408,7 +414,7 @@ class GameScene extends Phaser.Scene {
 	        }
 	}
 	
-	updateHandPosition	(playerId, handIndex) {
+	updateHandPosition(playerId, handIndex) {
 	    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
 	        const message = {
 	            type: "HAND_POSITION_UPDATE",
@@ -419,23 +425,12 @@ class GameScene extends Phaser.Scene {
 
 	        try {
 	            this.socket.send(JSON.stringify(message));
-	            console.log("Mensaje enviado:", message);
+	            console.log("Mensaje de mano enviado:", message);
 	        } catch (error) {
-	            console.error("Error al enviar el mensaje:", error);
+	            console.error("Error al enviar el mensaje de mano:", error);
 	        }
 	    } else {
 	        console.error("El WebSocket no está conectado.");
-	    }
-	}
-	// Esta función actualiza la posición de la mano de otro jugador
-	updateOtherPlayerHandPosition(playerId, handIndex) {
-	    // Asegúrate de que el handIndex esté dentro de los límites del arreglo handcoords
-	    const handPosition = this.handcoords[handIndex];  // Usar el índice para obtener la posición de la mano
-	    console.log(`Actualizar mano para el jugador ${playerId} a la posición:`, handPosition);
-
-	    if (this.otherHand) {
-	        this.otherHand.setPosition(handPosition.x, handPosition.y);  // Actualiza la posición del sprite de la mano
-	        this.otherHand.setVisible(true);  // Asegúrate de que la mano sea visible
 	    }
 	}
 	
@@ -453,6 +448,7 @@ class GameScene extends Phaser.Scene {
 	        if (!otherPlayer) {
 	            // Crear el sprite solo una vez si no existe
 	            otherPlayer = this.addOtherPlayer(message.playerId, message.x, message.y);
+				
 	        }
 
 	        // Actualizar la posición del jugador
@@ -473,21 +469,19 @@ class GameScene extends Phaser.Scene {
 	    return otherPlayer;
 	}
 
-	handleHandPositionUpdate(data) {
-	    console.log(`Actualizando posición de la mano para ${data.playerId} a (${data.x}, ${data.y})`);
+	handleHandPositionUpdate(message) {
+	    console.log(`Actualizando la posición de la mano para ${message.playerId} al índice ${message.handIndex}`);
 
-	    if (data.playerId !== 'player123') {
-	        let otherHand = this.getHandByPlayerId(data.playerId);
-	        
-	        if (!otherHand) {
-	            otherHand = this.addOtherHand(data.playerId, data.x, data.y);
-	        }
+	    if (message.playerId === this.userId) {
+	        // Actualizar la posición de la mano del jugador local (si aplica)
+	        this.hand.x = this.handcoords[message.handIndex];
+	    } else {
+	        // Buscar o crear al otro jugador y actualizar su mano
+	        let otherPlayer = this.getPlayerById(message.playerId);
 
-	        // Si tienes un array de coordenadas, puedes usarlo aquí
-	        if (otherHand) {
-	            // Usar handcoords para mover la mano
-	            otherHand.x = this.handcoords[data.handIndex]; // Usar el índice para ubicar la mano
-	            otherHand.setPosition(otherHand.x, data.y);  // Actualizar la posición con las nuevas coordenadas
+	        if (otherPlayer) {
+	            // Actualizar la posición de la mano de otro jugador
+	            otherPlayer.hand.x = otherPlayer.handcoords[message.handIndex];
 	        }
 	    }
 	}

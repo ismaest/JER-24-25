@@ -143,12 +143,17 @@ class MatchmakingScene extends Phaser.Scene {
     }
 
 	createPlayButton() {
-	        const chatButton = this.add.image(385, 550, 'jugarBtn').setScale(0.5).setInteractive();
-	        chatButton.on('pointerdown', () => {
-			this.scene.stop("MatchmakingScene");
-			this.scene.start('GameScene', {socket:this.socket});
-	        });
-	    }
+	    const startBtn = this.add.image(385, 550, 'jugarBtn').setScale(0.5).setInteractive();
+	    startBtn.on('pointerdown', () => {
+	        // Enviar un mensaje de inicio de juego a todos los jugadores
+	        const message = JSON.stringify({ type: 'START_GAME' });
+	        this.socket.send(message);
+
+	        // Cambiar a la escena de juego para este jugador
+	        this.scene.stop("MatchmakingScene");
+	        this.scene.start('GameScene', { socket: this.socket });
+	    });
+	}
 	
     // Crear el contenedor del chat
     createChatContainer() {
