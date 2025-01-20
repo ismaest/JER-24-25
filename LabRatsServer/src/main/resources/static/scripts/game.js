@@ -603,7 +603,7 @@ class GameScene extends Phaser.Scene {
 
 	    // Si cambió la posición, envía un evento al servidor
 	    if (positionChanged) {
-	        const playerId = 'player123'; // ID del jugador actual
+	        const playerId = 'player124'; // ID del jugador actual
 	        const handIndex = this.index; // Índice actual de la mano
 
 	        this.updateHandPosition(playerId, handIndex); // Llamar a la función para enviar la posición
