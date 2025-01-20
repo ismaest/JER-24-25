@@ -126,20 +126,10 @@ class GameScene extends Phaser.Scene {
     }
   
     create() {  
-		// Escuchar el WebSocket para recibir mensajes
-		        this.socket.addEventListener('message', (event) => {
-		            const data = JSON.parse(event.data);
-		            console.log("Mensaje recibido:", data);
-
-		            // Aquí podrías manejar los mensajes recibidos
-		            if (data.type === "POSITION_UPDATE") {
-		                // Actualizar la posición de otro jugador
-		                if (data.playerId !== 'player123') {
-		                    // Actualiza la posición del otro jugador
-		                    this.otherRat.setPosition(data.x, data.y);
-		                }
-		            }
-		        });
+		
+		// Crear la rata del otro jugador
+				this.otherRat = this.physics.add.sprite(100, 140, 'rat');
+				this.otherRat.setVisible(false);  // Asegúrate de que no sea visible hasta que reciba la información
       
         //Añadir escenario
         this.add.image(400, 300, 'scenery');
@@ -261,8 +251,45 @@ class GameScene extends Phaser.Scene {
         });
         this.btnOpt.on('pointerover', () => {this.btnOpt.setScale(0.35)});
         this.btnOpt.on('pointerout', () => {this.btnOpt.setScale(0.3)});
+		
+		// Crear la mano del otro jugador
+					this.otherHand = this.physics.add.sprite(200, 140, 'hand');
+					this.otherHand.setVisible(false);  // Asegúrate de que no sea visible hasta que reciba la información
+			// Escuchar el WebSocket para recibir mensajes
+			
+			this.socket.addEventListener('message', (event) => {
+			    const data = JSON.parse(event.data);
+			    console.log("Mensaje recibido:", data);
+
+			    if (data.type === "HAND_POSITION_UPDATE") {
+			        // Asegúrate de que el mensaje no sea del jugador local
+			        if (data.playerId !== this.playerId) {
+			            // Actualizar la posición de la mano de otro jugador
+			            const x = data.x;
+			            const y = data.y;
+						this.otherHand.setPosition(x, y)
+			        }
+			    } else if (data.type === "POSITION_UPDATE") {
+			        // Asegúrate de que el mensaje no sea del jugador local
+			        if (data.playerId !== this.playerId) {
+			            // Actualizar la posición de la rata de otro jugador
+			            this.otherRat.setPosition(data.x, data.y);  // Mover la rata
+			        }
+			    }
+			});
        
 		this.game.events.on('positionUpdate', this.handlePositionUpdate, this);
+		this.game.events.on('handPositionUpdate', (message) => {
+		    const playerId = message.playerId;
+		    const handIndex = message.handIndex;
+
+		    // Encontrar el jugador y actualizar la posición de la mano
+		    let player = this.getPlayerById(playerId);
+		    if (player) {
+		        // Actualiza la posición de la mano (por ejemplo, usando el índice)
+		        player.hand.x = this.handcoords[handIndex]; // Suponiendo que `handcoords` es un arreglo de posiciones
+		    }
+		});
     }
 
     update(time, delta) {
@@ -387,24 +414,81 @@ class GameScene extends Phaser.Scene {
 	        }
 	}
 	
+	updateHandPosition(playerId, handIndex) {
+	    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+	        const message = {
+	            type: "HAND_POSITION_UPDATE",
+	            playerId: playerId,
+	            handIndex: handIndex,
+	            timestamp: new Date().toISOString()
+	        };
+
+	        try {
+	            this.socket.send(JSON.stringify(message));
+	            console.log("Mensaje de mano enviado:", message);
+	        } catch (error) {
+	            console.error("Error al enviar el mensaje de mano:", error);
+	        }
+	    } else {
+	        console.error("El WebSocket no está conectado.");
+	    }
+	}
+	
 	handlePositionUpdate(message) {
 	    console.log(`Actualizando posición para ${message.playerId} a (${message.x}, ${message.y})`);
 
 	    if (message.playerId === this.userId) {
 	        // Actualizar la posición del jugador local (si aplica)
-	        //this.rat.setPosition(message.x, message.y);
-			this.targetPositions[message.playerId] = { x: message.x, y: message.y };
+	        this.targetPositions[message.playerId] = { x: message.x, y: message.y };
 	    } else {
 	        // Buscar o crear al otro jugador
 	        let otherPlayer = this.getPlayerById(message.playerId);
+	        
+	        // Si el jugador no existe, lo creamos
 	        if (!otherPlayer) {
+	            // Crear el sprite solo una vez si no existe
 	            otherPlayer = this.addOtherPlayer(message.playerId, message.x, message.y);
-	        } else {
+				
+	        }
+
+	        // Actualizar la posición del jugador
+	        if (otherPlayer) {
 	            otherPlayer.setPosition(message.x, message.y);
 	        }
 	    }
 	}
+	
+	addOtherPlayer(playerId, x, y) {
+	    // Crear el sprite de la rata solo una vez
+	    let otherPlayer = this.physics.add.sprite(x, y, 'rat');
+	    otherPlayer.setScale(0.035); // Ajustar el tamaño si es necesario
+	    otherPlayer.playerId = playerId; // Añadir ID para rastrear este jugador
 
+	    // Guardar al jugador para futuras actualizaciones
+	    this.players[playerId] = otherPlayer;
+	    return otherPlayer;
+	}
+
+	handleHandPositionUpdate(message) {
+	    console.log(`Actualizando la posición de la mano para ${message.playerId} al índice ${message.handIndex}`);
+
+	    if (message.playerId === this.userId) {
+	        // Actualizar la posición de la mano del jugador local (si aplica)
+	        this.hand.x = this.handcoords[message.handIndex];
+	    } else {
+	        // Buscar o crear al otro jugador y actualizar su mano
+	        let otherPlayer = this.getPlayerById(message.playerId);
+
+	        if (otherPlayer) {
+	            // Actualizar la posición de la mano de otro jugador
+	            otherPlayer.hand.x = otherPlayer.handcoords[message.handIndex];
+	        }
+	    }
+	}
+	
+	getHandByPlayerId(playerId) {
+	    return this.hands[playerId]; // Devuelve la mano asociada al playerId si existe
+	}
 	
 	getPlayerById(playerId) {
 	    return this.players[playerId] || null;
@@ -487,45 +571,44 @@ class GameScene extends Phaser.Scene {
     //MANEJO DEL CIENTÍFICO
     
     //Manejo de la mano
-    handleHandMovement(time) {
-        if (this.index === undefined || this.index < 0) {
-            this.index = 0; // Valor inicial
-        }
+	handleHandMovement(time) {
+	    if (this.index === undefined || this.index < 0) {
+	        this.index = 0; // Valor inicial
+	    }
 
-        const previousIndex = this.index; // Guardar el índice previo
+	    const previousIndex = this.index; // Guardar el índice previo
+	    let positionChanged = false; // Flag para rastrear cambios de posición
 
-        // Moverse a la izquierda
-        if (this.cursors.left.isDown) {
-            if (this.index > 0 && time - this.lastMove > 150) {
-                this.index--;
-                this.hand.x = this.handcoords[this.index];
-                this.lastMove = time;
-                this.game.handMoving.play();
+	    // Moverse a la izquierda
+	    if (this.cursors.left.isDown) {
+	        if (this.index > 0 && time - this.lastMove > 150) {
+	            this.index--;
+	            this.hand.x = this.handcoords[this.index];
+	            this.lastMove = time;
+	            this.game.handMoving.play();
+	            positionChanged = true;
+	        }
+	    }
 
-                // Enviar evento de movimiento
-                sendHandMovementEvent('player123', -1); // -1 significa izquierda
-            }
-        }
+	    // Moverse a la derecha
+	    if (this.cursors.right.isDown) {
+	        if (this.index < this.handcoords.length - 1 && time - this.lastMove > 150) {
+	            this.index++;
+	            this.hand.x = this.handcoords[this.index];
+	            this.lastMove = time;
+	            this.game.handMoving.play();
+	            positionChanged = true;
+	        }
+	    }
 
-        // Moverse a la derecha
-        if (this.cursors.right.isDown) {
-            if (this.index < this.handcoords.length - 1 && time - this.lastMove > 150) {
-                this.index++;
-                this.hand.x = this.handcoords[this.index];
-                this.lastMove = time;
-                this.game.handMoving.play();
+	    // Si cambió la posición, envía un evento al servidor
+	    if (positionChanged) {
+	        const playerId = 'player123'; // ID del jugador actual
+	        const handIndex = this.index; // Índice actual de la mano
 
-                // Enviar evento de movimiento
-                sendHandMovementEvent('player123', 1); // 1 significa derecha
-            }
-        }
-
-        // Verificar si está en el centro (opcional)
-        if (this.index === Math.floor(this.handcoords.length / 2) && previousIndex !== this.index) {
-            // Enviar evento de posición central
-            sendHandMovementEvent('player123', 0); // 0 significa centro
-        }
-    }
+	        this.updateHandPosition(playerId, handIndex); // Llamar a la función para enviar la posición
+	    }
+	}
     
     
     //MANEJO DE COLISIONES

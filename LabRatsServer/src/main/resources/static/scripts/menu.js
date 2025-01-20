@@ -43,7 +43,7 @@ class MenuScene extends Phaser.Scene {
         this.createChatContainer();
         
         // Iniciar actualización periódica de usuarios conectados
-        this.sendHeartbeat(); // Enviar heartbeat periódicamente
+        //this.sendHeartbeat(); // Enviar heartbeat periódicamente
         this.updateConnectedUsers(); // Actualizar usuarios conectados periódicamente
         
         // Iniciar polling para obtener mensajes cada 1 segundo
@@ -56,7 +56,7 @@ class MenuScene extends Phaser.Scene {
 		    this.socket.addEventListener('open', () => {
 		        console.log('Conectado al servidor WebSocket');
 		        // Ahora que el WebSocket está abierto, crear el botón
-		        this.createStartButton();
+		        //this.createStartButton();
 		    });
 
 		    this.socket.addEventListener('message', (event) => {
@@ -77,7 +77,19 @@ class MenuScene extends Phaser.Scene {
 						// Emitir un evento global
 						this.game.events.emit('positionUpdate', message);
 					break;	
-
+					
+					case 'HAND_POSITION_UPDATE':
+					    console.log(`Jugador ${message.playerId} movió la mano al índice ${message.handIndex}`);
+					    // Emitir un evento global para que el juego lo maneje
+					    this.game.events.emit('handPositionUpdate', message);
+					    break;
+					case 'START_GAME':
+						console.log("Iniciando el juego...");
+						// Cambiar a la escena de GameScene cuando todos los jugadores reciban el mensaje
+						this.scene.stop("MatchmakingScene");
+						this.scene.start('GameScene', {socket:this.socket});
+						break;
+								
 		            default:
 		                console.error('Tipo de mensaje desconocido:', message.type);
 		        }
@@ -187,7 +199,7 @@ class MenuScene extends Phaser.Scene {
 
     // Crear botón para abrir el chat
     createChatButton() {
-        const chatButton = this.add.image(740, 575, 'acceptBtn').setScale(0.5).setInteractive();
+        const chatButton = this.add.image(740, 575, 'chat').setScale(0.5).setInteractive();
         chatButton.on('pointerdown', () => {
             this.toggleChat();
         });
@@ -234,7 +246,7 @@ class MenuScene extends Phaser.Scene {
         });
 
         // Botón para enviar mensajes (fuera del cuadro de texto)
-        this.sendButton = this.add.image(460, 265, 'acceptBtn') // Botón fuera del cuadro
+        this.sendButton = this.add.image(460, 265, 'enviar') // Botón fuera del cuadro
             .setScale(0.5)
             .setInteractive()
             .on('pointerdown', () => this.sendMessage());
@@ -335,6 +347,8 @@ class MenuScene extends Phaser.Scene {
         this.load.image('metalpipe', 'metalpipe.png');
         this.load.image('interrogacion', 'interrogacion.png');
         this.load.image ('secreto', 'secreto.png');
+		this.load.image('chat', 'chat.png');
+		this.load.image('enviar', 'enviar.png');
         this.load.audio('mainMenuMusic', 'mainMenuMusic.ogg');
         this.load.audio('deathMusic', 'deathMusic.ogg');
         this.load.audio('click', 'click.wav');
@@ -357,8 +371,8 @@ class MenuScene extends Phaser.Scene {
         this.startBtn.on('pointerdown', () => {
             this.game.click.play();
             this.scene.stop("MenuScene");
-            this.scene.start('GameScene', { socket: this.socket });
-            this.scene.launch("RoleInfo");
+            this.scene.start('MatchmakingScene', { socket: this.socket });
+            //this.scene.launch("RoleInfo");
         });
     }
 
