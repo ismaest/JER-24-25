@@ -42,7 +42,7 @@ class MenuSceneLocal extends Phaser.Scene {
         this.load.image('background', 'MenuBackground.png');
         this.load.image('startBtn', 'btnJugar.png');
         this.load.image('optionsBtn', 'btnOpciones.png');
-        this.load.image('creditsBtn', 'btnCreditos.png');
+        this.load.image('creditsBtn', 'btnCréditos.png');
         this.load.image('metalpipe', 'metalpipe.png');
         this.load.image('interrogacion', 'interrogacion.png');
         this.load.image ('secreto', 'secreto.png');
