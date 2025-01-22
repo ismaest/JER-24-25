@@ -206,84 +206,90 @@ class MenuScene extends Phaser.Scene {
     }
 
     // Crear el contenedor del chat
-    createChatContainer() {
-        this.chatContainer = this.add.container(180, 180).setVisible(false);
+	createChatContainer() {
+	    this.chatContainer = this.add.container(180, 180).setVisible(false);
 
-        // Fondo del chat
-        const chatBackground = this.add.rectangle(0, 0, 400, 300, 0x000000, 0.8).setOrigin(0);
-        this.chatContainer.add(chatBackground);
+	    // Fondo del chat
+	    const chatBackground = this.add.rectangle(0, 0, 400, 300, 0x000000, 0.8).setOrigin(0);
+	    this.chatContainer.add(chatBackground);
 
-        // Zona de mensajes
-        this.messagesText = this.add.text(10, 10, '', {
-            fontSize: '16px',
-            fill: '#fff',
-            wordWrap: { width: 380, useAdvancedWrap: true }  // Configurar wordWrap al crear el texto
-        });
-        this.chatContainer.add(this.messagesText);
+	    // Zona de mensajes
+	    this.messagesText = this.add.text(10, 10, '', {
+	        fontSize: '16px',
+	        fill: '#fff',
+	        wordWrap: { width: 380, useAdvancedWrap: true }  // Configurar wordWrap al crear el texto
+	    });
+	    this.chatContainer.add(this.messagesText);
 
-        // Input para escribir mensaje
-        this.inputBackground = this.add.rectangle(10, 260, 380, 30, 0x222222).setOrigin(0).setInteractive();
-        this.chatContainer.add(this.inputBackground);
+	    // Input para escribir mensaje
+	    this.inputBackground = this.add.rectangle(10, 260, 380, 30, 0x222222).setOrigin(0).setInteractive();
+	    this.chatContainer.add(this.inputBackground);
 
-        this.inputText = this.add.text(15, 265, '', {
-            fontSize: '16px',
-            fill: '#fff',
-            wordWrap: { width: 360, useAdvancedWrap: true }  // También configuramos wordWrap para el texto de entrada
-        });
-        this.chatContainer.add(this.inputText);
+	    this.inputText = this.add.text(15, 265, '', {
+	        fontSize: '16px',
+	        fill: '#fff',
+	        wordWrap: { width: 360, useAdvancedWrap: true }  // También configuramos wordWrap para el texto de entrada
+	    });
+	    this.chatContainer.add(this.inputText);
 
-        // Detectar teclas para entrada de texto
-        this.input.keyboard.on('keydown', (event) => {
-            if (!this.chatContainer.visible) return;
+	    // Indicador de envío en progreso
+	    this.isSending = false;
 
-            if (event.key === 'Backspace') {
-                this.inputText.text = this.inputText.text.slice(0, -1); // Eliminar último carácter
-            } else if (event.key === 'Enter') {
-                this.sendMessage();
-            } else if (event.key.length === 1) {
-                this.inputText.text += event.key; // Agregar carácter al texto
-            }
-        });
+	    // Detectar teclas para entrada de texto
+	    this.input.keyboard.on('keydown', (event) => {
+	        if (!this.chatContainer.visible) return;
 
-        // Botón para enviar mensajes (fuera del cuadro de texto)
-        this.sendButton = this.add.image(460, 265, 'enviar') // Botón fuera del cuadro
-            .setScale(0.5)
-            .setInteractive()
-            .on('pointerdown', () => this.sendMessage());
-        this.chatContainer.add(this.sendButton);
-    }
+	        if (event.key === 'Backspace') {
+	            this.inputText.text = this.inputText.text.slice(0, -1); // Eliminar último carácter
+	        } else if (event.key === 'Enter') {
+	            this.sendMessage();
+	        } else if (event.key.length === 1) {
+	            this.inputText.text += event.key; // Agregar carácter al texto
+	        }
+	    });
+
+	    // Botón para enviar mensajes (fuera del cuadro de texto)
+	    this.sendButton = this.add.image(460, 265, 'enviar') // Botón fuera del cuadro
+	        .setScale(0.5)
+	        .setInteractive()
+	        .on('pointerdown', () => this.sendMessage());
+	    this.chatContainer.add(this.sendButton);
+	}
 
     // Método para enviar un mensaje
-    sendMessage() {
-        const message = this.inputText.text.trim();  // Usar inputText.text directamente
-        if (message) {
-            //this.displayMessage(`Tú: ${message}`);
-			const sender = this.userName || this.userId;
-            this.inputText.text = ''; // Limpiar el inputText
+	sendMessage() {
+	    const message = this.inputText.text.trim();
+	    if (!message || this.isSending) return; // Evitar enviar mensajes vacíos o duplicados
 
-            // Aquí puedes enviar el mensaje al servidor
-            fetch('/api/messages', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    id: Date.now(), // Generar un ID basado en el timestamp o de alguna otra manera
-                    sender: sender , 
-                    content: message, 
-                    timestamp: Date.now(),
-                }),
-            })
-            .then(response => {
-                if (response.ok) {
-                    console.log("Mensaje enviado correctamente");
-                } else {
-                    console.error("Error al enviar el mensaje");
-                }
-            })
-            .catch(error => console.error('Error al enviar el mensaje:', error));
-        }
-    }
+	    this.isSending = true; // Bloquear nuevos envíos mientras se procesa el actual
+
+	    const sender = this.userName || this.userId;
+	    this.inputText.text = ''; // Limpiar el inputText
+
+	    fetch('/api/messages', {
+	        method: 'POST',
+	        headers: {
+	            'Content-Type': 'application/json',
+	        },
+	        body: JSON.stringify({
+	            id: Date.now(), // Generar un ID basado en el timestamp
+	            sender: sender,
+	            content: message,
+	            timestamp: Date.now(),
+	        }),
+	    })
+	    .then(response => {
+	        if (response.ok) {
+	            console.log("Mensaje enviado correctamente");
+	        } else {
+	            console.error("Error al enviar el mensaje");
+	        }
+	    })
+	    .catch(error => console.error('Error al enviar el mensaje:', error))
+	    .finally(() => {
+	        this.isSending = false; // Desbloquear envío al completar la operación
+	    });
+	}
 
     // Mostrar el mensaje en la interfaz
 	displayMessage(message) {
