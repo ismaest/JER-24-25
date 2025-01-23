@@ -34,7 +34,7 @@ class MenuScene extends Phaser.Scene {
         this.createOptionsButton();
         this.createCreditsButton();
         this.createChatButton();
-		this.createLogOutButton();
+		//this.createLogOutButton();
         this.createMetalPipe();
         this.campeonesinvierno();
 		
@@ -234,13 +234,13 @@ class MenuScene extends Phaser.Scene {
 					this.usersText.setText(`USUARIOS CONECTADOS: ${data}`);
                 })
                 .catch(error => console.error("Error al obtener usuarios conectados:", error));
-        }, 1000); // 1 segundos
+        }, 500); // 1 segundos
     }
 
     // Crear botón para abrir el chat
     createChatButton() {
-        const chatButton = this.add.image(740, 575, 'chat').setScale(0.5).setInteractive();
-        chatButton.on('pointerdown', () => {
+        this.chatButton = this.add.image(700, 550, 'chat').setScale(0.5).setInteractive();
+        this.chatButton.on('pointerdown', () => {
             this.toggleChat();
         });
     }
@@ -401,6 +401,7 @@ class MenuScene extends Phaser.Scene {
         this.load.image('optionsBtn', 'btnOpciones.png');
         this.load.image('creditsBtn', 'btnCreditos.png'); //cambiar la imagen
         this.load.image('acceptBtn', 'btnAceptar.png');
+		this.load.image('accountBtn', 'btnAceptar.png'); //cambiar la imagen
         this.load.image('menuBtn', 'btnMenu.png');
         this.load.image('backButton', 'btnVolver.png');
         this.load.image('metalpipe', 'metalpipe.png');
@@ -425,7 +426,7 @@ class MenuScene extends Phaser.Scene {
     }
 
 	createAccountBtn(){
-		this.accBtn = this.add.image(49, 90, 'acceptBtn').setScale(0.35).setInteractive(); //cambiar por CUENTA
+		this.accBtn = this.add.image(90, 100, 'accountBtn').setScale(0.5).setInteractive(); //cambiar por CUENTA
 		        this.accBtn.on('pointerdown', () => {
 		            this.scene.start('AccountMenu');
 		        });
@@ -433,7 +434,7 @@ class MenuScene extends Phaser.Scene {
 	
     //CREACIÓN DE BOTONES
     createStartButton() {
-        this.startBtn = this.add.image(400, 250, 'acceptBtn').setScale(0.5).setInteractive();
+        this.startBtn = this.add.image(400, 300, 'acceptBtn').setScale(0.5).setInteractive();
         this.startBtn.on('pointerdown', () => {
             this.game.click.play();
             this.scene.stop("MenuScene");
@@ -443,7 +444,7 @@ class MenuScene extends Phaser.Scene {
     }
 
     createOptionsButton() {
-        this.optionsBtn = this.add.image(400, 350, 'optionsBtn').setScale(0.5).setInteractive();
+        this.optionsBtn = this.add.image(400, 400, 'optionsBtn').setScale(0.5).setInteractive();
         this.optionsBtn.on('pointerdown', () => {
             this.game.click.play();
             this.scene.start('OptionsMenu');
@@ -451,7 +452,7 @@ class MenuScene extends Phaser.Scene {
     }
 
     createCreditsButton() {
-        this.creditsBtn = this.add.image(400, 450, 'creditsBtn').setScale(0.5).setInteractive();
+        this.creditsBtn = this.add.image(400, 500, 'creditsBtn').setScale(0.5).setInteractive();
         this.creditsBtn.on('pointerdown', () => {
             this.game.click.play();
             this.scene.start('Credits');
@@ -459,8 +460,8 @@ class MenuScene extends Phaser.Scene {
     }
 	
 	createLogOutButton() {
-	        this.creditsBtn = this.add.image(400, 550, 'logOut').setScale(0.5).setInteractive();
-	        this.creditsBtn.on('pointerdown', () => {
+	        this.logOutBtn = this.add.image(400, 550, 'logOut').setScale(0.5).setInteractive();
+	        this.logOutBtn.on('pointerdown', () => {
 	            this.game.click.play();
 	            this.scene.start('UserScene');
 	        });
@@ -508,7 +509,7 @@ class MenuScene extends Phaser.Scene {
 
     //CONFIGURACIÓN DE BOTONES
     buttonAnims(){
-        [this.startBtn, this.optionsBtn, this.creditsBtn].forEach(button => {
+        [this.startBtn, this.optionsBtn, this.creditsBtn, this.accBtn, this.chatButton].forEach(button => {
             button.on('pointerover', ()=>this.onButtonHover(button));
             button.on('pointerout', ()=>this.onButtonOut(button));
         });

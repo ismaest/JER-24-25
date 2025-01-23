@@ -31,7 +31,7 @@ class UserScene extends Phaser.Scene {
         });
 
         // Resto de tu lógica para la escena
-        this.backBtn = this.add.image(680, 550, 'backBtn').setScale(0.5).setInteractive();
+        this.backBtn = this.add.image(700, 550, 'backBtn').setScale(0.5).setInteractive();
         this.backBtn.on('pointerdown', () => {
             this.game.click.play();
             this.scene.stop('UserScene');
@@ -271,7 +271,7 @@ class UserScene extends Phaser.Scene {
         });
     }
     onButtonHover(button){
-        button.setScale(0.7);
+        button.setScale(0.55);
     }
 
     onButtonOut(button){
