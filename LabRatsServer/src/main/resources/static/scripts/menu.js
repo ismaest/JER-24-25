@@ -234,7 +234,7 @@ class MenuScene extends Phaser.Scene {
 					this.usersText.setText(`USUARIOS CONECTADOS: ${data}`);
                 })
                 .catch(error => console.error("Error al obtener usuarios conectados:", error));
-        }, 500); // 1 segundos
+        }, 50); // 50 milisegundos
     }
 
     // Crear botón para abrir el chat
@@ -401,7 +401,7 @@ class MenuScene extends Phaser.Scene {
         this.load.image('optionsBtn', 'btnOpciones.png');
         this.load.image('creditsBtn', 'btnCreditos.png'); //cambiar la imagen
         this.load.image('acceptBtn', 'btnAceptar.png');
-		this.load.image('accountBtn', 'btnAceptar.png'); //cambiar la imagen
+		this.load.image('accountBtn', 'cuenta.png'); //cambiar la imagen
         this.load.image('menuBtn', 'btnMenu.png');
         this.load.image('backButton', 'btnVolver.png');
         this.load.image('metalpipe', 'metalpipe.png');
@@ -428,7 +428,7 @@ class MenuScene extends Phaser.Scene {
 	createAccountBtn(){
 		this.accBtn = this.add.image(90, 100, 'accountBtn').setScale(0.5).setInteractive(); //cambiar por CUENTA
 		        this.accBtn.on('pointerdown', () => {
-		            this.scene.start('AccountMenu');
+		            this.scene.start('AccountMenu', {"userName" : this.userName});
 		        });
 		}
 	
@@ -460,12 +460,33 @@ class MenuScene extends Phaser.Scene {
     }
 	
 	createLogOutButton() {
-	        this.logOutBtn = this.add.image(400, 550, 'logOut').setScale(0.5).setInteractive();
-	        this.logOutBtn.on('pointerdown', () => {
-	            this.game.click.play();
-	            this.scene.start('UserScene');
-	        });
-	    }
+	    this.logOutBtn = this.add.image(400, 550, 'logOut').setScale(0.5).setInteractive();
+	    this.logOutBtn.on('pointerdown', async () => {
+	        this.game.click.play();
+	        
+	        // Llamar al endpoint de desconexión
+	        const playerName = this.game.playerName; // Asegúrate de tener el nombre del jugador almacenado
+	        try {
+	            const response = await fetch('/user/disconnect', {
+	                method: 'POST',
+	                headers: {
+	                    'Content-Type': 'application/x-www-form-urlencoded',
+	                },
+	                body: new URLSearchParams({ playerName }),
+	            });
+
+	            if (response.ok) {
+	                console.log("Jugador desconectado exitosamente del servidor.");
+	                this.scene.start('UserScene'); // Cambiar a la escena de inicio
+	            } else {
+	                console.error("Error al desconectar al jugador del servidor.");
+	            }
+	        } catch (err) {
+	            console.error("Error al realizar la solicitud de desconexión:", err);
+	        }
+	    });
+	}
+
 		
 
 		createXButton() {
