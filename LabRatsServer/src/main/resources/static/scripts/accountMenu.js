@@ -1,14 +1,20 @@
 class AccountMenu extends Phaser.Scene {
-	
+	userName;
 	constructor() {
 	       super({key: "AccountMenu"});
+		   
 	   }
+	   
+	   init(data){
+		this.userName = data.userName;
+	   }
+	   
 	   preload(){
 		this.load.setPath('assets/');
 		this.load.image('background', 'MenuBackground.png');
 		this.load.image('backBtn', 'btnVolver.png');
-		this.load.image('deleteBtn', 'btnAceptar.png'); //cambiar por borrar
-		this.load.image('logOut', 'Log_Out.png');
+		this.load.image('deleteBtn', 'eliminar.png'); //cambiar por borrar
+		this.load.image('logOut', 'cerrar_sesion.png');
 		
 	   }
 	   
@@ -27,12 +33,33 @@ class AccountMenu extends Phaser.Scene {
 	   }
 	   
 	   createLogOutButton() {
-	   	        this.logOutBtn = this.add.image(400, 480, 'logOut').setScale(0.5).setInteractive();
-	   	        this.logOutBtn.on('pointerdown', () => {
-	   	            this.game.click.play();
-	   	            this.scene.start('UserScene');
-	   	        });
-	   	    }
+	       this.logOutBtn = this.add.image(400, 480, 'logOut').setScale(0.5).setInteractive();
+	       this.logOutBtn.on('pointerdown', async () => {
+	           this.game.click.play();
+	           
+	           // Llamar al endpoint de desconexión
+	           const playerName = this.userName; // Asegúrate de tener el nombre del jugador almacenado
+	           try {
+	               const response = await fetch('/user/disconnect', {
+	                   method: 'POST',
+	                   headers: {
+	                       'Content-Type': 'application/x-www-form-urlencoded',
+	                   },
+	                   body: new URLSearchParams({ playerName }),
+	               });
+
+	               if (response.ok) {
+	                   console.log("Jugador desconectado exitosamente del servidor.");
+	                   this.scene.start('UserScene', {"userName" : this.userName}); // Cambiar a la escena de inicio
+	               } else {
+	                   console.error("Error al desconectar al jugador del servidor.");
+	               }
+	           } catch (err) {
+	               console.error("Error al realizar la solicitud de desconexión:", err);
+	           }
+	       });
+	   }
+
 	   
 	   createBackBtn(){
 		this.backBtn = this.add.image(700, 550, 'backBtn').setScale(0.5).setInteractive();
@@ -84,7 +111,7 @@ class AccountMenu extends Phaser.Scene {
 	   					this.usersText.setText(`USUARIOS CONECTADOS: ${data}`);
 	                   })
 	                   .catch(error => console.error("Error al obtener usuarios conectados:", error));
-	           }, 1000); // 1 segundos
+	           }, 50); // 50 milisegundos
 	       }
 		   
 		   createConnectionIndicator() {
