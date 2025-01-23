@@ -1,9 +1,2 @@
-JER,fase3-2024
-Juan,jose
-b,b
-a,a
-Hola,hola
-x,x
-aa,aa
-sdadsasad,saddsaads
 ,
+x,x

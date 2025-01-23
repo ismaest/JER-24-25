@@ -18,10 +18,20 @@
         <script src="scripts/roleInfo.js"></script>
         <script src="scripts/gameOver.js"></script>
         <script src="scripts/winScene.js"></script>
+        <script src="scripts/matchmaking.js"></script>
         <script src="scripts/loadingScreen.js"></script>
         <script src="scripts/credits.js"></script>
         <script src="scripts/testScript.js"></script>
         <script src="scripts/user.js"></script>
+        <script src="scripts/local/creditsLocal.js"></script>
+        <script src="scripts/local/gameLocal.js"></script>
+        <script src="scripts/local/gameOverLocal.js"></script>
+        <script src="scripts/local/loadingScreenLocal.js"></script>
+        <script src="scripts/local/menuLocal.js"></script>
+        <script src="scripts/local/optionsLocal.js"></script>
+        <script src="scripts/local/roleInfoLocal.js"></script>
+        <script src="scripts/local/winSceneLocal.js"></script>
+        <script src="scripts/local/ChooseNetType.js"></script>
         
         <title>LABRATS</title>
         
@@ -46,11 +56,15 @@
                     }
                     
                 },
-                scene: [LoadingScene, UserScene, MenuScene, GameScene, RoleInfo, OptionsMenu, GameOverScene, WinScene, Credits]
+                scene: [ChooseNetType, LoadingScene, UserScene, MatchmakingScene, MenuScene, GameScene, RoleInfo, OptionsMenu, GameOverScene, WinScene, Credits, CreditsLocal,
+                    GameSceneLocal, GameOverSceneLocal, LoadingSceneLocal, MenuSceneLocal, OptionsMenuLocal, RoleInfoLocal, WinSceneLocal]
             };
             const game = new Phaser.Game(config);
             
         </script>
+    
+        <p id="UsuariosConectados"></p>
+    <br></br>
         
     </body>
 

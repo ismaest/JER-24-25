@@ -1,8 +1,26 @@
 class MatchmakingScene extends Phaser.Scene {
 
-    constructor() {
+    constructor(socket) {
         super({key: "MatchmakingScene"});
+		this.socket = socket;
     }
+	init(data) {
+			this.players = {};
+			this.targetPositions = {};
+		        // Asegúrate de que el socket esté disponible
+		        if (data && data.socket instanceof WebSocket) {
+		            this.socket = data.socket;
+
+		            // Verificar si el WebSocket está abierto antes de hacer algo
+		            if (this.socket.readyState !== WebSocket.OPEN) {
+		                console.error("El WebSocket no está conectado.");
+		                return;
+		            }
+		        } else {
+		            console.error("Socket no válido en GameScene");
+		            return;
+		        }
+		    }
 
     preload() {
         //Cargamos los assets necesarios
@@ -10,13 +28,13 @@ class MatchmakingScene extends Phaser.Scene {
     }
 
     create() {
-        this.setupWebSocket();
+        //this.setupWebSocket();
         this.userName = sessionStorage.getItem('userName');
         //Configuramos los sonidos
         this.setupSounds();
 
         //Creamos el escenario
-        this.add.image(400, 300, 'background');
+        this.add.image(400, 300, 'backgroundMenu');
 
         this.createConnectedUsersDisplay();
 
@@ -28,11 +46,12 @@ class MatchmakingScene extends Phaser.Scene {
         this.createChatContainer();
 
         // Iniciar actualización periódica de usuarios conectados
-        this.sendHeartbeat(); // Enviar heartbeat periódicamente
+        //this.sendHeartbeat(); // Enviar heartbeat periódicamente
         this.updateConnectedUsers(); // Actualizar usuarios conectados periódicamente
+		this.createPlayButton();
 
         // Iniciar polling para obtener mensajes cada 1 segundo
-        this.startPolling();
+        //this.startPolling();
     }
 
     // Crear el indicador de conexión
@@ -89,7 +108,7 @@ class MatchmakingScene extends Phaser.Scene {
 
     createConnectedUsersDisplay() {
         // Fondo negro para el área de usuarios conectados
-        this.usersContainer = this.add.container(10, 10); // Puedes ajustar la posición aquí
+        this.usersContainer = this.add.container(300, 350);
         const usersBackground = this.add.rectangle(0, 0, 180, 60, 0x000000, 0.8).setOrigin(0);
         this.usersContainer.add(usersBackground);
 
@@ -109,7 +128,7 @@ class MatchmakingScene extends Phaser.Scene {
                 .then(response => response.json())
                 .then(data => {
                     // Actualizar el texto de usuarios conectados
-                    this.usersText.setText(`USUARIOS CONECTADOS: ${data}`);
+                    this.usersText.setText(`USUARIOS CONECTADOS: ${data}/2`);
                 })
                 .catch(error => console.error("Error al obtener usuarios conectados:", error));
         }, 1000); // 1 segundos
@@ -123,6 +142,19 @@ class MatchmakingScene extends Phaser.Scene {
         });
     }
 
+	createPlayButton() {
+	    const startBtn = this.add.image(385, 550, 'jugarBtn').setScale(0.5).setInteractive();
+	    startBtn.on('pointerdown', () => {
+	        // Enviar un mensaje de inicio de juego a todos los jugadores
+	        const message = JSON.stringify({ type: 'START_GAME' });
+	        this.socket.send(message);
+
+	        // Cambiar a la escena de juego para este jugador
+	        this.scene.stop("MatchmakingScene");
+	        this.scene.start('GameScene', { socket: this.socket });
+	    });
+	}
+	
     // Crear el contenedor del chat
     createChatContainer() {
         this.chatContainer = this.add.container(180, 180).setVisible(false);
@@ -253,7 +285,8 @@ class MatchmakingScene extends Phaser.Scene {
     }
     loadAssets() {
         this.load.setPath('assets/');
-        this.load.image('background', 'MenuMatchmaking.png');
+        this.load.image('backgroundMenu', 'MenuMatchmaking.png');
+		this.load.image('jugarBtn', 'btnJugar.png');
         this.load.audio('mainMenuMusic', 'mainMenuMusic.ogg');
         this.load.audio('click', 'click.wav');
     }

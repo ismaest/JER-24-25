@@ -7,6 +7,7 @@ class UserScene extends Phaser.Scene {
     preload() {
         this.load.setPath('assets/');
         this.load.image('background', 'MenuBackground.png');
+        this.load.image('backBtn', 'btnVolver.png');
         this.load.audio('mainMenuMusic', 'mainMenuMusic.ogg');
         this.load.audio('click', 'click.wav');
     }
@@ -15,10 +16,29 @@ class UserScene extends Phaser.Scene {
         
         this.add.image(400, 300, 'background');
 
+        this.SignUp();
         
         this.game.click = this.sound.add('click');
+        //this.backBtn = this.add.image(680, 550, 'backBtn').setScale(0.5).setInteractive();
+        // Mostrar el formulario al iniciar la escena
+        this.events.on('create', () => {
+            this.toggleFormVisibility(true);
+        });
+
+        // Ocultar el formulario al detener la escena
+        this.events.on('shutdown', () => {
+            this.toggleFormVisibility(false);
+        });
+
+        // Resto de tu lógica para la escena
+        this.backBtn = this.add.image(700, 550, 'backBtn').setScale(0.5).setInteractive();
+        this.backBtn.on('pointerdown', () => {
+            this.game.click.play();
+            this.scene.stop('UserScene');
+            this.scene.start('ChooseNetType');
+        });
+        this.buttonAnims();
         
-        this.SignUp();
     }
 
     SignUp() {
@@ -112,6 +132,8 @@ class UserScene extends Phaser.Scene {
         this.form.appendChild(signButton);
         document.body.appendChild(this.form);
 
+        this.toggleFormVisibility(true);
+        
         // Añadir indicador de conexión
         //let connectionIndicator = document.createElement('div');
         //connectionIndicator.id = 'connection-indicator';
@@ -150,34 +172,37 @@ class UserScene extends Phaser.Scene {
 							
 							// Guardar el nombre del usuario en sessionStorage
 							sessionStorage.setItem('userName', userData.name);
+							sessionStorage.setItem('userPassword', userData.password);
                             // Cambiar la escena a MenuScene solo si se creó el usuario
                             console.log("Usuario creado, cambiando a la escena de menú...");
                             self.form.style.display = 'none';
                             self.scene.start('MenuScene');
                         }
                     },
-                    error: function(xhr, status, error) {
-                        if (xhr.status === 409) {
-                            // Si el servidor responde con un código de conflicto (usuario ya existe)
-                            console.log("El usuario ya existe, prueba a iniciar sesión.");
+					error: (xhr, status, error) => {
+					    if (xhr.status === 409) {
+					        // Si el servidor responde con un código de conflicto (usuario ya existe)
+					        console.log("El usuario ya existe, prueba a iniciar sesión.");
 
-                            // Mostrar mensaje de error en la interfaz (por encima del cuadro de texto del nombre de usuario)
-                            const errorMessage = document.createElement('div');
-                            errorMessage.textContent = "El usuario que has intentado registrar ya existe, prueba a iniciar sesión con las mismas credenciales.";
-                            errorMessage.style.color = 'black';  // Cambiar color a negro
-                            errorMessage.style.fontSize = '12px';  // Ajustar el tamaño de fuente (opcional)
-                            errorMessage.style.marginBottom = '10px'; // Espaciado para que no esté pegado al cuadro del usuario
+					        // Mostrar mensaje de error en la interfaz usando Phaser
+					        const errorMessage = this.add.text(400, 238, 
+					            "El usuario que has intentado registrar ya existe, prueba a iniciar sesión con las mismas credenciales.", 
+					            {
+					                fontSize: '16px',
+					                fill: '#FF0000',  // Color rojo
+					                wordWrap: { width: 800, useAdvancedWrap: true },  // Ajustar el texto al ancho deseado
+					                align: 'center'
+					            });
 
-                            // Colocar el mensaje de error justo encima del cuadro de texto del nombre de usuario
-                            const userInput = document.getElementById('userID');
-                            userInput.parentNode.insertBefore(errorMessage, userInput);  // Insertamos el mensaje antes del cuadro de texto del usuario
+					        // Centrar el mensaje de error en la pantalla (ajustar la posición según sea necesario)
+					        errorMessage.setOrigin(0.5, 0.5); // Centrado en la pantalla
 
-                            // Asegurarse de que no se cambie la escena
-                            // No hacemos nada más, permanecemos en la misma pantalla
-                        } else {
-                            console.error("Error al enviar los datos:", xhr.responseText);
-                        }
-                    }
+					        // Asegurarse de que no se cambie la escena
+					        // No hacemos nada más, permanecemos en la misma pantalla
+					    } else {
+					        console.error("Error al enviar los datos:", xhr.responseText);
+					    }
+					}
                 });
             };
             
@@ -207,6 +232,7 @@ class UserScene extends Phaser.Scene {
 						
 						// Guardar el nombre del usuario en sessionStorage
 						sessionStorage.setItem('userName', userData.name);
+						sessionStorage.setItem('userPassword', userData.password);
                         // Cambiar la escena a MenuScene solo si se creó el usuario
                         console.log("Usuario iniciado, cambiando a la escena de menú...");
                         self.form.style.display = 'none';
@@ -231,5 +257,25 @@ class UserScene extends Phaser.Scene {
             });
             
         };
+    toggleFormVisibility(isVisible) {
+        const display = isVisible ? 'block' : 'none';
+
+        if (this.form) {
+            this.form.style.display = display;
+        }
+    }
+    buttonAnims(){
+        [this.backBtn].forEach(button => {
+            button.on('pointerover', ()=>this.onButtonHover(button));
+            button.on('pointerout', ()=>this.onButtonOut(button));
+        });
+    }
+    onButtonHover(button){
+        button.setScale(0.55);
+    }
+
+    onButtonOut(button){
+        button.setScale(0.5);
+    }
 }
 
