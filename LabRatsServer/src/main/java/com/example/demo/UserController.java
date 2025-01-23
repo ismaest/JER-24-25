@@ -1,5 +1,7 @@
 package com.example.demo;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -88,7 +90,7 @@ public class UserController {
         return ResponseEntity.notFound().build();
     }
 
-    @DeleteMapping
+    @DeleteMapping("/delete")
     public ResponseEntity<String> deleteUser(@RequestParam String name, @RequestParam String password) {
         if (userService.deleteUser(name, password)) {
             return ResponseEntity.ok("User deleted successfully");
@@ -122,9 +124,33 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
     }
     
+    @GetMapping("/connection")
+    public ResponseEntity<String> getConnectedUser() {
+        String connectedUser = userService.getCurrentUser();
+        if (connectedUser != null) {
+            return ResponseEntity.ok("{\"username\":\"" + connectedUser + "\"}");
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("{\"message\":\"No hay usuario conectado\"}");
+        }
+    }
+
+    // Endpoint para obtener el recuento de usuarios conectados
     @GetMapping("/connected-users")
     public ResponseEntity<Integer> getConnectedUsers() {
-    	return new ResponseEntity<Integer>(userService.getConnectedPlayersAmmount(), HttpStatus.OK);
+        int connectedUsersCount = userService.getConnectedPlayersAmmount();
+        return ResponseEntity.ok(connectedUsersCount);
+    }
+
+    // Endpoint para iniciar sesión
+    @PostMapping("/user/login")
+    public ResponseEntity<String> login(@RequestParam String username, @RequestParam String password) {
+        User user = userService.getUser(username, password);
+        if (user != null) {
+            userService.setCurrentUser(user.getName());  // Establecemos el usuario conectado
+            return ResponseEntity.ok("Usuario conectado");
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciales incorrectas");
+        }
     }
     
     @PostMapping("/heartbeat")

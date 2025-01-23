@@ -11,6 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -21,10 +22,11 @@ public class UserService {
     private Map<String, Instant> connectedUsers = new ConcurrentHashMap<>();
     private List<User> userList = new ArrayList<>(); // Simulamos la base de datos en memoria
     private Map<String, Boolean> playerConnections = new HashMap<>(); // Mapa para gestionar el estado de conexión de los jugadores
+    private String currentUser;
 
     // Cargar usuarios desde el archivo al iniciar el servidor
     @PostConstruct
-    private void loadUsersFromFile() {
+    private void setFromFile() {
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_NAME))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -44,6 +46,16 @@ public class UserService {
         startCleanupTask();
     }
 
+ // Método para obtener el usuario conectado
+    public String getCurrentUser() {
+        return currentUser;
+    }
+
+    // Método para establecer el usuario conectado
+    public void setCurrentUser(String userName) {
+        this.currentUser = userName;
+    }
+    
     // Guardar usuarios en el archivo
     private void saveUsersToFile() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME))) {

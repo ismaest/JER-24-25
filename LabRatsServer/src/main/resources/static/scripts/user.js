@@ -172,6 +172,7 @@ class UserScene extends Phaser.Scene {
 							
 							// Guardar el nombre del usuario en sessionStorage
 							sessionStorage.setItem('userName', userData.name);
+							sessionStorage.setItem('userPassword', userData.password);
                             // Cambiar la escena a MenuScene solo si se creó el usuario
                             console.log("Usuario creado, cambiando a la escena de menú...");
                             self.form.style.display = 'none';
@@ -231,6 +232,7 @@ class UserScene extends Phaser.Scene {
 						
 						// Guardar el nombre del usuario en sessionStorage
 						sessionStorage.setItem('userName', userData.name);
+						sessionStorage.setItem('userPassword', userData.password);
                         // Cambiar la escena a MenuScene solo si se creó el usuario
                         console.log("Usuario iniciado, cambiando a la escena de menú...");
                         self.form.style.display = 'none';

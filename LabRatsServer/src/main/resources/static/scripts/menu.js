@@ -7,6 +7,7 @@ class MenuScene extends Phaser.Scene {
 		this.userName = null;
         this.lastMessageId = 0;  // Inicializamos el ID del último mensaje recibido
 		this.maxMessages = 16;
+		this.receivedMessages = new Set();
     }
 
     preload() {
@@ -33,9 +34,14 @@ class MenuScene extends Phaser.Scene {
         this.createOptionsButton();
         this.createCreditsButton();
         this.createChatButton();
+		this.createLogOutButton();
         this.createMetalPipe();
         this.campeonesinvierno();
-        
+		
+		this.createAccountBtn();
+		
+		//this.getConnectedUser();
+		
         //Configuramos los botones
         this.buttonAnims();
         
@@ -103,6 +109,40 @@ class MenuScene extends Phaser.Scene {
 		        console.error('Error en el WebSocket:', error);
 		    });
 	}
+	
+	createDeleteAccountButton() {
+	    const deleteButton = this.add.image(20, 80, 'deleteAccount').setScale(0.5).setInteractive();
+	    deleteButton.on('pointerdown', () => {
+	        // Confirmar con el usuario antes de eliminar la cuenta
+	        const confirmation = confirm("¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede deshacer.");
+	        if (confirmation) {
+	            this.deleteAccount();
+	        }
+	    });
+	}
+	
+	// Función para mostrar el nombre del usuario en la pantalla
+	showUsername(username) {
+	    // Si el contenedor de nombre de usuario no existe, lo creamos
+	    if (!this.usernameContainer) {
+	        // Fondo negro para el área del nombre del usuario
+	        this.usernameContainer = this.add.container(10, 80); // Ajustamos la posición aquí
+	        const usernameBackground = this.add.rectangle(0, 0, 180, 60, 0x000000, 0.8).setOrigin(0);
+	        this.usernameContainer.add(usernameBackground);
+
+	        // Texto del nombre de usuario conectado
+	        this.usernameText = this.add.text(10, 10, `Usuario: ${username}`, {
+	            fontSize: '16px',
+	            fill: '#fff',
+	            wordWrap: { width: 180, useAdvancedWrap: true }
+	        });
+	        this.usernameContainer.add(this.usernameText);
+	    } else {
+	        // Si el contenedor ya existe, solo actualizamos el texto
+	        this.usernameText.setText(`Usuario: ${username}`);
+	    }
+	}
+	
 	// Crear el indicador de conexión
 	    createConnectionIndicator() {
 	        // Crear el cuadrado verde (inicialmente desconectado)
@@ -157,7 +197,7 @@ class MenuScene extends Phaser.Scene {
 
 	createConnectedUsersDisplay() {
 	        // Fondo negro para el área de usuarios conectados
-	        this.usersContainer = this.add.container(10, 10); // Puedes ajustar la posición aquí
+	        this.usersContainer = this.add.container(10, 10);
 	        const usersBackground = this.add.rectangle(0, 0, 180, 60, 0x000000, 0.8).setOrigin(0);
 	        this.usersContainer.add(usersBackground);
 
@@ -204,7 +244,7 @@ class MenuScene extends Phaser.Scene {
             this.toggleChat();
         });
     }
-
+	
     // Crear el contenedor del chat
 	createChatContainer() {
 	    this.chatContainer = this.add.container(180, 180).setVisible(false);
@@ -312,10 +352,17 @@ class MenuScene extends Phaser.Scene {
 	   }
 
     // Hacer que el chat se muestre o se oculte
-    toggleChat() {
-        const isVisible = this.chatContainer.visible;
-        this.chatContainer.setVisible(!isVisible);
-    }
+	toggleChat() {
+	    const isVisible = this.chatContainer.visible;
+	    this.chatContainer.setVisible(!isVisible);
+
+	    // Mostrar u ocultar el botón X según el estado del chat
+	    if (this.xButton) {
+	        this.xButton.setVisible(!isVisible);
+	    } else if (!isVisible) {
+	        this.createXButton(); // Crear el botón solo si el chat se abre y no existe
+	    }
+	}
 
     // Iniciar polling para obtener mensajes nuevos cada 1 segundo
     startPolling() {
@@ -333,20 +380,26 @@ class MenuScene extends Phaser.Scene {
     }
 
     // Actualizar la interfaz con los nuevos mensajes
-    updateMessages(messages) {
-        messages.forEach(message => {
-            const formattedMessage = `${message.sender}: ${message.content}`;
-            this.displayMessage(formattedMessage);
-        });
+	updateMessages(messages) {
+	    messages.forEach(message => {
+	        // Verificar si el mensaje ya fue procesado
+	        if (!this.receivedMessages.has(message.id)) {
+	            this.receivedMessages.add(message.id); // Marcar el mensaje como procesado
+	            const formattedMessage = `${message.sender}: ${message.content}`;
+	            this.displayMessage(formattedMessage);
+	        }
+	    });
     }
 
     //CARGA DE ASSETS
     loadAssets() {
         this.load.setPath('assets/');
+		this.load.image('xButton', 'X.png');
+		this.load.image('logOut', 'Log_Out.png');
         this.load.image('background', 'MenuBackground.png');
         this.load.image('startBtn', 'ejemplo.png');
         this.load.image('optionsBtn', 'btnOpciones.png');
-        this.load.image('creditsBtn', 'btnCreditos.png');
+        this.load.image('creditsBtn', 'btnCreditos.png'); //cambiar la imagen
         this.load.image('acceptBtn', 'btnAceptar.png');
         this.load.image('menuBtn', 'btnMenu.png');
         this.load.image('backButton', 'btnVolver.png');
@@ -356,7 +409,7 @@ class MenuScene extends Phaser.Scene {
 		this.load.image('chat', 'chat.png');
 		this.load.image('enviar', 'enviar.png');
         this.load.audio('mainMenuMusic', 'mainMenuMusic.ogg');
-        this.load.audio('deathMusic', 'deathMusic.ogg');
+        this.load.audio('deathMusic', 'deathMusic.mp3');
         this.load.audio('click', 'click.wav');
         this.load.audio('pipe', 'metalpipe.mp3');
         this.load.audio('atleti', 'himnoatletico.mp3');
@@ -371,9 +424,16 @@ class MenuScene extends Phaser.Scene {
         }
     }
 
+	createAccountBtn(){
+		this.accBtn = this.add.image(49, 90, 'acceptBtn').setScale(0.35).setInteractive(); //cambiar por CUENTA
+		        this.accBtn.on('pointerdown', () => {
+		            this.scene.start('AccountMenu');
+		        });
+		}
+	
     //CREACIÓN DE BOTONES
     createStartButton() {
-        this.startBtn = this.add.image(400, 300, 'acceptBtn').setScale(0.5).setInteractive();
+        this.startBtn = this.add.image(400, 250, 'acceptBtn').setScale(0.5).setInteractive();
         this.startBtn.on('pointerdown', () => {
             this.game.click.play();
             this.scene.stop("MenuScene");
@@ -383,7 +443,7 @@ class MenuScene extends Phaser.Scene {
     }
 
     createOptionsButton() {
-        this.optionsBtn = this.add.image(400, 400, 'optionsBtn').setScale(0.5).setInteractive();
+        this.optionsBtn = this.add.image(400, 350, 'optionsBtn').setScale(0.5).setInteractive();
         this.optionsBtn.on('pointerdown', () => {
             this.game.click.play();
             this.scene.start('OptionsMenu');
@@ -391,12 +451,35 @@ class MenuScene extends Phaser.Scene {
     }
 
     createCreditsButton() {
-        this.creditsBtn = this.add.image(400, 500, 'creditsBtn').setScale(0.5).setInteractive();
+        this.creditsBtn = this.add.image(400, 450, 'creditsBtn').setScale(0.5).setInteractive();
         this.creditsBtn.on('pointerdown', () => {
             this.game.click.play();
             this.scene.start('Credits');
         });
     }
+	
+	createLogOutButton() {
+	        this.creditsBtn = this.add.image(400, 550, 'logOut').setScale(0.5).setInteractive();
+	        this.creditsBtn.on('pointerdown', () => {
+	            this.game.click.play();
+	            this.scene.start('UserScene');
+	        });
+	    }
+		
+
+		createXButton() {
+		    // Crear el botón solo si no existe
+		    if (!this.xButton) {
+		        this.xButton = this.add.image(570, 160, 'xButton')
+		            .setScale(0.35)
+		            .setInteractive();
+
+		        this.xButton.on('pointerdown', () => {
+		            this.toggleChat(); // Ocultar el chat al presionar el botón
+		        });
+		    }
+		    this.xButton.setVisible(true); // Asegurarse de que sea visible al crearlo
+		}
     
     createMetalPipe() {
         this.metalpipe = this.add.image(750, 400, 'metalpipe').setScale(0.1).setInteractive();
