@@ -23,15 +23,16 @@
         <script src="scripts/credits.js"></script>
         <script src="scripts/testScript.js"></script>
         <script src="scripts/user.js"></script>
-        <script src="scripts/local/creditsLocal.js"></script>
-        <script src="scripts/local/gameLocal.js"></script>
-        <script src="scripts/local/gameOverLocal.js"></script>
-        <script src="scripts/local/loadingScreenLocal.js"></script>
-        <script src="scripts/local/menuLocal.js"></script>
-        <script src="scripts/local/optionsLocal.js"></script>
-        <script src="scripts/local/roleInfoLocal.js"></script>
-        <script src="scripts/local/winSceneLocal.js"></script>
-        <script src="scripts/local/ChooseNetType.js"></script>
+        <script src="scripts/creditsLocal.js"></script>
+        <script src="scripts/gameLocal.js"></script>
+        <script src="scripts/gameOverLocal.js"></script>
+        <script src="scripts/loadingScreenLocal.js"></script>
+        <script src="scripts/menuLocal.js"></script>
+        <script src="scripts/optionsLocal.js"></script>
+        <script src="scripts/roleInfoLocal.js"></script>
+        <script src="scripts/winSceneLocal.js"></script>
+        <script src="scripts/ChooseNetType.js"></script>
+		<script src="scripts/accountMenu.js"></script>
         
         <title>LABRATS</title>
         
@@ -57,7 +58,7 @@
                     
                 },
                 scene: [ChooseNetType, LoadingScene, UserScene, MatchmakingScene, MenuScene, GameScene, RoleInfo, OptionsMenu, GameOverScene, WinScene, Credits, CreditsLocal,
-                    GameSceneLocal, GameOverSceneLocal, LoadingSceneLocal, MenuSceneLocal, OptionsMenuLocal, RoleInfoLocal, WinSceneLocal]
+                    GameSceneLocal, GameOverSceneLocal, LoadingSceneLocal, MenuSceneLocal, OptionsMenuLocal, RoleInfoLocal, WinSceneLocal, AccountMenu]
             };
             const game = new Phaser.Game(config);
             

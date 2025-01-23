@@ -22,6 +22,7 @@ class MenuSceneLocal extends Phaser.Scene {
         this.createStartButton();
         this.createOptionsButton();
         this.createCreditsButton();
+        this.createBackButton();
         this.createMetalPipe();
         this.campeonesinvierno();
         
@@ -41,10 +42,11 @@ class MenuSceneLocal extends Phaser.Scene {
         this.load.image('background', 'MenuBackground.png');
         this.load.image('startBtn', 'btnJugar.png');
         this.load.image('optionsBtn', 'btnOpciones.png');
-        this.load.image('creditsBtn', 'btnCréditos.png');
+        this.load.image('creditsBtn', 'btnCreditos.png');
         this.load.image('metalpipe', 'metalpipe.png');
         this.load.image('interrogacion', 'interrogacion.png');
         this.load.image ('secreto', 'secreto.png');
+        this.load.image('backBtn', 'btnVolver.png');
         
         //Audio
         this.load.audio('mainMenuMusic', 'mainMenuMusic.ogg');
@@ -67,7 +69,7 @@ class MenuSceneLocal extends Phaser.Scene {
     //CREACIÓN DE BOTONES
     
     createStartButton() {
-        this.startBtn = this.add.image(400, 300, 'startBtn').setScale(0.5).setInteractive();
+        this.startBtn = this.add.image(400, 250, 'startBtn').setScale(0.5).setInteractive();
         this.startBtn.on('pointerdown', () => {
             this.game.click.play();
             this.scene.stop("MenuSceneLocal");
@@ -77,7 +79,7 @@ class MenuSceneLocal extends Phaser.Scene {
     }
 
     createOptionsButton() {
-        this.optionsBtn = this.add.image(400, 400, 'optionsBtn').setScale(0.5).setInteractive();
+        this.optionsBtn = this.add.image(400, 350, 'optionsBtn').setScale(0.5).setInteractive();
         this.optionsBtn.on('pointerdown', () => {
             this.game.click.play();
             this.scene.start('OptionsMenuLocal');
@@ -85,17 +87,25 @@ class MenuSceneLocal extends Phaser.Scene {
     }
     
     createCreditsButton() {
-        this.creditsBtn = this.add.image(400, 500, 'creditsBtn').setScale(0.5).setInteractive();
+        this.creditsBtn = this.add.image(400, 450, 'creditsBtn').setScale(0.5).setInteractive();
         this.creditsBtn.on('pointerdown', () => {
             this.game.click.play();
-            this.scene.start('Credits');
+            this.scene.start('CreditsLocal');
+        });
+    }
+
+    createBackButton() {
+        this.backBtn = this.add.image(400, 550, 'backBtn').setScale(0.5).setInteractive();
+        this.backBtn.on('pointerdown', () => {
+            this.game.click.play();
+            this.scene.start('ChooseNetType');
         });
     }
     
     //CONFIGURACIÓN DE BOTONES
     
     buttonAnims(){
-        [this.startBtn, this.optionsBtn, this.creditsBtn].forEach(button => {
+        [this.startBtn, this.optionsBtn, this.creditsBtn, this.backBtn].forEach(button => {
             button.on('pointerover', ()=>this.onButtonHover(button));
             button.on('pointerout', ()=>this.onButtonOut(button));
         });

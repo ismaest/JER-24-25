@@ -15,16 +15,30 @@ class UserScene extends Phaser.Scene {
     create() {
         
         this.add.image(400, 300, 'background');
+
+        this.SignUp();
         
         this.game.click = this.sound.add('click');
-        this.backBtn = this.add.image(680, 550, 'backBtn').setScale(0.5).setInteractive();
+        //this.backBtn = this.add.image(680, 550, 'backBtn').setScale(0.5).setInteractive();
+        // Mostrar el formulario al iniciar la escena
+        this.events.on('create', () => {
+            this.toggleFormVisibility(true);
+        });
+
+        // Ocultar el formulario al detener la escena
+        this.events.on('shutdown', () => {
+            this.toggleFormVisibility(false);
+        });
+
+        // Resto de tu lógica para la escena
+        this.backBtn = this.add.image(700, 550, 'backBtn').setScale(0.5).setInteractive();
         this.backBtn.on('pointerdown', () => {
             this.game.click.play();
             this.scene.stop('UserScene');
             this.scene.start('ChooseNetType');
         });
+        this.buttonAnims();
         
-        this.SignUp();
     }
 
     SignUp() {
@@ -118,6 +132,8 @@ class UserScene extends Phaser.Scene {
         this.form.appendChild(signButton);
         document.body.appendChild(this.form);
 
+        this.toggleFormVisibility(true);
+        
         // Añadir indicador de conexión
         //let connectionIndicator = document.createElement('div');
         //connectionIndicator.id = 'connection-indicator';
@@ -156,6 +172,7 @@ class UserScene extends Phaser.Scene {
 							
 							// Guardar el nombre del usuario en sessionStorage
 							sessionStorage.setItem('userName', userData.name);
+							sessionStorage.setItem('userPassword', userData.password);
                             // Cambiar la escena a MenuScene solo si se creó el usuario
                             console.log("Usuario creado, cambiando a la escena de menú...");
                             self.form.style.display = 'none';
@@ -215,6 +232,7 @@ class UserScene extends Phaser.Scene {
 						
 						// Guardar el nombre del usuario en sessionStorage
 						sessionStorage.setItem('userName', userData.name);
+						sessionStorage.setItem('userPassword', userData.password);
                         // Cambiar la escena a MenuScene solo si se creó el usuario
                         console.log("Usuario iniciado, cambiando a la escena de menú...");
                         self.form.style.display = 'none';
@@ -239,5 +257,25 @@ class UserScene extends Phaser.Scene {
             });
             
         };
+    toggleFormVisibility(isVisible) {
+        const display = isVisible ? 'block' : 'none';
+
+        if (this.form) {
+            this.form.style.display = display;
+        }
+    }
+    buttonAnims(){
+        [this.backBtn].forEach(button => {
+            button.on('pointerover', ()=>this.onButtonHover(button));
+            button.on('pointerout', ()=>this.onButtonOut(button));
+        });
+    }
+    onButtonHover(button){
+        button.setScale(0.55);
+    }
+
+    onButtonOut(button){
+        button.setScale(0.5);
+    }
 }
 

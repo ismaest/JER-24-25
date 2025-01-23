@@ -55,6 +55,7 @@ class GameSceneLocal extends Phaser.Scene {
         this.load.image('queso', 'queso.png');
         this.load.image('vacuna', 'vacuna.png');
         this.load.image('trapdoor', 'trapdoor.png');
+        this.load.image("menu", "btnMenu.png");
         
         this.load.image("roleInfo", "btnOpciones.png") //cambiar a btn de menu
         
@@ -68,7 +69,8 @@ class GameSceneLocal extends Phaser.Scene {
         this.load.image('needleClosed', 'needleClosed.png');
         this.load.image('trapdoorOpen', 'trapdoorOpen.png');
         this.load.image('trapdoorClosed', 'trapdoorClosed.png');
-
+        this.load.image('metalpipe', 'metalpipe.png');
+        
         //cargamos aquí los efectos de sonido necesarios
         
         this.load.audio('mainMenuMusic', 'mainMenuMusic.ogg');
@@ -79,7 +81,8 @@ class GameSceneLocal extends Phaser.Scene {
         this.load.audio('handMoving', 'handMoving.mp3');
         this.load.audio('click', 'click.wav');
         this.load.audio('tpSound', 'tpSound.wav');
-
+        this.load.audio('pipe', 'metalpipe.mp3');
+        
         //Paredes
         this.load.image('closedDown', 'closedDown.png');
         this.load.image('closedLeft', 'closedLeft.png');
@@ -96,8 +99,9 @@ class GameSceneLocal extends Phaser.Scene {
         this.load.image('left', 'Left.png');
         this.load.image('right', 'Right.png');
         this.load.image('bot', 'Bot.png');
-        
 
+        
+        
         this.load.image('exit', 'exit.png');
     }
 
@@ -212,9 +216,10 @@ class GameSceneLocal extends Phaser.Scene {
         
         //Creación del laberinto
         this.createLabyritnh();
+        this.createMetalPipe();
         
         //Crear el botón de arriba de opciones
-        this.btnOpt = this.add.image(745, 30, 'roleInfo').setScale(0.3);
+        this.btnOpt = this.add.image(745, 30, 'menu').setScale(0.3);
         this.btnOpt.setInteractive();
         this.btnOpt.on('pointerdown', () => {
             this.game.click.play();
@@ -310,6 +315,14 @@ class GameSceneLocal extends Phaser.Scene {
 
     changeScene() {
         this.scene.start('WinSceneLocal');
+    }
+
+    createMetalPipe() {
+        this.metalpipe = this.add.image(30, 420, 'metalpipe').setScale(0.1).setInteractive();
+        this.metalpipe.on('pointerdown', () => {
+            this.game.pipe = this.sound.add('pipe');
+            this.game.pipe.play();
+        })
     }
     
     //MANEJO DE LA RATA
