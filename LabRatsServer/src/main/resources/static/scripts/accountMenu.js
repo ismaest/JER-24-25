@@ -72,8 +72,42 @@ class AccountMenu extends Phaser.Scene {
 	   
 	   createDeleteButton(){
 		this.deleteBtn = this.add.image(400, 550, 'deleteBtn').setScale(0.5).setInteractive();
-		this.deleteBtn.on('pointerdown', () => {
-			//Lógica para borrar la cuenta
+		this.deleteBtn.on('pointerdown', async () => {
+			// Obtener el nombre y contraseña del usuario de sessionStorage
+			        const playerName = sessionStorage.getItem('userName');
+			        const password = sessionStorage.getItem('userPassword');
+			        if (!playerName || !password) {
+			            console.error("No se encontró información del usuario en sessionStorage.");
+			            return;
+			        }
+
+			        try {
+			            // Llamar al endpoint DELETE para eliminar al usuario
+			            const response = await fetch('/user/delete', {
+			                method: 'DELETE',
+			                headers: {
+			                    'Content-Type': 'application/x-www-form-urlencoded',
+			                },
+			                body: new URLSearchParams({ name: playerName, password }),
+			            });
+
+			            if (response.ok) {
+			                console.log("Usuario eliminado exitosamente del servidor.");
+
+			                // Limpiar el sessionStorage
+			                sessionStorage.removeItem('userName');
+			                sessionStorage.removeItem('userPassword');
+
+			                // Cambiar a la escena inicial
+			                this.scene.start('UserScene');
+			            } else if (response.status === 404) {
+			                console.error("El usuario no existe o ya fue eliminado.");
+			            } else {
+			                console.error("Error al intentar eliminar el usuario.");
+			            }
+			        } catch (err) {
+			            console.error("Error al realizar la solicitud de eliminación:", err);
+			        }
 		});
 		
 	   }
@@ -93,13 +127,19 @@ class AccountMenu extends Phaser.Scene {
 	   	        this.usersContainer.add(this.usersText);
 	   	    }
 	   
-		connectedUser(){
-			// Texto de 'USUARIO:' que se mostrará en la parte superior
-			this.add.text(310, 250, 'USUARIO:', {
-			fontSize: '32px',
-			fill: '#000',
-			});
-		}
+			connectedUser() {
+			    // Mostrar texto de 'USUARIO:'
+			    this.add.text(310, 250, 'USUARIO:', {
+			        fontSize: '32px',
+			        fill: '#000',
+			    });
+
+			    // Mostrar el nombre del usuario al lado del texto
+				this.add.text(350, 280, `"${this.userName}"`, {
+				        fontSize: '32px',
+				        fill: '#000',
+				    });
+			}
 			
 	   updateConnectedUsers() {
 	           // Actualizar usuarios conectados cada 5 segundos
