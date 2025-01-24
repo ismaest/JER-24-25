@@ -59,6 +59,7 @@ public class UserController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error connecting the player");
             }
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while processing the request");
         }
     }

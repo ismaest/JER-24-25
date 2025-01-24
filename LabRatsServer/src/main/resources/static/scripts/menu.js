@@ -392,7 +392,7 @@ class MenuScene extends Phaser.Scene {
     loadAssets() {
         this.load.setPath('assets/');
 		this.load.image('xButton', 'X.png');
-		this.load.image('logOut', 'Log_Out.png');
+		//this.load.image('logOut', 'Log_Out.png');
         this.load.image('background', 'MenuBackground.png');
         this.load.image('startBtn', 'ejemplo.png');
         this.load.image('optionsBtn', 'btnOpciones.png');
@@ -425,7 +425,7 @@ class MenuScene extends Phaser.Scene {
 	createAccountBtn(){
 		this.accBtn = this.add.image(90, 100, 'accountBtn').setScale(0.5).setInteractive(); //cambiar por CUENTA
 		        this.accBtn.on('pointerdown', () => {
-		            this.scene.start('AccountMenu', {"userName" : this.userName});
+		            this.scene.start('AccountMenu', {"userName" : this.userName}, {"password" : this.password});
 		        });
 		}
 	
@@ -435,7 +435,7 @@ class MenuScene extends Phaser.Scene {
         this.startBtn.on('pointerdown', () => {
 		this.game.click.play();
 		this.scene.stop("MenuScene");
-		this.scene.start('MatchmakingScene', { socket: this.socket });
+		this.scene.start('MatchmakingScene', { socket: this.socket }, {"userName" : this.userName });
 		
         });
     }

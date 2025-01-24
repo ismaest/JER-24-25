@@ -18,7 +18,7 @@ class UserScene extends Phaser.Scene {
     }
 
     create() {
-        
+		
         this.add.image(400, 300, 'background');
 
         this.SignUp();
@@ -171,7 +171,8 @@ class UserScene extends Phaser.Scene {
                     data: JSON.stringify(userData),  // Convierte el objeto JS a JSON
                     success: function(response) {
                         console.log("Respuesta del servidor:", response);
-
+						sessionStorage.removeItem('userName');
+						sessionStorage.removeItem('userPassword');
                         // Si la respuesta indica que el jugador se conectó correctamente
                         if (response === "User created and connected successfully") {
 							
