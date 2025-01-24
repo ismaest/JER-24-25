@@ -127,10 +127,6 @@ class GameScene extends Phaser.Scene {
   
     create() {  
 		
-		// Crear la rata del otro jugador
-				this.otherRat = this.physics.add.sprite(100, 140, 'rat');
-				this.otherRat.setVisible(false);  // Asegúrate de que no sea visible hasta que reciba la información
-      
         //Añadir escenario
         this.add.image(400, 300, 'scenery');
         
@@ -227,13 +223,11 @@ class GameScene extends Phaser.Scene {
         this.exit = this.physics.add.staticImage(317, 415, 'exit').setScale(0.5);
         
         //Crear la rata
-        this.rat = this.physics.add.sprite(20, 140, 'rat');
-
+		this.rat = this.physics.add.sprite(20, 140, 'rat');
         this.rat.setScale(0.035);
-
         this.rat.setCollideWorldBounds(true);
         this.ratSpeed = 100;
-        
+		
         //Crear y configurar la mano
         this.hand = this.add.image(400, 530, 'hand');
         this.hand.setScale(0.5);
@@ -251,10 +245,7 @@ class GameScene extends Phaser.Scene {
         });
         this.btnOpt.on('pointerover', () => {this.btnOpt.setScale(0.35)});
         this.btnOpt.on('pointerout', () => {this.btnOpt.setScale(0.3)});
-		
-		// Crear la mano del otro jugador
-					this.otherHand = this.physics.add.sprite(200, 140, 'hand');
-					this.otherHand.setVisible(false);  // Asegúrate de que no sea visible hasta que reciba la información
+
 			// Escuchar el WebSocket para recibir mensajes
 			
 			this.socket.addEventListener('message', (event) => {
@@ -264,21 +255,17 @@ class GameScene extends Phaser.Scene {
 			    if (data.type === "HAND_POSITION_UPDATE") {
 			        // Asegúrate de que el mensaje no sea del jugador local
 			        if (data.playerId !== this.playerId) {
-			            // Actualizar la posición de la mano de otro jugador
-			            const x = data.x;
-			            const y = data.y;
-						this.otherHand.setPosition(x, y)
+						this.index = data.handIndex;
+						this.hand.x = this.handcoords[this.index];
 			        }
 			    } else if (data.type === "POSITION_UPDATE") {
 			        // Asegúrate de que el mensaje no sea del jugador local
 			        if (data.playerId !== this.playerId) {
-			            // Actualizar la posición de la rata de otro jugador
-			            this.otherRat.setPosition(data.x, data.y);  // Mover la rata
+						this.rat.setPosition(data.x, data.y);
 			        }
 			    }
 			});
        
-		this.game.events.on('positionUpdate', this.handlePositionUpdate, this);
 		this.game.events.on('handPositionUpdate', (message) => {
             console.log("Entra al evento");
 		    const playerId = message.playerId;
@@ -435,71 +422,10 @@ class GameScene extends Phaser.Scene {
 	    }
 	}
 	
-	handlePositionUpdate(message) {
-	    console.log(`Actualizando posición para ${message.playerId} a (${message.x}, ${message.y})`);
-
-	    if (message.playerId === this.userId) {
-	        // Actualizar la posición del jugador local (si aplica)
-	        this.targetPositions[message.playerId] = { x: message.x, y: message.y };
-	    } else {
-	        // Buscar o crear al otro jugador
-	        let otherPlayer = this.getPlayerById(message.playerId);
-	        
-	        // Si el jugador no existe, lo creamos
-	        if (!otherPlayer) {
-	            // Crear el sprite solo una vez si no existe
-	            otherPlayer = this.addOtherPlayer(message.playerId, message.x, message.y);
-				
-	        }
-
-	        // Actualizar la posición del jugador
-	        if (otherPlayer) {
-	            otherPlayer.setPosition(message.x, message.y);
-	        }
-	    }
-	}
-	
-	addOtherPlayer(playerId, x, y) {
-	    // Crear el sprite de la rata solo una vez
-	    let otherPlayer = this.physics.add.sprite(x, y, 'rat');
-	    otherPlayer.setScale(0.035); // Ajustar el tamaño si es necesario
-	    otherPlayer.playerId = playerId; // Añadir ID para rastrear este jugador
-
-	    // Guardar al jugador para futuras actualizaciones
-	    this.players[playerId] = otherPlayer;
-	    return otherPlayer;
-	}
-
-	handleHandPositionUpdate(message) {
-	    console.log(`Actualizando la posición de la mano para ${message.playerId} al índice ${message.handIndex}`);
-
-	    if (message.playerId === this.userId) {
-	        // Actualizar la posición de la mano del jugador local (si aplica)
-	        this.hand.x = this.handcoords[message.handIndex];
-	    } else {
-	        // Buscar o crear al otro jugador y actualizar su mano
-	        let otherPlayer = this.getPlayerById(message.playerId);
-
-	        if (otherPlayer) {
-	            // Actualizar la posición de la mano de otro jugador
-	            otherPlayer.hand.x = otherPlayer.handcoords[message.handIndex];
-	        }
-	    }
-	}
-	
-	getHandByPlayerId(playerId) {
-	    return this.hands[playerId]; // Devuelve la mano asociada al playerId si existe
-	}
-	
 	getPlayerById(playerId) {
 	    return this.players[playerId] || null;
 	}
 
-	addOtherPlayer(playerId, x, y) {
-	    const newPlayer = this.add.sprite(x, y, 'playerSprite'); // Cambia 'playerSprite' por tu recurso gráfico
-	    this.players[playerId] = newPlayer;
-	    return newPlayer;
-	}
     //MANEJO DE LA RATA
     
     //Maneja el movimiento de la rata según la velocidad.
@@ -606,8 +532,8 @@ class GameScene extends Phaser.Scene {
 	    if (positionChanged) {
 	        const playerId = 'player124'; // ID del jugador actual
 	        const handIndex = this.index; // Índice actual de la mano
-
 	        this.updateHandPosition(playerId, handIndex); // Llamar a la función para enviar la posición
+			positionChanged = false;
 	    }
 	}
     
@@ -899,18 +825,21 @@ class GameScene extends Phaser.Scene {
         tp.targetY = 200;
         return tp;
     }
+	
     createTeleportA2(x, y) {
         const tp = this.add.image(x, y, 'tpA').setScale(0.125);
         tp.targetX = 400; //cambia esto según dónde quieres que lleve
         tp.targetY = 200;
         return tp;
     }
+	
     createTeleportB1(x, y) {
         const tp = this.add.image(x, y, 'tpB').setScale(0.125);
         tp.targetX = 600; //cambia esto según dónde quieres que lleve
         tp.targetY = 290;
         return tp;
     }
+	
     createTeleportB2(x, y) {
         const tp = this.add.image(x, y, 'tpB').setScale(0.125);
         tp.targetX = 600; //cambia esto según dónde quieres que lleve
