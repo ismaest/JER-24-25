@@ -1,8 +1,13 @@
 
 class UserScene extends Phaser.Scene {
+	userName;
     constructor() {
         super({ key: "UserScene" });
     }
+	
+	init(data){
+		this.userName = data.userName;
+	}
 
     preload() {
         this.load.setPath('assets/');
@@ -176,7 +181,7 @@ class UserScene extends Phaser.Scene {
                             // Cambiar la escena a MenuScene solo si se creó el usuario
                             console.log("Usuario creado, cambiando a la escena de menú...");
                             self.form.style.display = 'none';
-                            self.scene.start('MenuScene');
+                            self.scene.start('MenuScene', {"userName" : this.userName});
                         }
                     },
 					error: (xhr, status, error) => {
@@ -236,7 +241,7 @@ class UserScene extends Phaser.Scene {
                         // Cambiar la escena a MenuScene solo si se creó el usuario
                         console.log("Usuario iniciado, cambiando a la escena de menú...");
                         self.form.style.display = 'none';
-                        self.scene.start('MenuScene');
+                        self.scene.start('MenuScene', {"userName" : this.userName});
                     }
                 }).error(function(xhr, status, error) {
                     if (xhr.status === 404) {
