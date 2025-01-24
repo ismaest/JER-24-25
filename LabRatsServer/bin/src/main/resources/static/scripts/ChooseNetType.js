@@ -24,6 +24,21 @@ class ChooseNetType extends Phaser.Scene {
             this.scene.stop('ChooseNetType');
             this.scene.start('UserScene');
         });
+        this.buttonAnims();
+    }
+
+    buttonAnims(){
+        [this.localBtn, this.onlineBtn].forEach(button => {
+            button.on('pointerover', ()=>this.onButtonHover(button));
+            button.on('pointerout', ()=>this.onButtonOut(button));
+        });
+    }
+    onButtonHover(button){
+        button.setScale(1);
+    }
+
+    onButtonOut(button){
+        button.setScale(0.85);
     }
     
 }

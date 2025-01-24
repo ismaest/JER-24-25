@@ -7,6 +7,7 @@ class MenuScene extends Phaser.Scene {
 		this.userName = null;
         this.lastMessageId = 0;  // Inicializamos el ID del último mensaje recibido
 		this.maxMessages = 16;
+		this.receivedMessages = new Set();
     }
 
     preload() {
@@ -33,9 +34,14 @@ class MenuScene extends Phaser.Scene {
         this.createOptionsButton();
         this.createCreditsButton();
         this.createChatButton();
+		//this.createLogOutButton();
         this.createMetalPipe();
         this.campeonesinvierno();
-        
+		
+		this.createAccountBtn();
+		
+		//this.getConnectedUser();
+		
         //Configuramos los botones
         this.buttonAnims();
         
@@ -103,6 +109,40 @@ class MenuScene extends Phaser.Scene {
 		        console.error('Error en el WebSocket:', error);
 		    });
 	}
+	
+	createDeleteAccountButton() {
+	    const deleteButton = this.add.image(20, 80, 'deleteAccount').setScale(0.5).setInteractive();
+	    deleteButton.on('pointerdown', () => {
+	        // Confirmar con el usuario antes de eliminar la cuenta
+	        const confirmation = confirm("¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede deshacer.");
+	        if (confirmation) {
+	            this.deleteAccount();
+	        }
+	    });
+	}
+	
+	// Función para mostrar el nombre del usuario en la pantalla
+	showUsername(username) {
+	    // Si el contenedor de nombre de usuario no existe, lo creamos
+	    if (!this.usernameContainer) {
+	        // Fondo negro para el área del nombre del usuario
+	        this.usernameContainer = this.add.container(10, 80); // Ajustamos la posición aquí
+	        const usernameBackground = this.add.rectangle(0, 0, 180, 60, 0x000000, 0.8).setOrigin(0);
+	        this.usernameContainer.add(usernameBackground);
+
+	        // Texto del nombre de usuario conectado
+	        this.usernameText = this.add.text(10, 10, `Usuario: ${username}`, {
+	            fontSize: '16px',
+	            fill: '#fff',
+	            wordWrap: { width: 180, useAdvancedWrap: true }
+	        });
+	        this.usernameContainer.add(this.usernameText);
+	    } else {
+	        // Si el contenedor ya existe, solo actualizamos el texto
+	        this.usernameText.setText(`Usuario: ${username}`);
+	    }
+	}
+	
 	// Crear el indicador de conexión
 	    createConnectionIndicator() {
 	        // Crear el cuadrado verde (inicialmente desconectado)
@@ -157,7 +197,7 @@ class MenuScene extends Phaser.Scene {
 
 	createConnectedUsersDisplay() {
 	        // Fondo negro para el área de usuarios conectados
-	        this.usersContainer = this.add.container(10, 10); // Puedes ajustar la posición aquí
+	        this.usersContainer = this.add.container(10, 10);
 	        const usersBackground = this.add.rectangle(0, 0, 180, 60, 0x000000, 0.8).setOrigin(0);
 	        this.usersContainer.add(usersBackground);
 
@@ -194,96 +234,102 @@ class MenuScene extends Phaser.Scene {
 					this.usersText.setText(`USUARIOS CONECTADOS: ${data}`);
                 })
                 .catch(error => console.error("Error al obtener usuarios conectados:", error));
-        }, 1000); // 1 segundos
+        }, 500); // 1 segundos
     }
 
     // Crear botón para abrir el chat
     createChatButton() {
-        const chatButton = this.add.image(740, 575, 'chat').setScale(0.5).setInteractive();
-        chatButton.on('pointerdown', () => {
+        this.chatButton = this.add.image(700, 550, 'chat').setScale(0.5).setInteractive();
+        this.chatButton.on('pointerdown', () => {
             this.toggleChat();
         });
     }
-
+	
     // Crear el contenedor del chat
-    createChatContainer() {
-        this.chatContainer = this.add.container(180, 180).setVisible(false);
+	createChatContainer() {
+	    this.chatContainer = this.add.container(180, 180).setVisible(false);
 
-        // Fondo del chat
-        const chatBackground = this.add.rectangle(0, 0, 400, 300, 0x000000, 0.8).setOrigin(0);
-        this.chatContainer.add(chatBackground);
+	    // Fondo del chat
+	    const chatBackground = this.add.rectangle(0, 0, 400, 300, 0x000000, 0.8).setOrigin(0);
+	    this.chatContainer.add(chatBackground);
 
-        // Zona de mensajes
-        this.messagesText = this.add.text(10, 10, '', {
-            fontSize: '16px',
-            fill: '#fff',
-            wordWrap: { width: 380, useAdvancedWrap: true }  // Configurar wordWrap al crear el texto
-        });
-        this.chatContainer.add(this.messagesText);
+	    // Zona de mensajes
+	    this.messagesText = this.add.text(10, 10, '', {
+	        fontSize: '16px',
+	        fill: '#fff',
+	        wordWrap: { width: 380, useAdvancedWrap: true }  // Configurar wordWrap al crear el texto
+	    });
+	    this.chatContainer.add(this.messagesText);
 
-        // Input para escribir mensaje
-        this.inputBackground = this.add.rectangle(10, 260, 380, 30, 0x222222).setOrigin(0).setInteractive();
-        this.chatContainer.add(this.inputBackground);
+	    // Input para escribir mensaje
+	    this.inputBackground = this.add.rectangle(10, 260, 380, 30, 0x222222).setOrigin(0).setInteractive();
+	    this.chatContainer.add(this.inputBackground);
 
-        this.inputText = this.add.text(15, 265, '', {
-            fontSize: '16px',
-            fill: '#fff',
-            wordWrap: { width: 360, useAdvancedWrap: true }  // También configuramos wordWrap para el texto de entrada
-        });
-        this.chatContainer.add(this.inputText);
+	    this.inputText = this.add.text(15, 265, '', {
+	        fontSize: '16px',
+	        fill: '#fff',
+	        wordWrap: { width: 360, useAdvancedWrap: true }  // También configuramos wordWrap para el texto de entrada
+	    });
+	    this.chatContainer.add(this.inputText);
 
-        // Detectar teclas para entrada de texto
-        this.input.keyboard.on('keydown', (event) => {
-            if (!this.chatContainer.visible) return;
+	    // Indicador de envío en progreso
+	    this.isSending = false;
 
-            if (event.key === 'Backspace') {
-                this.inputText.text = this.inputText.text.slice(0, -1); // Eliminar último carácter
-            } else if (event.key === 'Enter') {
-                this.sendMessage();
-            } else if (event.key.length === 1) {
-                this.inputText.text += event.key; // Agregar carácter al texto
-            }
-        });
+	    // Detectar teclas para entrada de texto
+	    this.input.keyboard.on('keydown', (event) => {
+	        if (!this.chatContainer.visible) return;
 
-        // Botón para enviar mensajes (fuera del cuadro de texto)
-        this.sendButton = this.add.image(460, 265, 'enviar') // Botón fuera del cuadro
-            .setScale(0.5)
-            .setInteractive()
-            .on('pointerdown', () => this.sendMessage());
-        this.chatContainer.add(this.sendButton);
-    }
+	        if (event.key === 'Backspace') {
+	            this.inputText.text = this.inputText.text.slice(0, -1); // Eliminar último carácter
+	        } else if (event.key === 'Enter') {
+	            this.sendMessage();
+	        } else if (event.key.length === 1) {
+	            this.inputText.text += event.key; // Agregar carácter al texto
+	        }
+	    });
+
+	    // Botón para enviar mensajes (fuera del cuadro de texto)
+	    this.sendButton = this.add.image(460, 265, 'enviar') // Botón fuera del cuadro
+	        .setScale(0.5)
+	        .setInteractive()
+	        .on('pointerdown', () => this.sendMessage());
+	    this.chatContainer.add(this.sendButton);
+	}
 
     // Método para enviar un mensaje
-    sendMessage() {
-        const message = this.inputText.text.trim();  // Usar inputText.text directamente
-        if (message) {
-            //this.displayMessage(`Tú: ${message}`);
-			const sender = this.userName || this.userId;
-            this.inputText.text = ''; // Limpiar el inputText
+	sendMessage() {
+	    const message = this.inputText.text.trim();
+	    if (!message || this.isSending) return; // Evitar enviar mensajes vacíos o duplicados
 
-            // Aquí puedes enviar el mensaje al servidor
-            fetch('/api/messages', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    id: Date.now(), // Generar un ID basado en el timestamp o de alguna otra manera
-                    sender: sender , 
-                    content: message, 
-                    timestamp: Date.now(),
-                }),
-            })
-            .then(response => {
-                if (response.ok) {
-                    console.log("Mensaje enviado correctamente");
-                } else {
-                    console.error("Error al enviar el mensaje");
-                }
-            })
-            .catch(error => console.error('Error al enviar el mensaje:', error));
-        }
-    }
+	    this.isSending = true; // Bloquear nuevos envíos mientras se procesa el actual
+
+	    const sender = this.userName || this.userId;
+	    this.inputText.text = ''; // Limpiar el inputText
+
+	    fetch('/api/messages', {
+	        method: 'POST',
+	        headers: {
+	            'Content-Type': 'application/json',
+	        },
+	        body: JSON.stringify({
+	            id: Date.now(), // Generar un ID basado en el timestamp
+	            sender: sender,
+	            content: message,
+	            timestamp: Date.now(),
+	        }),
+	    })
+	    .then(response => {
+	        if (response.ok) {
+	            console.log("Mensaje enviado correctamente");
+	        } else {
+	            console.error("Error al enviar el mensaje");
+	        }
+	    })
+	    .catch(error => console.error('Error al enviar el mensaje:', error))
+	    .finally(() => {
+	        this.isSending = false; // Desbloquear envío al completar la operación
+	    });
+	}
 
     // Mostrar el mensaje en la interfaz
 	displayMessage(message) {
@@ -306,10 +352,17 @@ class MenuScene extends Phaser.Scene {
 	   }
 
     // Hacer que el chat se muestre o se oculte
-    toggleChat() {
-        const isVisible = this.chatContainer.visible;
-        this.chatContainer.setVisible(!isVisible);
-    }
+	toggleChat() {
+	    const isVisible = this.chatContainer.visible;
+	    this.chatContainer.setVisible(!isVisible);
+
+	    // Mostrar u ocultar el botón X según el estado del chat
+	    if (this.xButton) {
+	        this.xButton.setVisible(!isVisible);
+	    } else if (!isVisible) {
+	        this.createXButton(); // Crear el botón solo si el chat se abre y no existe
+	    }
+	}
 
     // Iniciar polling para obtener mensajes nuevos cada 1 segundo
     startPolling() {
@@ -327,21 +380,28 @@ class MenuScene extends Phaser.Scene {
     }
 
     // Actualizar la interfaz con los nuevos mensajes
-    updateMessages(messages) {
-        messages.forEach(message => {
-            const formattedMessage = `${message.sender}: ${message.content}`;
-            this.displayMessage(formattedMessage);
-        });
+	updateMessages(messages) {
+	    messages.forEach(message => {
+	        // Verificar si el mensaje ya fue procesado
+	        if (!this.receivedMessages.has(message.id)) {
+	            this.receivedMessages.add(message.id); // Marcar el mensaje como procesado
+	            const formattedMessage = `${message.sender}: ${message.content}`;
+	            this.displayMessage(formattedMessage);
+	        }
+	    });
     }
 
     //CARGA DE ASSETS
     loadAssets() {
         this.load.setPath('assets/');
+		this.load.image('xButton', 'X.png');
+		this.load.image('logOut', 'Log_Out.png');
         this.load.image('background', 'MenuBackground.png');
         this.load.image('startBtn', 'ejemplo.png');
         this.load.image('optionsBtn', 'btnOpciones.png');
-        this.load.image('creditsBtn', 'btnCréditos.png');
+        this.load.image('creditsBtn', 'btnCreditos.png'); //cambiar la imagen
         this.load.image('acceptBtn', 'btnAceptar.png');
+		this.load.image('accountBtn', 'btnAceptar.png'); //cambiar la imagen
         this.load.image('menuBtn', 'btnMenu.png');
         this.load.image('backButton', 'btnVolver.png');
         this.load.image('metalpipe', 'metalpipe.png');
@@ -350,7 +410,7 @@ class MenuScene extends Phaser.Scene {
 		this.load.image('chat', 'chat.png');
 		this.load.image('enviar', 'enviar.png');
         this.load.audio('mainMenuMusic', 'mainMenuMusic.ogg');
-        this.load.audio('deathMusic', 'deathMusic.ogg');
+        this.load.audio('deathMusic', 'deathMusic.mp3');
         this.load.audio('click', 'click.wav');
         this.load.audio('pipe', 'metalpipe.mp3');
         this.load.audio('atleti', 'himnoatletico.mp3');
@@ -365,6 +425,13 @@ class MenuScene extends Phaser.Scene {
         }
     }
 
+	createAccountBtn(){
+		this.accBtn = this.add.image(90, 100, 'accountBtn').setScale(0.5).setInteractive(); //cambiar por CUENTA
+		        this.accBtn.on('pointerdown', () => {
+		            this.scene.start('AccountMenu');
+		        });
+		}
+	
     //CREACIÓN DE BOTONES
     createStartButton() {
         this.startBtn = this.add.image(400, 300, 'acceptBtn').setScale(0.5).setInteractive();
@@ -391,6 +458,29 @@ class MenuScene extends Phaser.Scene {
             this.scene.start('Credits');
         });
     }
+	
+	createLogOutButton() {
+	        this.logOutBtn = this.add.image(400, 550, 'logOut').setScale(0.5).setInteractive();
+	        this.logOutBtn.on('pointerdown', () => {
+	            this.game.click.play();
+	            this.scene.start('UserScene');
+	        });
+	    }
+		
+
+		createXButton() {
+		    // Crear el botón solo si no existe
+		    if (!this.xButton) {
+		        this.xButton = this.add.image(570, 160, 'xButton')
+		            .setScale(0.35)
+		            .setInteractive();
+
+		        this.xButton.on('pointerdown', () => {
+		            this.toggleChat(); // Ocultar el chat al presionar el botón
+		        });
+		    }
+		    this.xButton.setVisible(true); // Asegurarse de que sea visible al crearlo
+		}
     
     createMetalPipe() {
         this.metalpipe = this.add.image(750, 400, 'metalpipe').setScale(0.1).setInteractive();
@@ -419,7 +509,7 @@ class MenuScene extends Phaser.Scene {
 
     //CONFIGURACIÓN DE BOTONES
     buttonAnims(){
-        [this.startBtn, this.optionsBtn, this.creditsBtn].forEach(button => {
+        [this.startBtn, this.optionsBtn, this.creditsBtn, this.accBtn, this.chatButton].forEach(button => {
             button.on('pointerover', ()=>this.onButtonHover(button));
             button.on('pointerout', ()=>this.onButtonOut(button));
         });
