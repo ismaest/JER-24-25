@@ -301,28 +301,30 @@ class GameScene extends Phaser.Scene {
             this.changeScene(); //si se detecta el "overlap" de la rata con la salid se cambia de escena
         }, null, this);
         
-        if (this.cheeseCollider == false) {
+		if (this.cheeseCollider == false) {
 
-            //comprobar colisiones con los quesos
-            this.cheeses.forEach((cheese, index) => {
-                if (this.checkCollision(this.rat, cheese, 50)) {
-                    this.ratSpeed = 50;
-                    cheese.destroy(); // Desactiva el queso del juego
-                    console.log("Queso recogido");
-                    this.cheeseCollider = true;
-                    this.cheeseTime = time;
-                    this.game.eatSound.play();
-                    //deleteCollectedItem(this.playerId, cheese.id);
-                }
-            });
-            
-        } else {
-            //EFECTOS DEL QUESO
-            if (Math.abs(time - this.cheeseTime) > 10000) {
-                this.cheeseCollider = false;
-                this.ratSpeed = 100;
-            }
-        }
+		    // Comprobar colisiones con los quesos
+		    this.cheeses = this.cheeses.filter((cheese, index) => {
+		        if (this.checkCollision(this.rat, cheese, 30)) {
+		            this.ratSpeed = 50;
+		            cheese.destroy(); // Desactiva el queso del juego
+		            this.cheeseCollider = true;
+		            this.cheeseTime = time;
+		            this.game.eatSound.play();
+		            // deleteCollectedItem(this.playerId, cheese.id);
+
+		            return false;
+		        }
+		        return true;
+		    });
+
+		} else {
+		    // EFECTOS DEL QUESO
+		    if (Math.abs(time - this.cheeseTime) > 10000) {
+		        this.cheeseCollider = false;
+		        this.ratSpeed = 100;
+		    }
+		}
 
         //MOVIMIENTO DE LA MANO
         this.handleHandMovement(time);
@@ -591,18 +593,27 @@ class GameScene extends Phaser.Scene {
     
     ActivateCheese(){
         //Regenera los quesos en sus respectivas posiciones
-        this.cheeses.push(this.createCheese(250, 100));
-        this.cheeses.push(this.createCheese(300, 300));
-        this.cheeses.push(this.createCheese(700, 400));
+		this.cheeses.push(this.createCheese(275, 100));
+		this.cheeses.push(this.createCheese(300, 300));
+		this.cheeses.push(this.createCheese(735, 400));
     }
     
-    createMetalPipe() {
-        this.metalpipe = this.add.image(30, 420, 'metalpipe').setScale(0.1).setInteractive();
-        this.metalpipe.on('pointerdown', () => {
-            this.game.pipe = this.sound.add('pipe');
-            this.game.pipe.play();
-        })
-    }
+	createMetalPipe() {
+	    // Crear la tubería de metal
+	    this.metalpipe = this.physics.add.image(30, 420, 'metalpipe').setScale(0.1);
+
+	    // Añadir colisión con la rata
+	    this.physics.add.overlap(this.rat, this.metalpipe, () => {
+	        // Reproducir sonido de tubería metálica
+	        if (!this.game.pipe) {
+	            this.game.pipe = this.sound.add('pipe');
+	        }
+	        this.game.pipe.play();
+
+	        // Destruir la tubería del juego
+	        this.metalpipe.destroy();
+	    });
+	}
     
     //CREAR EL LABERINTO
     
@@ -821,7 +832,7 @@ class GameScene extends Phaser.Scene {
 
     createTeleportA1(x, y) {
         const tp = this.add.image(x, y, 'tpA').setScale(0.125);
-        tp.targetX = 85; //cambia esto según dónde quieres que lleve
+        tp.targetX = 35; //cambia esto según dónde quieres que lleve
         tp.targetY = 200;
         return tp;
     }
