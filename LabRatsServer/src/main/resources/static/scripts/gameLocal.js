@@ -238,26 +238,31 @@ class GameSceneLocal extends Phaser.Scene {
 
         this.physics.add.overlap(this.rat, this.exit, this.changeScene, null, this);
         
-        if (this.cheeseCollider == false) {
+		if (this.cheeseCollider == false) {
 
-            //comprobar colisiones con los quesos
-            this.cheeses.forEach((cheese, index) => {
-                if (this.checkCollision(this.rat, cheese, 50)) {
-                    this.ratSpeed = 50;
-                    cheese.destroy(); // Desactiva el queso del juego
-                    this.cheeseCollider = true;
-                    this.cheeseTime = time;
-                    this.game.eatSound.play();
-                }
-            });
-            
-        } else {
-            //EFECTOS DEL QUESO
-            if (Math.abs(time - this.cheeseTime) > 10000) {
-                this.cheeseCollider = false;
-                this.ratSpeed = 100;
-            }
-        }
+		    // Comprobar colisiones con los quesos
+		    this.cheeses = this.cheeses.filter((cheese, index) => {
+		        if (this.checkCollision(this.rat, cheese, 30)) {
+		            this.ratSpeed = 50;
+		            cheese.destroy(); // Desactiva el queso del juego
+		            this.cheeseCollider = true;
+		            this.cheeseTime = time;
+		            this.game.eatSound.play();
+		            // deleteCollectedItem(this.playerId, cheese.id);
+
+		            return false;
+		        }
+		        return true;
+		    });
+
+		} else {
+		    // EFECTOS DEL QUESO
+		    if (Math.abs(time - this.cheeseTime) > 10000) {
+		        this.cheeseCollider = false;
+		        this.ratSpeed = 100;
+		    }
+		}
+
 
         //MOVIMIENTO DE LA MANO
         this.handleHandMovement(time);
@@ -299,7 +304,7 @@ class GameSceneLocal extends Phaser.Scene {
         
         //TP ENTRE LAS ALCANTARILLAS
         this.tps.forEach(tp => {
-            if (this.checkCollision(this.rat, tp, 50) && this.exitCollider) {
+            if (this.checkCollision(this.rat, tp, 30) && this.exitCollider) {
                 this.rat.x = tp.targetX;
                 this.rat.y = tp.targetY;
                 this.exitCollider = false;
@@ -307,7 +312,7 @@ class GameSceneLocal extends Phaser.Scene {
             }
         });
 
-        if (this.tps.every(tp => !this.checkCollision(this.rat, tp, 50)) && !this.exitCollider) {
+        if (this.tps.every(tp => !this.checkCollision(this.rat, tp, 30)) && !this.exitCollider) {
             this.exitCollider = true;
         }
     }
@@ -317,36 +322,56 @@ class GameSceneLocal extends Phaser.Scene {
         this.scene.start('WinSceneLocal');
     }
 
-    createMetalPipe() {
-        this.metalpipe = this.add.image(30, 420, 'metalpipe').setScale(0.1).setInteractive();
-        this.metalpipe.on('pointerdown', () => {
-            this.game.pipe = this.sound.add('pipe');
-            this.game.pipe.play();
-        })
-    }
+	createMetalPipe() {
+	    // Crear la tubería de metal
+	    this.metalpipe = this.physics.add.image(30, 420, 'metalpipe').setScale(0.1);
+
+	    // Añadir colisión con la rata
+	    this.physics.add.overlap(this.rat, this.metalpipe, () => {
+	        // Reproducir sonido de tubería metálica
+	        if (!this.game.pipe) {
+	            this.game.pipe = this.sound.add('pipe');
+	        }
+	        this.game.pipe.play();
+
+	        // Destruir la tubería del juego
+	        this.metalpipe.destroy();
+	    });
+	}
+
     
     //MANEJO DE LA RATA
     
     //Maneja el movimiento de la rata según la velocidad.
     handleRatMovement(speed) {
+		let positionChanged = false;
         
-        //Movimiento vertical
-        if (this.keys.W.isDown) {
-            this.rat.setVelocityY(-speed); // Arriba
-        } else if (this.keys.S.isDown) {
-            this.rat.setVelocityY(speed); // Abajo
-        } else {
-           this.rat.setVelocityY(0); // Detener en Y si no hay input
-        }
-        
-        //Movimiento horizontal
-        if (this.keys.A.isDown) {
-            this.rat.setVelocityX(-speed); // Izquierda
-        } else if (this.keys.D.isDown) {
-            this.rat.setVelocityX(speed); // Derecha
-        } else {
-            this.rat.setVelocityX(0); // Detener en X si no hay input
-        }
+		// Movimiento vertical
+		       if (this.keys.W.isDown) {
+		           this.rat.setVelocityY(-speed); // Arriba
+		           this.rat.rotation=-1.5708;
+		           positionChanged = true;
+		       } else if (this.keys.S.isDown) {
+		           this.rat.setVelocityY(speed); // Abajo
+		           this.rat.rotation=1.5708;
+		           positionChanged = true;
+		       } else {
+		           this.rat.setVelocityY(0); // Detener en Y si no hay input
+		       }
+
+		       // Movimiento horizontal
+		       if (this.keys.A.isDown) {
+		           this.rat.setVelocityX(-speed); // Izquierda
+		           this.rat.rotation=3.14159;
+		           positionChanged = true;
+		       } else if (this.keys.D.isDown) {
+		           this.rat.setVelocityX(speed); // Derecha
+		           this.rat.rotation=0;
+		           positionChanged = true;
+		       } else {
+		           this.rat.setVelocityX(0); // Detener en X si no hay input
+		       }
+
     }
 
     //Manejo de perder vidas y de morir
@@ -460,9 +485,9 @@ class GameSceneLocal extends Phaser.Scene {
     
     ActivateCheese(){
         //Regenera los quesos en sus respectivas posiciones
-        this.cheeses.push(this.createCheese(250, 100));
+        this.cheeses.push(this.createCheese(275, 100));
         this.cheeses.push(this.createCheese(300, 300));
-        this.cheeses.push(this.createCheese(700, 400));
+        this.cheeses.push(this.createCheese(735, 400));
     }
     
     //CREAR EL LABERINTO
@@ -680,7 +705,7 @@ class GameSceneLocal extends Phaser.Scene {
 
     createTeleportA1(x, y) {
         const tp = this.add.image(x, y, 'tpA').setScale(0.125);
-        tp.targetX = 85; //cambia esto según dónde quieres que lleve
+        tp.targetX = 35; //cambia esto según dónde quieres que lleve
         tp.targetY = 200;
         return tp;
     }
