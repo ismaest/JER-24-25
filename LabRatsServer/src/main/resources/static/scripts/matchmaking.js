@@ -52,8 +52,19 @@ class MatchmakingScene extends Phaser.Scene {
 
         // Iniciar polling para obtener mensajes cada 1 segundo
         //this.startPolling();
+		
+		this.socket.addEventListener('message', (event) => {
+			const data = JSON.parse(event.data);
+			console.log("Mensaje recibido:", data);
+			
+			if (data.type == "START_GAME") {
+				console.log("PARTIDA INICIADA");
+				this.scene.stop("MatchmakingScene");
+				this.scene.start('GameScene', { socket: this.socket });
+			}
+		});
     }
-
+	
     // Crear el indicador de conexión
     createConnectionIndicator() {
         // Crear el cuadrado verde (inicialmente desconectado)
@@ -146,9 +157,16 @@ class MatchmakingScene extends Phaser.Scene {
 	    const startBtn = this.add.image(385, 550, 'jugarBtn').setScale(0.5).setInteractive();
 	    startBtn.on('pointerdown', () => {
 	        // Enviar un mensaje de inicio de juego a todos los jugadores
-	        const message = JSON.stringify({ type: 'START_GAME' });
-	        this.socket.send(message);
+	        //const message = JSON.stringify({ type: 'START_GAME' });
+			//this.socket.send(message);
 
+			if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+				const message = {type: "START_GAME"};
+				this.socket.send(JSON.stringify(message));
+			} else {
+			    console.error('El WebSocket no está conectado');
+			}
+			
 	        // Cambiar a la escena de juego para este jugador
 	        this.scene.stop("MatchmakingScene");
 	        this.scene.start('GameScene', { socket: this.socket });

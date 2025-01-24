@@ -63,7 +63,7 @@ class RoleInfoLocal extends Phaser.Scene {
         this.acceptBtn.on('pointerdown', () => {
             console.log('Accept button pressed');
             this.game.click.play();
-            this.scene.stop('RoleInfo');
+            this.scene.stop('RoleInfoLocal');
         });
     }
 
@@ -72,9 +72,9 @@ class RoleInfoLocal extends Phaser.Scene {
         this.exitBtn.on('pointerdown', () => {
             console.log('Exit button pressed');
             this.game.click.play();
-            this.scene.stop('RoleInfo'); // Detenemos la escena actual
-            this.scene.stop('GameScene'); // Detenemos la escena del juego
-            this.scene.start('MenuScene'); // Cambiamos a la escena del menú
+            this.scene.stop('RoleInfoLocal'); // Detenemos la escena actual
+            this.scene.stop('GameSceneLocal'); // Detenemos la escena del juego
+            this.scene.start('MenuSceneLocal'); // Cambiamos a la escena del menú
         });
     }
     

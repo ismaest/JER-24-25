@@ -23,26 +23,16 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        String userId = "user_" + session.getId();
-        activeSessions.put(userId, session);
+        //String userId = "user_" + session.getId();
+    	String userId = "user_" + (activeSessions.size() + 1); //ARREGLAR ESTO!!!!!
+    	
+    	activeSessions.put(userId, session);
         System.out.println("Usuario conectado: " + userId);
 
         // Enviar mensaje de conexión al cliente
         session.sendMessage(new TextMessage("{\"type\": \"CONNECTED\", \"userId\": \"" + userId + "\"}"));
-
-        // Enviar las posiciones actuales de todos los jugadores al cliente recién conectado
-        for (PlayerPosition position : playerPositions.values()) {
-            GameMessage positionMessage = new GameMessage();
-            positionMessage.setType("POSITION_UPDATE");
-            positionMessage.setPlayerId(position.getPlayerId());
-            positionMessage.setX(position.getX());
-            positionMessage.setY(position.getY());
-            positionMessage.setTimestamp(position.getTimestamp());
-
-            String serializedMessage = objectMapper.writeValueAsString(positionMessage);
-            session.sendMessage(new TextMessage(serializedMessage));
-        }
     }
+    
 
     private void handleJoinRoom(GameMessage message, WebSocketSession session) throws Exception {
         String roomId = message.getPlayerId(); // Puedes usar un ID específico para la sala o generar uno dinámico
@@ -78,6 +68,7 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
         }
     }
     
+    
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         System.out.println("Mensaje recibido: " + message.getPayload());
@@ -104,11 +95,17 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
                 handleJoinRoom(gameMessage, session);
                 break;
                 
+            case "START_GAME":
+            	broadcastMessage(gameMessage, session);
+            	break;
+            	
+                
             default:
                 System.out.println("Tipo de mensaje desconocido: " + gameMessage.getType());
         }
     }
 
+    
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         String userId = "user_" + session.getId();
@@ -132,6 +129,8 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
         System.out.println("Usuario desconectado: " + userId);
     }
 
+    
+    
     private void broadcastMessage(GameMessage message, WebSocketSession sender) throws Exception {
         String serializedMessage = objectMapper.writeValueAsString(message);
         for (WebSocketSession session : activeSessions.values()) {
@@ -174,19 +173,18 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
             this.handIndex = handIndex;
         }
     }
+    
     private void updatePlayerPosition(GameMessage message) {
         PlayerPosition position = new PlayerPosition();
         position.setPlayerId(message.getPlayerId());
         position.setX(message.getX());
         position.setY(message.getY());
         position.setTimestamp(message.getTimestamp());
-        
 
         playerPositions.put(message.getPlayerId(), position);
     }
+    
     private void updateHandPosition(GameMessage message) {
-        // Guardar o procesar la información de la mano (como la posición) en el servidor
-        // Puedes hacer esto de forma similar al manejo de la posición de la rata
         HandPosition handPosition = new HandPosition();
         handPosition.setPlayerId(message.getPlayerId());
         handPosition.setHandIndex(message.getHandIndex());

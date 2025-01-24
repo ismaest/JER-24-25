@@ -61,8 +61,6 @@ class MenuScene extends Phaser.Scene {
 
 		    this.socket.addEventListener('open', () => {
 		        console.log('Conectado al servidor WebSocket');
-		        // Ahora que el WebSocket está abierto, crear el botón
-		        //this.createStartButton();
 		    });
 
 		    this.socket.addEventListener('message', (event) => {
@@ -78,24 +76,23 @@ class MenuScene extends Phaser.Scene {
 		            case 'CHAT':
 		                this.displayMessage(`${message.sender}: ${message.content}`);
 		                break;
+						
 					case 'POSITION_UPDATE':
 						console.log(`Jugador ${message.playerId} se movió a (${message.x}, ${message.y})`);
 						// Emitir un evento global
 						this.game.events.emit('positionUpdate', message);
-					break;	
+						break;	
 					
 					case 'HAND_POSITION_UPDATE':
 					    console.log(`Jugador ${message.playerId} movió la mano al índice ${message.handIndex}`);
 					    // Emitir un evento global para que el juego lo maneje
 					    this.game.events.emit('handPositionUpdate', message);
 					    break;
+					
 					case 'START_GAME':
 						console.log("Iniciando el juego...");
-						// Cambiar a la escena de GameScene cuando todos los jugadores reciban el mensaje
-						this.scene.stop("MatchmakingScene");
-						this.scene.start('GameScene', {socket:this.socket});
 						break;
-								
+						
 		            default:
 		                console.error('Tipo de mensaje desconocido:', message.type);
 		        }
@@ -436,10 +433,10 @@ class MenuScene extends Phaser.Scene {
     createStartButton() {
         this.startBtn = this.add.image(400, 300, 'acceptBtn').setScale(0.5).setInteractive();
         this.startBtn.on('pointerdown', () => {
-            this.game.click.play();
-            this.scene.stop("MenuScene");
-            this.scene.start('MatchmakingScene', { socket: this.socket });
-            //this.scene.launch("RoleInfo");
+		this.game.click.play();
+		this.scene.stop("MenuScene");
+		this.scene.start('MatchmakingScene', { socket: this.socket });
+		
         });
     }
 
