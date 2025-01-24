@@ -37,7 +37,8 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
     private void handleJoinRoom(GameMessage message, WebSocketSession session) throws Exception {
         String roomId = message.getPlayerId(); // Puedes usar un ID específico para la sala o generar uno dinámico
         GameRoom room = gameRooms.computeIfAbsent(roomId, id -> new GameRoom(id));
-
+        
+        
         if (room.addPlayer(message.getPlayerId())) {
             // Notificar a los jugadores de la sala
             for (String playerId : room.getPlayers()) {
@@ -93,12 +94,17 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
                 
             case "JOIN_ROOM":
                 handleJoinRoom(gameMessage, session);
+                broadcastMessage(gameMessage, session);
                 break;
                 
             case "START_GAME":
             	broadcastMessage(gameMessage, session);
             	break;
             	
+            case "CHECK_ROOM":
+            	//checkRoomFull(gameMessage);
+                broadcastMessage(gameMessage, session);
+            	break;
                 
             default:
                 System.out.println("Tipo de mensaje desconocido: " + gameMessage.getType());
@@ -128,7 +134,6 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
 
         System.out.println("Usuario desconectado: " + userId);
     }
-
     
     
     private void broadcastMessage(GameMessage message, WebSocketSession sender) throws Exception {
@@ -148,6 +153,8 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
         private double y;
         private Integer handIndex;
         private String timestamp;
+        private boolean roomFull;
+        private String roomId;
 
         // Getters y setters
         public String getType() { return type; }
@@ -164,6 +171,12 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
 
         public String getTimestamp() { return timestamp; }
         public void setTimestamp(String timestamp) { this.timestamp = timestamp; }
+        
+        public boolean getRoomFull() { return roomFull; }
+        public void setRoomFull(boolean full) { this.roomFull = full; }
+        
+        public String getRoomId() { return roomId; }
+        public void setRoomId(String roomID) { this.roomId = roomID; }
         
         public Integer getHandIndex() {
             return handIndex;
@@ -192,5 +205,28 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
 
         // Guardar la información en el servidor (si es necesario)
         handPositions.put(message.getPlayerId(), handPosition);
+    }
+    
+    private void checkRoomFull(GameMessage message) {
+        String localRoomId = message.getPlayerId(); // Puedes usar un ID específico para la sala o generar uno dinámico
+        GameRoom room = null;
+        
+        if(message.getRoomId() == null) {
+        	message.setRoomId(localRoomId);
+        }
+        
+        if(gameRooms.containsKey(message.getRoomId())) {
+        	room = gameRooms.get(message.getRoomId());
+        } else {
+        	room = new GameRoom(message.getRoomId()); 
+        }
+        
+        room.addPlayer(message.getPlayerId());
+        
+        if(room.isFull()) {
+        	message.setRoomFull(true);
+        } else {
+        	message.setRoomFull(false);
+        }
     }
 }

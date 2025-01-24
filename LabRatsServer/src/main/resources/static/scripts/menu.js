@@ -92,6 +92,16 @@ class MenuScene extends Phaser.Scene {
 					case 'START_GAME':
 						console.log("Iniciando el juego...");
 						break;
+					
+					case 'CHECK_ROOM':
+						if(message.roomFull == true){
+							this.startBtn.setVisible = false;
+							console.log("FULL");
+						} else {
+							this.startBtn.setVisible = true;
+							console.log("NOT FULL");
+						}
+						break;
 						
 		            default:
 		                console.error('Tipo de mensaje desconocido:', message.type);
@@ -431,12 +441,17 @@ class MenuScene extends Phaser.Scene {
 	
     //CREACIÓN DE BOTONES
     createStartButton() {
-        this.startBtn = this.add.image(400, 300, 'acceptBtn').setScale(0.5).setInteractive();
+        this.startBtn = this.add.image(400, 300, 'btnJugar').setScale(0.5).setInteractive();
         this.startBtn.on('pointerdown', () => {
-		this.game.click.play();
-		this.scene.stop("MenuScene");
-		this.scene.start('MatchmakingScene', { socket: this.socket });
-		
+			this.game.click.play(); //Reproducir sonido
+			if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+				const message = {type: "CHECK_ROOM"};
+				this.socket.send(JSON.stringify(message));
+			} else {
+				console.error('El WebSocket no está conectado');
+			}
+			this.scene.stop("MenuScene");
+			this.scene.start('MatchmakingScene', { socket: this.socket });
         });
     }
 
