@@ -1,8 +1,13 @@
 
 class UserScene extends Phaser.Scene {
+	userName;
     constructor() {
         super({ key: "UserScene" });
     }
+	
+	init(data){
+		this.userName = data.userName;
+	}
 
     preload() {
         this.load.setPath('assets/');
@@ -13,7 +18,7 @@ class UserScene extends Phaser.Scene {
     }
 
     create() {
-        
+		
         this.add.image(400, 300, 'background');
 
         this.SignUp();
@@ -166,7 +171,8 @@ class UserScene extends Phaser.Scene {
                     data: JSON.stringify(userData),  // Convierte el objeto JS a JSON
                     success: function(response) {
                         console.log("Respuesta del servidor:", response);
-
+						sessionStorage.removeItem('userName');
+						sessionStorage.removeItem('userPassword');
                         // Si la respuesta indica que el jugador se conectó correctamente
                         if (response === "User created and connected successfully") {
 							
@@ -176,7 +182,7 @@ class UserScene extends Phaser.Scene {
                             // Cambiar la escena a MenuScene solo si se creó el usuario
                             console.log("Usuario creado, cambiando a la escena de menú...");
                             self.form.style.display = 'none';
-                            self.scene.start('MenuScene');
+                            self.scene.start('MenuScene', {"userName" : this.userName});
                         }
                     },
 					error: (xhr, status, error) => {
@@ -236,7 +242,7 @@ class UserScene extends Phaser.Scene {
                         // Cambiar la escena a MenuScene solo si se creó el usuario
                         console.log("Usuario iniciado, cambiando a la escena de menú...");
                         self.form.style.display = 'none';
-                        self.scene.start('MenuScene');
+                        self.scene.start('MenuScene', {"userName" : this.userName});
                     }
                 }).error(function(xhr, status, error) {
                     if (xhr.status === 404) {

@@ -50,9 +50,9 @@ class MenuSceneLocal extends Phaser.Scene {
         
         //Audio
         this.load.audio('mainMenuMusic', 'mainMenuMusic.ogg');
-        this.load.audio('deathMusic', 'deathMusic.ogg');
+        this.load.audio('deathMusic', 'deathMusic.mp3');
         this.load.audio('click', 'click.wav');
-        this.load.audio('pipe', 'pipe.wav')
+        this.load.audio('pipe', 'metalpipe.mp3')
         this.load.audio('atleti', 'himnoatletico.mp3')
     }
 

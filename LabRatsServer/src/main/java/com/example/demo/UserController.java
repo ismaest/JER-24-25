@@ -23,8 +23,14 @@ public class UserController {
     @GetMapping("/signin")
     public ResponseEntity<User> getUserSigned(@RequestParam String name, @RequestParam String password) {
         User user = userService.getUser(name, password);
-        userService.connectPlayer(user.getName());
-        return (user != null) ? ResponseEntity.ok(user) : ResponseEntity.notFound().build();
+
+        if (user != null) {
+            // Conecta al usuario solo si se valida correctamente
+            userService.connectPlayer(user.getName());
+            return ResponseEntity.ok(user);
+        }
+
+        return ResponseEntity.notFound().build();
     }
     
     @GetMapping("/check-server-status")
@@ -53,6 +59,7 @@ public class UserController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error connecting the player");
             }
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while processing the request");
         }
     }

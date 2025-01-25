@@ -1,14 +1,20 @@
 class AccountMenu extends Phaser.Scene {
-	
+	userName;
 	constructor() {
 	       super({key: "AccountMenu"});
+		   
 	   }
+	   
+	   init(data){
+		this.userName = data.userName;
+	   }
+	   
 	   preload(){
 		this.load.setPath('assets/');
 		this.load.image('background', 'MenuBackground.png');
 		this.load.image('backBtn', 'btnVolver.png');
-		this.load.image('deleteBtn', 'btnAceptar.png'); //cambiar por borrar
-		this.load.image('logOut', 'Log_Out.png');
+		this.load.image('deleteBtn', 'eliminar.png'); //cambiar por borrar
+		this.load.image('logOut', 'cerrar_sesion.png');
 		
 	   }
 	   
@@ -27,12 +33,33 @@ class AccountMenu extends Phaser.Scene {
 	   }
 	   
 	   createLogOutButton() {
-	   	        this.logOutBtn = this.add.image(400, 480, 'logOut').setScale(0.5).setInteractive();
-	   	        this.logOutBtn.on('pointerdown', () => {
-	   	            this.game.click.play();
-	   	            this.scene.start('UserScene');
-	   	        });
-	   	    }
+	       this.logOutBtn = this.add.image(400, 480, 'logOut').setScale(0.5).setInteractive();
+	       this.logOutBtn.on('pointerdown', async () => {
+	           this.game.click.play();
+	           
+	           // Llamar al endpoint de desconexión
+	           const playerName = this.userName; // Asegúrate de tener el nombre del jugador almacenado
+	           try {
+	               const response = await fetch('/user/disconnect', {
+	                   method: 'POST',
+	                   headers: {
+	                       'Content-Type': 'application/x-www-form-urlencoded',
+	                   },
+	                   body: new URLSearchParams({ playerName }),
+	               });
+
+	               if (response.ok) {
+	                   console.log("Jugador desconectado exitosamente del servidor.");
+	                   this.scene.start('UserScene', {"userName" : this.userName}); // Cambiar a la escena de inicio
+	               } else {
+	                   console.error("Error al desconectar al jugador del servidor.");
+	               }
+	           } catch (err) {
+	               console.error("Error al realizar la solicitud de desconexión:", err);
+	           }
+	       });
+	   }
+
 	   
 	   createBackBtn(){
 		this.backBtn = this.add.image(700, 550, 'backBtn').setScale(0.5).setInteractive();
@@ -45,8 +72,42 @@ class AccountMenu extends Phaser.Scene {
 	   
 	   createDeleteButton(){
 		this.deleteBtn = this.add.image(400, 550, 'deleteBtn').setScale(0.5).setInteractive();
-		this.deleteBtn.on('pointerdown', () => {
-			//Lógica para borrar la cuenta
+		this.deleteBtn.on('pointerdown', async () => {
+			// Obtener el nombre y contraseña del usuario de sessionStorage
+			        const playerName = sessionStorage.getItem('userName');
+			        const password = sessionStorage.getItem('userPassword');
+			        if (!playerName || !password) {
+			            console.error("No se encontró información del usuario en sessionStorage.");
+			            return;
+			        }
+
+			        try {
+			            // Llamar al endpoint DELETE para eliminar al usuario
+			            const response = await fetch('/user/delete', {
+			                method: 'DELETE',
+			                headers: {
+			                    'Content-Type': 'application/x-www-form-urlencoded',
+			                },
+			                body: new URLSearchParams({ name: playerName, password }),
+			            });
+
+			            if (response.ok) {
+			                console.log("Usuario eliminado exitosamente del servidor.");
+
+			                // Limpiar el sessionStorage
+			                sessionStorage.removeItem('userName');
+			                sessionStorage.removeItem('userPassword');
+
+			                // Cambiar a la escena inicial
+			                this.scene.start('UserScene');
+			            } else if (response.status === 404) {
+			                console.error("El usuario no existe o ya fue eliminado.");
+			            } else {
+			                console.error("Error al intentar eliminar el usuario.");
+			            }
+			        } catch (err) {
+			            console.error("Error al realizar la solicitud de eliminación:", err);
+			        }
 		});
 		
 	   }
@@ -66,13 +127,19 @@ class AccountMenu extends Phaser.Scene {
 	   	        this.usersContainer.add(this.usersText);
 	   	    }
 	   
-		connectedUser(){
-			// Texto de 'USUARIO:' que se mostrará en la parte superior
-			this.add.text(310, 250, 'USUARIO:', {
-			fontSize: '32px',
-			fill: '#000',
-			});
-		}
+			connectedUser() {
+			    // Mostrar texto de 'USUARIO:'
+			    this.add.text(310, 250, 'USUARIO:', {
+			        fontSize: '32px',
+			        fill: '#000',
+			    });
+
+			    // Mostrar el nombre del usuario al lado del texto
+				this.add.text(350, 280, `"${this.userName}"`, {
+				        fontSize: '32px',
+				        fill: '#000',
+				    });
+			}
 			
 	   updateConnectedUsers() {
 	           // Actualizar usuarios conectados cada 5 segundos
@@ -84,7 +151,7 @@ class AccountMenu extends Phaser.Scene {
 	   					this.usersText.setText(`USUARIOS CONECTADOS: ${data}`);
 	                   })
 	                   .catch(error => console.error("Error al obtener usuarios conectados:", error));
-	           }, 1000); // 1 segundos
+	           }, 50); // 50 milisegundos
 	       }
 		   
 		   createConnectionIndicator() {
