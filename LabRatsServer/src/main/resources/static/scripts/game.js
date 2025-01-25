@@ -1,5 +1,4 @@
 class GameScene extends Phaser.Scene {
-    rol;
 	
 	constructor(socket) {
         super({ key: "GameScene" });
@@ -8,15 +7,12 @@ class GameScene extends Phaser.Scene {
     }
 	
 	init(data) {
-		this.rol = data.rolId;
-		console.log(data.rolId);
-		console.log(this.rol);
 		this.players = {};
+		this.rol = data.rol
 		this.targetPositions = {};
 	        // Asegúrate de que el socket esté disponible
 	        if (data && data.socket instanceof WebSocket) {
 	            this.socket = data.socket;
-
 	            // Verificar si el WebSocket está abierto antes de hacer algo
 	            if (this.socket.readyState !== WebSocket.OPEN) {
 	                console.error("El WebSocket no está conectado.");
@@ -335,7 +331,7 @@ class GameScene extends Phaser.Scene {
         this.handleHandMovement(time);
 
         //USO DE BOTONES
-        if (this.cursors.up.isDown) {
+        if (this.cursors.up.isDown && rol == 1) {
             switch (this.index) {
                 case 0: //Activar jeringuilla
                     this.bvacuna = true;
@@ -515,6 +511,7 @@ class GameScene extends Phaser.Scene {
 
 	    const previousIndex = this.index; // Guardar el índice previo
 	    let positionChanged = false; // Flag para rastrear cambios de posición
+		
 		if(this.rol == 1){
 		    // Moverse a la izquierda
 		    if (this.cursors.left.isDown) {

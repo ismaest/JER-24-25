@@ -61,7 +61,7 @@ class MatchmakingScene extends Phaser.Scene {
 				console.log("PARTIDA INICIADA");
 				this.scene.stop("MatchmakingScene");
 				console.log(data.rolId);
-				this.scene.start('GameScene', { socket: this.socket }, {"rol" : data.rolId});
+				this.scene.start('GameScene', { socket: this.socket, rol : data.rolId });
 			}
 		});
     }
@@ -166,7 +166,7 @@ class MatchmakingScene extends Phaser.Scene {
 				this.socket.send(JSON.stringify(message));
 				// Cambiar a la escena de juego para este jugador
 				this.scene.stop("MatchmakingScene");
-				this.scene.start('GameScene', { socket: this.socket });
+				this.scene.start('GameScene', { socket: this.socket, rol : 0 });
 			} else {
 			    console.error('El WebSocket no está conectado');
 			}
