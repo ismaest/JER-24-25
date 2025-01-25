@@ -103,6 +103,14 @@ class MenuScene extends Phaser.Scene {
 						}
 						break;
 						
+					case "LIFE_UPDATE":
+						console.log("Actualizaciones de vida");
+						break;
+						
+					case "WIN_SCENE":
+						console.log("Pasamos a la victoria");
+						break;
+						
 		            default:
 		                console.error('Tipo de mensaje desconocido:', message.type);
 		        }
@@ -198,7 +206,7 @@ class MenuScene extends Phaser.Scene {
 		                    console.error('Error al comprobar la conexión:', error);
 		                    this.updateConnectionStatus(false);  // En caso de error, asumimos que el servidor está desconectado
 		                });
-		        }, 10000);  // Verificar cada 500 milisegundos
+		        }, 100);  // Verificar cada 500 milisegundos
 		    }
 
 
@@ -411,6 +419,7 @@ class MenuScene extends Phaser.Scene {
 		this.load.image('accountBtn', 'btnAceptar.png'); //cambiar la imagen
         this.load.image('menuBtn', 'btnMenu.png');
         this.load.image('backButton', 'btnVolver.png');
+		this.load.image('btnJugar', 'btnJugar.png');
         this.load.image('metalpipe', 'metalpipe.png');
         this.load.image('interrogacion', 'interrogacion.png');
         this.load.image ('secreto', 'secreto.png');
@@ -434,11 +443,10 @@ class MenuScene extends Phaser.Scene {
 
 	createAccountBtn(){
 		this.accBtn = this.add.image(90, 100, 'accountBtn').setScale(0.5).setInteractive(); //cambiar por CUENTA
-		        this.accBtn.on('pointerdown', () => {
-		            this.scene.start('AccountMenu');
-					
-		        });
-		}
+		this.accBtn.on('pointerdown', () => {
+			this.scene.start('AccountMenu');
+		 });
+	}
 	
     //CREACIÓN DE BOTONES
     createStartButton() {
@@ -473,27 +481,27 @@ class MenuScene extends Phaser.Scene {
     }
 	
 	createLogOutButton() {
-	        this.logOutBtn = this.add.image(400, 550, 'logOut').setScale(0.5).setInteractive();
-	        this.logOutBtn.on('pointerdown', () => {
-	            this.game.click.play();
-	            this.scene.start('UserScene');
-	        });
-	    }
+	    this.logOutBtn = this.add.image(400, 550, 'logOut').setScale(0.5).setInteractive();
+	    this.logOutBtn.on('pointerdown', () => {
+	        this.game.click.play();
+	        this.scene.start('UserScene');
+	    });
+	}
 		
 
-		createXButton() {
-		    // Crear el botón solo si no existe
-		    if (!this.xButton) {
-		        this.xButton = this.add.image(570, 160, 'xButton')
-		            .setScale(0.35)
-		            .setInteractive();
+	createXButton() {
+		 // Crear el botón solo si no existe
+		 if (!this.xButton) {
+		 	this.xButton = this.add.image(570, 160, 'xButton')
+		    	.setScale(0.35)
+		        .setInteractive();
 
-		        this.xButton.on('pointerdown', () => {
-		            this.toggleChat(); // Ocultar el chat al presionar el botón
-		        });
-		    }
-		    this.xButton.setVisible(true); // Asegurarse de que sea visible al crearlo
+		    this.xButton.on('pointerdown', () => {
+		    	this.toggleChat(); // Ocultar el chat al presionar el botón
+		    });
 		}
+		this.xButton.setVisible(true); // Asegurarse de que sea visible al crearlo
+	}
     
     createMetalPipe() {
         this.metalpipe = this.add.image(750, 400, 'metalpipe').setScale(0.1).setInteractive();

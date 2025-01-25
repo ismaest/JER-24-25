@@ -264,7 +264,11 @@ class GameScene extends Phaser.Scene {
 			        if (data.playerId !== this.playerId) {
 						this.rat.setPosition(data.x, data.y);
 			        }
-			    }
+			    } else if (data.type === "LIFE_UPDATE") {
+					this.LifeDown();
+				} else if (data.type === "WIN_SCENE") {
+					this.scene.start('WinScene');
+				}
 			});
        
 		this.game.events.on('handPositionUpdate', (message) => {
@@ -298,10 +302,20 @@ class GameScene extends Phaser.Scene {
         
         this.handleRatMovement(this.ratSpeed);
 
+		//COMPROBAR SI SE HA GANADO
         this.physics.add.overlap(this.rat, this.exit, () => {
-            this.changeScene(); //si se detecta el "overlap" de la rata con la salid se cambia de escena
+			if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+				const message = {type: "WIN_SCENE"};
+				this.socket.send(JSON.stringify(message));
+				
+				// Cambiar a la escena de juego para este jugador
+				this.scene.start('WinScene');
+			} else {
+				console.error('El WebSocket no está conectado');
+			}
         }, null, this);
         
+		
 		if (this.cheeseCollider == false) {
 
 		    // Comprobar colisiones con los quesos
@@ -331,7 +345,7 @@ class GameScene extends Phaser.Scene {
         this.handleHandMovement(time);
 
         //USO DE BOTONES
-        if (this.cursors.up.isDown && rol == 1) {
+        if (this.cursors.up.isDown && this.rol == 1) {
             switch (this.index) {
                 case 0: //Activar jeringuilla
                     this.bvacuna = true;
@@ -371,6 +385,7 @@ class GameScene extends Phaser.Scene {
             if (this.checkCollision(this.rat, tp, 25) && this.exitCollider) {
                 this.rat.x = tp.targetX;
                 this.rat.y = tp.targetY;
+				this.updatePlayerPosition(playerId, this.rat.x, this.rat.y);
                 this.exitCollider = false;
                 this.game.tpSound.play();
             }
@@ -381,14 +396,6 @@ class GameScene extends Phaser.Scene {
         }
     }
 
-
-    changeScene() {
-        // Llama a la función sendRatExitEvent con el playerId
-        //sendRatExitEvent(this.playerId);
-
-        // Cambia a la escena de victoria después de enviar el evento
-        this.scene.start('WinScene');
-    }
 
 	updatePlayerPosition(playerId, x, y) {
 	        console.log(this.socket); // Asegúrate de que aquí esté definido
@@ -481,7 +488,8 @@ class GameScene extends Phaser.Scene {
         //Devolvemos a la posicion inicial
         this.rat.x = 20;
         this.rat.y = 140; 
-        
+		this.updatePlayerPosition("player124", this.rat.x, this.rat.y);
+		
         this.lives--; //Restar la variable de vidas
         this.lifeIcons[this.lives].setVisible(false); //Quitar el icono de corazones
         this.game.hitSound.play();
@@ -559,9 +567,14 @@ class GameScene extends Phaser.Scene {
 
     ActivateSyringe() {
         this.syringes.forEach((syringe, index) => {
-            if (this.checkCollision(this.rat, syringe, 50) && syringe.isActive !== false) {
+            if (this.checkCollision(this.rat, syringe, 30) && syringe.isActive !== false) {
                 this.LifeDown();
-
+				
+				if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+					const message = {type: "LIFE_UPDATE"};
+					this.socket.send(JSON.stringify(message));
+				}
+				
                 //cambia la textura de la jeringuilla
                 syringe.setTexture('needle'); // Cambia a la textura de jeringuilla usada
 
@@ -579,9 +592,14 @@ class GameScene extends Phaser.Scene {
 
     ActivateTrapdoor() {
         this.trapdoors.forEach((trapdoor, index) => {
-            if (this.checkCollision(this.rat, trapdoor, 50) && trapdoor.isActive !== false) {
+            if (this.checkCollision(this.rat, trapdoor, 30) && trapdoor.isActive !== false) {
                 this.LifeDown();
-
+				
+				if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+					const message = {type: "LIFE_UPDATE"};
+					this.socket.send(JSON.stringify(message));
+				}
+				
                 //cambiar la textura de la trampilla
                 trapdoor.setTexture('trapdoorOpen'); // Cambia a la textura de trampa activada
 

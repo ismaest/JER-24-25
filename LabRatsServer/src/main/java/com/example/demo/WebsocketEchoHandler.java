@@ -106,6 +106,14 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
             	//checkRoomFull(gameMessage);
                 broadcastMessage(gameMessage, session);
             	break;
+            	
+            case "LIFE_UPDATE":
+            	broadcastMessage(gameMessage, session);
+            	break;
+            	
+            case "WIN_SCENE":
+            	broadcastMessage(gameMessage, session);
+            	break;
                 
             default:
                 System.out.println("Tipo de mensaje desconocido: " + gameMessage.getType());

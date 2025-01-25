@@ -445,7 +445,7 @@ class GameSceneLocal extends Phaser.Scene {
 
     ActivateSyringe() {
         this.syringes.forEach((syringe, index) => {
-            if (this.checkCollision(this.rat, syringe, 50) && syringe.isActive !== false) {
+            if (this.checkCollision(this.rat, syringe, 30) && syringe.isActive !== false) {
                 this.LifeDown();
 
                 //cambia la textura de la jeringuilla
@@ -465,7 +465,7 @@ class GameSceneLocal extends Phaser.Scene {
 
     ActivateTrapdoor() {
         this.trapdoors.forEach((trapdoor, index) => {
-            if (this.checkCollision(this.rat, trapdoor, 50) && trapdoor.isActive !== false) {
+            if (this.checkCollision(this.rat, trapdoor, 30) && trapdoor.isActive !== false) {
                 this.LifeDown();
 
                 //cambiar la textura de la trampilla

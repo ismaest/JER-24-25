@@ -38,7 +38,6 @@ class MatchmakingScene extends Phaser.Scene {
 
         this.createConnectedUsersDisplay();
 
-        this.createConnectionIndicator();
         this.checkConnection();
         
 
@@ -105,7 +104,10 @@ class MatchmakingScene extends Phaser.Scene {
             fetch('/user/check-server-status')  // Endpoint que verifica el estado del servidor
                 .then(response => {
                     if (response.ok) {
-                        this.updateConnectionStatus(true);  // El servidor está disponible
+						if(this.connectionIndicator == undefined){
+							this.createConnectionIndicator();
+						}
+						this.updateConnectionStatus(true);  // El servidor está disponible
                     } else {
                         this.updateConnectionStatus(false);  // El servidor no está disponible
                     }
@@ -114,7 +116,7 @@ class MatchmakingScene extends Phaser.Scene {
                     console.error('Error al comprobar la conexión:', error);
                     this.updateConnectionStatus(false);  // En caso de error, asumimos que el servidor está desconectado
                 });
-        }, 10000);  // Verificar cada 500 milisegundos
+        }, 100);  // Verificar cada 500 milisegundos
     }
 
 
@@ -143,7 +145,7 @@ class MatchmakingScene extends Phaser.Scene {
                     this.usersText.setText(`USUARIOS CONECTADOS: ${data}/2`);
                 })
                 .catch(error => console.error("Error al obtener usuarios conectados:", error));
-        }, 1000); // 1 segundos
+        }, 100); // 1 segundos
     }
 
     // Crear botón para abrir el chat
