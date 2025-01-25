@@ -436,6 +436,7 @@ class MenuScene extends Phaser.Scene {
 		this.accBtn = this.add.image(90, 100, 'accountBtn').setScale(0.5).setInteractive(); //cambiar por CUENTA
 		        this.accBtn.on('pointerdown', () => {
 		            this.scene.start('AccountMenu');
+					
 		        });
 		}
 	

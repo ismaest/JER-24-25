@@ -98,6 +98,7 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
                 break;
                 
             case "START_GAME":
+            	assignRol(gameMessage);
             	broadcastMessage(gameMessage, session);
             	break;
             	
@@ -155,6 +156,7 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
         private String timestamp;
         private boolean roomFull;
         private String roomId;
+        private Integer rolId = 0; //0: Rat / 1: Scientist
 
         // Getters y setters
         public String getType() { return type; }
@@ -178,13 +180,12 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
         public String getRoomId() { return roomId; }
         public void setRoomId(String roomID) { this.roomId = roomID; }
         
-        public Integer getHandIndex() {
-            return handIndex;
-        }
-
-        public void setHandIndex(Integer handIndex) {
-            this.handIndex = handIndex;
-        }
+        public Integer getHandIndex() {return handIndex; }
+        public void setHandIndex(Integer handIndex) { this.handIndex = handIndex; }
+        
+        public Integer getRolId() {return rolId; }
+        public void setRolId(Integer rol) { this.rolId = rol; }
+        
     }
     
     private void updatePlayerPosition(GameMessage message) {
@@ -205,6 +206,10 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
 
         // Guardar la información en el servidor (si es necesario)
         handPositions.put(message.getPlayerId(), handPosition);
+    }
+    
+    private void assignRol(GameMessage message){
+    	message.setRolId(1);
     }
     
     private void checkRoomFull(GameMessage message) {

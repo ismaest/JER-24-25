@@ -1,11 +1,16 @@
 class GameScene extends Phaser.Scene {
-    constructor(socket) {
+    rol;
+	
+	constructor(socket) {
         super({ key: "GameScene" });
 		this.socket = socket;
 		this.updatePlayerPosition = this.updatePlayerPosition.bind(this);
     }
 	
 	init(data) {
+		this.rol = data.rolId;
+		console.log(data.rolId);
+		console.log(this.rol);
 		this.players = {};
 		this.targetPositions = {};
 	        // Asegúrate de que el socket esté disponible
@@ -235,7 +240,7 @@ class GameScene extends Phaser.Scene {
         //Creación del laberinto
         this.createLabyritnh();
         this.createMetalPipe();
-        
+		
         //Crear el botón de arriba de opciones
         this.btnOpt = this.add.image(745, 30, 'menu').setScale(0.3);
         this.btnOpt.setInteractive();
@@ -433,42 +438,45 @@ class GameScene extends Phaser.Scene {
     //Maneja el movimiento de la rata según la velocidad.
     handleRatMovement(speed) {
         let positionChanged = false; // Flag para rastrear si hubo movimiento
-
-        // Movimiento vertical
-        if (this.keys.W.isDown) {
-            this.rat.setVelocityY(-speed); // Arriba
-            this.rat.rotation=-1.5708;
-            positionChanged = true;
-        } else if (this.keys.S.isDown) {
-            this.rat.setVelocityY(speed); // Abajo
-            this.rat.rotation=1.5708;
-            positionChanged = true;
-        } else {
-            this.rat.setVelocityY(0); // Detener en Y si no hay input
-        }
-
-        // Movimiento horizontal
-        if (this.keys.A.isDown) {
-            this.rat.setVelocityX(-speed); // Izquierda
-            this.rat.rotation=3.14159;
-            positionChanged = true;
-        } else if (this.keys.D.isDown) {
-            this.rat.setVelocityX(speed); // Derecha
-            this.rat.rotation=0;
-            positionChanged = true;
-        } else {
-            this.rat.setVelocityX(0); // Detener en X si no hay input
-        }
-
-        // Actualizar posición del jugador si cambió
-        if (positionChanged) {
-            const playerId = 'player123';  // O el ID que corresponda al jugador
-            const x = this.rat.x;          // Coordenada X de la rata
-            const y = this.rat.y;          // Coordenada Y de la rata
-            const timestamp = new Date().toISOString();  // Obtener el timestamp
-
-            this.updatePlayerPosition(playerId, x, y);  // Pasar los valores correctamente
-        }
+		
+		if(this.rol == 0){
+			
+	        // Movimiento vertical
+	        if (this.keys.W.isDown) {
+	            this.rat.setVelocityY(-speed); // Arriba
+	            this.rat.rotation=-1.5708;
+	            positionChanged = true;
+	        } else if (this.keys.S.isDown) {
+	            this.rat.setVelocityY(speed); // Abajo
+	            this.rat.rotation=1.5708;
+	            positionChanged = true;
+	        } else {
+	            this.rat.setVelocityY(0); // Detener en Y si no hay input
+	        }
+	
+	        // Movimiento horizontal
+	        if (this.keys.A.isDown) {
+	            this.rat.setVelocityX(-speed); // Izquierda
+	            this.rat.rotation=3.14159;
+	            positionChanged = true;
+	        } else if (this.keys.D.isDown) {
+	            this.rat.setVelocityX(speed); // Derecha
+	            this.rat.rotation=0;
+	            positionChanged = true;
+	        } else {
+	            this.rat.setVelocityX(0); // Detener en X si no hay input
+	        }
+	
+	        // Actualizar posición del jugador si cambió
+	        if (positionChanged) {
+	            const playerId = 'player123';  // O el ID que corresponda al jugador
+	            const x = this.rat.x;          // Coordenada X de la rata
+	            const y = this.rat.y;          // Coordenada Y de la rata
+	            const timestamp = new Date().toISOString();  // Obtener el timestamp
+	
+	            this.updatePlayerPosition(playerId, x, y);  // Pasar los valores correctamente
+	        }
+		}
     }
 
     //Manejo de perder vidas y de morir
@@ -507,28 +515,29 @@ class GameScene extends Phaser.Scene {
 
 	    const previousIndex = this.index; // Guardar el índice previo
 	    let positionChanged = false; // Flag para rastrear cambios de posición
-
-	    // Moverse a la izquierda
-	    if (this.cursors.left.isDown) {
-	        if (this.index > 0 && time - this.lastMove > 150) {
-	            this.index--;
-	            this.hand.x = this.handcoords[this.index];
-	            this.lastMove = time;
-	            this.game.handMoving.play();
-	            positionChanged = true;
-	        }
-	    }
-
-	    // Moverse a la derecha
-	    if (this.cursors.right.isDown) {
-	        if (this.index < this.handcoords.length - 1 && time - this.lastMove > 150) {
-	            this.index++;
-	            this.hand.x = this.handcoords[this.index];
-	            this.lastMove = time;
-	            this.game.handMoving.play();
-	            positionChanged = true;
-	        }
-	    }
+		if(this.rol == 1){
+		    // Moverse a la izquierda
+		    if (this.cursors.left.isDown) {
+		        if (this.index > 0 && time - this.lastMove > 150) {
+		            this.index--;
+		            this.hand.x = this.handcoords[this.index];
+		            this.lastMove = time;
+		            this.game.handMoving.play();
+		            positionChanged = true;
+		        }
+		    }
+	
+		    // Moverse a la derecha
+		    if (this.cursors.right.isDown) {
+		        if (this.index < this.handcoords.length - 1 && time - this.lastMove > 150) {
+		            this.index++;
+		            this.hand.x = this.handcoords[this.index];
+		            this.lastMove = time;
+		            this.game.handMoving.play();
+		            positionChanged = true;
+		        }
+		    }
+		}
 
 	    // Si cambió la posición, envía un evento al servidor
 	    if (positionChanged) {
