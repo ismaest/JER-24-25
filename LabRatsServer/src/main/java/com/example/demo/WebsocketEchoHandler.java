@@ -23,20 +23,26 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        //String userId = "user_" + session.getId();
-    	String userId = "user_" + (activeSessions.size() + 1); //ARREGLAR ESTO!!!!!
+        String userId = "user_" + session.getId();
     	
     	activeSessions.put(userId, session);
         System.out.println("Usuario conectado: " + userId);
 
         // Enviar mensaje de conexión al cliente
-        session.sendMessage(new TextMessage("{\"type\": \"CONNECTED\", \"userId\": \"" + userId + "\"}"));
+    	session.sendMessage(new TextMessage(
+                "{\"type\": \"CONNECTED\", \"playerId\": " + userId + "}"
+        ));
+        
+        for(WebSocketSession sessions : activeSessions.values()){
+        	UpdatePlayerJoined(sessions);
+        }
     }
     
 
     private void handleJoinRoom(GameMessage message, WebSocketSession session) throws Exception {
         String roomId = message.getPlayerId(); // Puedes usar un ID específico para la sala o generar uno dinámico
         GameRoom room = gameRooms.computeIfAbsent(roomId, id -> new GameRoom(id));
+        
         
         
         if (room.addPlayer(message.getPlayerId())) {
@@ -114,6 +120,14 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
             case "WIN_SCENE":
             	broadcastMessage(gameMessage, session);
             	break;
+            
+            case "PLAYER_DISCONECT":
+            	broadcastMessage(gameMessage, session);
+            	break;
+            	
+            case "PLAYER_CONNECT":
+            	broadcastMessage(gameMessage, session);
+            	break;
                 
             default:
                 System.out.println("Tipo de mensaje desconocido: " + gameMessage.getType());
@@ -123,24 +137,27 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
     
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-        String userId = "user_" + session.getId();
+    	String userId = "user_" + session.getId();
         activeSessions.remove(userId);
 
         // Eliminar al jugador de las salas
         for (GameRoom room : gameRooms.values()) {
-            room.removePlayer(userId);
-
+        	room.removePlayer(userId);
             // Notificar a los jugadores restantes
             for (String playerId : room.getPlayers()) {
-                WebSocketSession playerSession = activeSessions.get(playerId);
+            	WebSocketSession playerSession = activeSessions.get(playerId);
                 if (playerSession != null && playerSession.isOpen()) {
-                    playerSession.sendMessage(new TextMessage(
+                	playerSession.sendMessage(new TextMessage(
                         "{\"type\": \"ROOM_UPDATE\", \"roomId\": \"" + room.getRoomId() + "\", \"players\": " + room.getPlayers().size() + "}"
                     ));
                 }
             }
         }
-
+        
+        for(WebSocketSession sessions : activeSessions.values()){
+        	UpdatePlayerLeft(sessions);
+        }
+        
         System.out.println("Usuario desconectado: " + userId);
     }
     
@@ -165,6 +182,7 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
         private boolean roomFull;
         private String roomId;
         private Integer rolId = 0; //0: Rat / 1: Scientist
+        private Integer numOfPlayers;
 
         // Getters y setters
         public String getType() { return type; }
@@ -193,6 +211,9 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
         
         public Integer getRolId() {return rolId; }
         public void setRolId(Integer rol) { this.rolId = rol; }
+        
+        public Integer getNumOfPlayers() {return numOfPlayers; }
+        public void setNumOfPlayers(Integer num) { this.numOfPlayers = numOfPlayers; }
         
     }
     
@@ -241,5 +262,17 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
         } else {
         	message.setRoomFull(false);
         }
+    }
+    
+    private void UpdatePlayerLeft(WebSocketSession session) throws Exception {
+        session.sendMessage(new TextMessage(
+                "{\"type\": \"PLAYER_DISCONECT\", \"numOfPlayers\": " + activeSessions.size() + "}"
+        ));
+    }
+    
+    private void UpdatePlayerJoined(WebSocketSession session) throws Exception {
+    	session.sendMessage(new TextMessage(
+                "{\"type\": \"PLAYER_CONNECT\", \"numOfPlayers\": " + activeSessions.size() + "}"
+        ));
     }
 }

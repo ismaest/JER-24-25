@@ -8,6 +8,7 @@ class MenuScene extends Phaser.Scene {
         this.lastMessageId = 0;  // Inicializamos el ID del último mensaje recibido
 		this.maxMessages = 16;
 		this.receivedMessages = new Set();
+		this.connectedUsers = 0;
     }
 
     preload() {
@@ -50,7 +51,7 @@ class MenuScene extends Phaser.Scene {
         
         // Iniciar actualización periódica de usuarios conectados
         //this.sendHeartbeat(); // Enviar heartbeat periódicamente
-        this.updateConnectedUsers(); // Actualizar usuarios conectados periódicamente
+        //this.updateConnectedUsers(); // Actualizar usuarios conectados periódicamente
         
         // Iniciar polling para obtener mensajes cada 1 segundo
         this.startPolling();
@@ -109,6 +110,18 @@ class MenuScene extends Phaser.Scene {
 						
 					case "WIN_SCENE":
 						console.log("Pasamos a la victoria");
+						break;
+						
+					case "PLAYER_CONNECT":
+						console.log("CONEXIÓN DE JUGADOR");	
+					this.connectedUsers = message.numOfPlayers;
+						this.usersText.setText(`USUARIOS CONECTADOS: ${this.connectedUsers}`);	
+						break;
+						
+					case "PLAYER_DISCONECT":
+						console.log("DESCONEXION DE JUGADOR");
+						this.connectedUsers = message.numOfPlayers;
+						this.usersText.setText(`USUARIOS CONECTADOS: ${this.connectedUsers}`);
 						break;
 						
 		            default:
@@ -236,10 +249,10 @@ class MenuScene extends Phaser.Scene {
                     console.log("Heartbeat enviado correctamente");
                 })
                 .catch(error => console.error("Error en heartbeat:", error));
-        }, 10000); // Cada 2 segundos
+        }, 100); // Cada 2 segundos
     }
 
-    updateConnectedUsers() {
+    /*updateConnectedUsers() {
         // Actualizar usuarios conectados cada 5 segundos
         setInterval(() => {
             fetch("/user/connected-users")
@@ -250,7 +263,7 @@ class MenuScene extends Phaser.Scene {
                 })
                 .catch(error => console.error("Error al obtener usuarios conectados:", error));
         }, 500); // 1 segundos
-    }
+    }*/
 
     // Crear botón para abrir el chat
     createChatButton() {
