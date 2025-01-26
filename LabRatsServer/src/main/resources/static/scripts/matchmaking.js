@@ -40,7 +40,7 @@ class MatchmakingScene extends Phaser.Scene {
         this.createConnectedUsersDisplay();
 
         this.checkConnection();
-        
+        this.checkCurrentPlayers();
 
         // Contenedor del chat (inicialmente oculto)
         this.createChatContainer();
@@ -64,16 +64,18 @@ class MatchmakingScene extends Phaser.Scene {
 				this.scene.start('GameScene', { socket: this.socket, rol : data.rolId });
 			
 			} else if (data.type == "PLAYER_LOBBY_CONNECT"){
-				console.log("JUGADOR CONECTADO AL LOBBY");	
+				console.log("JUGADOR CONECTADO AL LOBBY");
 				this.connectedUsers = data.numOfPlayersLobby;
-				this.usersText.setText(`USUARIOS CONECTADOS: ${this.connectedUsers}/2`);	
 				
 			} else if (data.type == "PLAYER_LOBBY_DISCONNECT"){
-				console.log("JUGADOR DESCONECTADO AL LOBBY");	
+				console.log("JUGADOR DESCONECTADO DEL LOBBY");
 				this.connectedUsers = data.numOfPlayersLobby;
-				this.usersText.setText(`USUARIOS CONECTADOS: ${this.connectedUsers}/2`);		
-			}
-		});
+				this.usersText.setText(`USUARIOS CONECTADOS: ${this.connectedUsers}/2`);
+			
+			} else if (data.type == "UPDATE_LOBBY_PLAYERS"){
+				this.connectedUsers = data.numOfPlayersLobby;
+				this.usersText.setText(`USUARIOS CONECTADOS: ${this.connectedUsers}/2`);
+		}});
     }
 	
     // Crear el indicador de conexión
@@ -127,9 +129,14 @@ class MatchmakingScene extends Phaser.Scene {
                     console.error('Error al comprobar la conexión:', error);
                     this.updateConnectionStatus(false);  // En caso de error, asumimos que el servidor está desconectado
                 });
-        }, 100);  // Verificar cada 500 milisegundos
+        }, 1000);  // Verificar cada 500 milisegundos
     }
-
+	
+	checkCurrentPlayers() {
+		setInterval(() => {
+			this.socket.send(JSON.stringify({type: "UPDATE_LOBBY_PLAYERS", numOfPlayersLobby : this.connectedUsers}));
+		}, 2000);  // Verificar cada 500 milisegundos
+	}
 
     createConnectedUsersDisplay() {
         // Fondo negro para el área de usuarios conectados
@@ -138,7 +145,7 @@ class MatchmakingScene extends Phaser.Scene {
         this.usersContainer.add(usersBackground);
 
         // Texto de usuarios conectados
-        this.usersText = this.add.text(10, 10, 'USUARIOS CONECTADOS: Cargando...', {
+        this.usersText = this.add.text(10, 10, 'USUARIOS CONECTADOS: Esperando jugador...', {
             fontSize: '16px',
             fill: '#fff',
             wordWrap: { width: 180, useAdvancedWrap: true }

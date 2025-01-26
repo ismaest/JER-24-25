@@ -132,6 +132,12 @@ class MenuScene extends Phaser.Scene {
 					case "JOIN_ROOM":
 						break;
 						
+					case "UPDATE_LOBBY_PLAYERS":
+						break;
+						
+					case "ROOM_UPDATE":
+						break;
+						
 		            default:
 		                console.error('Tipo de mensaje desconocido:', message.type);
 		        }
@@ -227,7 +233,7 @@ class MenuScene extends Phaser.Scene {
 		                    console.error('Error al comprobar la conexión:', error);
 		                    this.updateConnectionStatus(false);  // En caso de error, asumimos que el servidor está desconectado
 		                });
-		        }, 100);  // Verificar cada 500 milisegundos
+		        }, 1000);  // Verificar cada 500 milisegundos
 		    }
 
 
@@ -461,12 +467,6 @@ class MenuScene extends Phaser.Scene {
         this.startBtn = this.add.image(400, 300, 'btnJugar').setScale(0.5).setInteractive();
         this.startBtn.on('pointerdown', () => {
 			this.game.click.play(); //Reproducir sonido
-			if (this.socket && this.socket.readyState === WebSocket.OPEN) {
-				const message = {type: "CHECK_ROOM"};
-				this.socket.send(JSON.stringify(message));
-			} else {
-				console.error('El WebSocket no está conectado');
-			}
 			
 			this.socket.send(JSON.stringify({type: "JOIN_ROOM"}));
 			

@@ -64,11 +64,11 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
             // Notificar a los jugadores de la sala
             for (String playerId : room.getPlayers()) {
                 WebSocketSession playerSession = activeSessions.get(playerId);
+                playerSession.sendMessage(new TextMessage(
+            			"{\"type\": \"PLAYER_LOBBY_CONNECT\", \"roomId\": \"" + roomId + "\", \"numOfPlayersLobby\": " + room.getPlayers().size() + "}"
+            	));
                 if (playerSession != null && playerSession.isOpen()) {
-                	System.out.println("TAMAÑO DEL LOBBY:" + room.getPlayers().size());
-                	playerSession.sendMessage(new TextMessage(
-                			"{\"type\": \"PLAYER_LOBBY_CONNECT\", \"roomId\": \"" + roomId + "\", \"numOfPlayersLobby\": " + room.getPlayers().size() + "}"
-                	));
+                	
                 }
             }
             /* RESOLVER MAS TARDE
@@ -82,12 +82,9 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
                         ));
                     }
                 }
-            }
+            }*/
         } else {
-            // Sala llena, notificar al cliente
-            session.sendMessage(new TextMessage(
-                "{\"type\": \"ROOM_FULL_ERROR\", \"roomId\": \"" + roomId + "\"}"
-            ));*/
+        	
         }
         
     }
@@ -125,11 +122,6 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
             	broadcastMessage(gameMessage, session);
             	break;
             	
-            case "CHECK_ROOM":
-            	//checkRoomFull(gameMessage);
-                broadcastMessage(gameMessage, session);
-            	break;
-            	
             case "LIFE_UPDATE":
             	broadcastMessage(gameMessage, session);
             	break;
@@ -151,7 +143,10 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
             	break;
             
             case "PLAYER_LOBBY_DISCONNECT":
-            	gameMessage.setNumOfPlayersLobby(gameMessage.getNumOfPlayersLobby() - 1);
+            	broadcastMessage(gameMessage, session);
+            	break;
+            	
+            case "UPDATE_LOBBY_PLAYERS":
             	broadcastMessage(gameMessage, session);
             	break;
                 
@@ -176,6 +171,9 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
                 	playerSession.sendMessage(new TextMessage(
                         "{\"type\": \"ROOM_UPDATE\", \"roomId\": \"" + room.getRoomId() + "\", \"players\": " + room.getPlayers().size() + "}"
                     ));
+                	playerSession.sendMessage(new TextMessage(
+                			"{\"type\": \"PLAYER_LOBBY_DISCONNECT\", \"numOfPlayersLobby\": " + room.getPlayers().size() + "}"
+                	));
                 }
             }
         }
@@ -269,29 +267,6 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
     
     private void assignRol(GameMessage message){
     	message.setRolId(1);
-    }
-    
-    private void checkRoomFull(GameMessage message) {
-        String localRoomId = message.getPlayerId(); // Puedes usar un ID específico para la sala o generar uno dinámico
-        GameRoom room = null;
-        
-        if(message.getRoomId() == null) {
-        	message.setRoomId(localRoomId);
-        }
-        
-        if(gameRooms.containsKey(message.getRoomId())) {
-        	room = gameRooms.get(message.getRoomId());
-        } else {
-        	room = new GameRoom(message.getRoomId()); 
-        }
-        
-        room.addPlayer(message.getPlayerId());
-        
-        if(room.isFull()) {
-        	message.setRoomFull(true);
-        } else {
-        	message.setRoomFull(false);
-        }
     }
     
     private void UpdatePlayerLeft(WebSocketSession session) throws Exception {
