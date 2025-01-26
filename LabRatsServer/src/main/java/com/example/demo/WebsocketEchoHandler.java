@@ -29,9 +29,7 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
         System.out.println("Usuario conectado: " + userId);
 
         // Enviar mensaje de conexión al cliente
-    	session.sendMessage(new TextMessage(
-                "{\"type\": \"CONNECTED\", \"playerId\": " + userId + "}"
-        ));
+        session.sendMessage(new TextMessage("{\"type\": \"CONNECTED\", \"userId\": \"" + userId + "\"}"));
         
         for(WebSocketSession sessions : activeSessions.values()){
         	UpdatePlayerJoined(sessions);
