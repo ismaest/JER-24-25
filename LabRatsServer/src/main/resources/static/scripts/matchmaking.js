@@ -3,6 +3,7 @@ class MatchmakingScene extends Phaser.Scene {
     constructor(socket) {
         super({key: "MatchmakingScene"});
 		this.socket = socket;
+		this.connectedUsers = 0;
     }
 	init(data) {
 			this.players = {};
@@ -46,7 +47,7 @@ class MatchmakingScene extends Phaser.Scene {
 
         // Iniciar actualización periódica de usuarios conectados
         //this.sendHeartbeat(); // Enviar heartbeat periódicamente
-        this.updateConnectedUsers(); // Actualizar usuarios conectados periódicamente
+        //this.updateConnectedUsers(); // Actualizar usuarios conectados periódicamente
 		this.createPlayButton();
 
         // Iniciar polling para obtener mensajes cada 1 segundo
@@ -61,6 +62,16 @@ class MatchmakingScene extends Phaser.Scene {
 				this.scene.stop("MatchmakingScene");
 				console.log(data.rolId);
 				this.scene.start('GameScene', { socket: this.socket, rol : data.rolId });
+			
+			} else if (data.type == "PLAYER_LOBBY_CONNECT"){
+				console.log("JUGADOR CONECTADO AL LOBBY");	
+				this.connectedUsers = data.numOfPlayersLobby;
+				this.usersText.setText(`USUARIOS CONECTADOS: ${this.connectedUsers}/2`);	
+				
+			} else if (data.type == "PLAYER_LOBBY_DISCONNECT"){
+				console.log("JUGADOR DESCONECTADO AL LOBBY");	
+				this.connectedUsers = data.numOfPlayersLobby;
+				this.usersText.setText(`USUARIOS CONECTADOS: ${this.connectedUsers}/2`);		
 			}
 		});
     }
@@ -133,19 +144,6 @@ class MatchmakingScene extends Phaser.Scene {
             wordWrap: { width: 180, useAdvancedWrap: true }
         });
         this.usersContainer.add(this.usersText);
-    }
-
-    updateConnectedUsers() {
-        // Actualizar usuarios conectados cada 5 segundos
-        setInterval(() => {
-            fetch("/user/connected-users")
-                .then(response => response.json())
-                .then(data => {
-                    // Actualizar el texto de usuarios conectados
-                    this.usersText.setText(`USUARIOS CONECTADOS: ${data}/2`);
-                })
-                .catch(error => console.error("Error al obtener usuarios conectados:", error));
-        }, 100); // 1 segundos
     }
 
     // Crear botón para abrir el chat

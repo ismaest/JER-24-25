@@ -51,7 +51,6 @@ class MenuScene extends Phaser.Scene {
         
         // Iniciar actualización periódica de usuarios conectados
         //this.sendHeartbeat(); // Enviar heartbeat periódicamente
-        //this.updateConnectedUsers(); // Actualizar usuarios conectados periódicamente
         
         // Iniciar polling para obtener mensajes cada 1 segundo
         this.startPolling();
@@ -114,14 +113,23 @@ class MenuScene extends Phaser.Scene {
 						
 					case "PLAYER_CONNECT":
 						console.log("CONEXIÓN DE JUGADOR");	
-					this.connectedUsers = message.numOfPlayers;
+						this.connectedUsers = message.numOfPlayersMenu;
 						this.usersText.setText(`USUARIOS CONECTADOS: ${this.connectedUsers}`);	
 						break;
 						
 					case "PLAYER_DISCONECT":
 						console.log("DESCONEXION DE JUGADOR");
-						this.connectedUsers = message.numOfPlayers;
+						this.connectedUsers = message.numOfPlayersMenu;
 						this.usersText.setText(`USUARIOS CONECTADOS: ${this.connectedUsers}`);
+						break;
+						
+					case "PLAYER_LOBBY_CONNECT":
+						break;
+						
+					case "PLAYER_LOBBY_DISCONNECT":
+						break;
+						
+					case "JOIN_ROOM":
 						break;
 						
 		            default:
@@ -251,19 +259,6 @@ class MenuScene extends Phaser.Scene {
                 .catch(error => console.error("Error en heartbeat:", error));
         }, 100); // Cada 2 segundos
     }
-
-    /*updateConnectedUsers() {
-        // Actualizar usuarios conectados cada 5 segundos
-        setInterval(() => {
-            fetch("/user/connected-users")
-                .then(response => response.json())
-                .then(data => {
-					// Actualizar el texto de usuarios conectados
-					this.usersText.setText(`USUARIOS CONECTADOS: ${data}`);
-                })
-                .catch(error => console.error("Error al obtener usuarios conectados:", error));
-        }, 500); // 1 segundos
-    }*/
 
     // Crear botón para abrir el chat
     createChatButton() {
@@ -472,6 +467,10 @@ class MenuScene extends Phaser.Scene {
 			} else {
 				console.error('El WebSocket no está conectado');
 			}
+			
+			this.socket.send(JSON.stringify({type: "JOIN_ROOM"}));
+			
+			
 			this.scene.stop("MenuScene");
 			this.scene.start('MatchmakingScene', { socket: this.socket });
         });

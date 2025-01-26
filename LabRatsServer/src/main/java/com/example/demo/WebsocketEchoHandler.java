@@ -38,22 +38,40 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
     
 
     private void handleJoinRoom(GameMessage message, WebSocketSession session) throws Exception {
-        String roomId = message.getPlayerId(); // Puedes usar un ID específico para la sala o generar uno dinámico
-        GameRoom room = gameRooms.computeIfAbsent(roomId, id -> new GameRoom(id));
+    	String userId = "user_" + session.getId();
+    	
+    	int roomIdInt = gameRooms.size();
+        
+    	if(roomIdInt == 0) { //ESTO ES PARA EVITAR QUE LA PRIMERA VEZ EL TAMAÑO SEA 0 Y POR ENDE, LA SIGUIENTE 1 Y SE DESCUADRE
+        	roomIdInt = 1;
+        }
+    	
+    	 // Puedes usar un ID específico para la sala o generar uno dinámico
+        String roomId = Integer.toString(roomIdInt);
+        GameRoom room;
+        
+        System.out.println("ID DEL LOBBY:" + roomId);
+        
+        if(gameRooms.containsKey(roomId)) {
+        	room = gameRooms.get(roomId);
+        } else {
+        	room = new GameRoom(roomId);
+        	gameRooms.put(roomId, room);
+        }
         
         
-        
-        if (room.addPlayer(message.getPlayerId())) {
+        if (room.addPlayer(userId)) {
             // Notificar a los jugadores de la sala
             for (String playerId : room.getPlayers()) {
                 WebSocketSession playerSession = activeSessions.get(playerId);
                 if (playerSession != null && playerSession.isOpen()) {
-                    playerSession.sendMessage(new TextMessage(
-                        "{\"type\": \"ROOM_UPDATE\", \"roomId\": \"" + roomId + "\", \"players\": " + room.getPlayers().size() + "}"
-                    ));
+                	System.out.println("TAMAÑO DEL LOBBY:" + room.getPlayers().size());
+                	playerSession.sendMessage(new TextMessage(
+                			"{\"type\": \"PLAYER_LOBBY_CONNECT\", \"roomId\": \"" + roomId + "\", \"numOfPlayersLobby\": " + room.getPlayers().size() + "}"
+                	));
                 }
             }
-
+            /* RESOLVER MAS TARDE
             // Si la sala está completa, habilitar la opción de jugar
             if (room.isFull()) {
                 for (String playerId : room.getPlayers()) {
@@ -69,8 +87,9 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
             // Sala llena, notificar al cliente
             session.sendMessage(new TextMessage(
                 "{\"type\": \"ROOM_FULL_ERROR\", \"roomId\": \"" + roomId + "\"}"
-            ));
+            ));*/
         }
+        
     }
     
     
@@ -124,6 +143,15 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
             	break;
             	
             case "PLAYER_CONNECT":
+            	broadcastMessage(gameMessage, session);
+            	break;
+            	
+            case "PLAYER_LOBBY_CONNECT":
+            	broadcastMessage(gameMessage, session);
+            	break;
+            
+            case "PLAYER_LOBBY_DISCONNECT":
+            	gameMessage.setNumOfPlayersLobby(gameMessage.getNumOfPlayersLobby() - 1);
             	broadcastMessage(gameMessage, session);
             	break;
                 
@@ -180,7 +208,8 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
         private boolean roomFull;
         private String roomId;
         private Integer rolId = 0; //0: Rat / 1: Scientist
-        private Integer numOfPlayers;
+        private Integer numOfPlayersMenu;
+        private Integer numOfPlayersLobby = 0;
 
         // Getters y setters
         public String getType() { return type; }
@@ -210,8 +239,11 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
         public Integer getRolId() {return rolId; }
         public void setRolId(Integer rol) { this.rolId = rol; }
         
-        public Integer getNumOfPlayers() {return numOfPlayers; }
-        public void setNumOfPlayers(Integer num) { this.numOfPlayers = numOfPlayers; }
+        public Integer getNumOfPlayersMenu() {return numOfPlayersMenu; }
+        public void setNumOfPlayersMenu(Integer numOfPlayersMenu) { this.numOfPlayersMenu = numOfPlayersMenu; }
+        
+        public Integer getNumOfPlayersLobby() {return numOfPlayersLobby; }
+        public void setNumOfPlayersLobby(Integer numOfPlayersLobby) { this.numOfPlayersLobby = numOfPlayersLobby; }
         
     }
     
@@ -264,13 +296,13 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
     
     private void UpdatePlayerLeft(WebSocketSession session) throws Exception {
         session.sendMessage(new TextMessage(
-                "{\"type\": \"PLAYER_DISCONECT\", \"numOfPlayers\": " + activeSessions.size() + "}"
+                "{\"type\": \"PLAYER_DISCONECT\", \"numOfPlayersMenu\": " + activeSessions.size() + "}"
         ));
     }
     
     private void UpdatePlayerJoined(WebSocketSession session) throws Exception {
     	session.sendMessage(new TextMessage(
-                "{\"type\": \"PLAYER_CONNECT\", \"numOfPlayers\": " + activeSessions.size() + "}"
+                "{\"type\": \"PLAYER_CONNECT\", \"numOfPlayersMenu\": " + activeSessions.size() + "}"
         ));
     }
 }
