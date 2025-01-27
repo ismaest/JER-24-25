@@ -267,22 +267,10 @@ class GameScene extends Phaser.Scene {
 					this.LifeDown();
 				} else if (data.type === "WIN_SCENE") {
 					this.rol = 0;
+					this.scene.stop('GameScene');
 					this.scene.start('WinScene');
 				}
 			});
-       
-		this.game.events.on('handPositionUpdate', (message) => {
-            console.log("Entra al evento");
-		    const playerId = message.playerId;
-		    const handIndex = message.handIndex;
-
-		    // Encontrar el jugador y actualizar la posición de la mano
-		    let player = this.getPlayerById(playerId);
-		    if (player) {
-		        // Actualiza la posición de la mano (por ejemplo, usando el índice)
-		        player.hand.x = this.handcoords[handIndex]; // Suponiendo que `handcoords` es un arreglo de posiciones
-		    }
-		});
     }
 
     update(time, delta) {
@@ -309,7 +297,12 @@ class GameScene extends Phaser.Scene {
 				this.socket.send(JSON.stringify(message));
 				this.rol = 0;
 				
+				this.rat.x = 20;
+				this.rat.y = 140; 
+				this.updatePlayerPosition(this.rat.x, this.rat.y);
+				
 				// Cambiar a la escena de juego para este jugador
+				this.scene.stop('GameScene');
 				this.scene.start('WinScene');
 			} else {
 				console.error('El WebSocket no está conectado');
@@ -386,7 +379,7 @@ class GameScene extends Phaser.Scene {
             if (this.checkCollision(this.rat, tp, 25) && this.exitCollider) {
                 this.rat.x = tp.targetX;
                 this.rat.y = tp.targetY;
-				this.updatePlayerPosition(this.playerId, this.rat.x, this.rat.y);
+				this.updatePlayerPosition(this.rat.x, this.rat.y);
                 this.exitCollider = false;
                 this.game.tpSound.play();
             }
@@ -398,12 +391,11 @@ class GameScene extends Phaser.Scene {
     }
 	
 	
-	updatePlayerPosition(playerId, x, y) {
+	updatePlayerPosition(x, y) {
 	        console.log(this.socket); // Asegúrate de que aquí esté definido
 	        if (this.socket && this.socket.readyState === WebSocket.OPEN) {
 	            this.socket.send(JSON.stringify({
 	                type: "POSITION_UPDATE",
-	                playerId: playerId,
 	                x: x,
 	                y: y,
 	                timestamp: new Date().toISOString()
@@ -413,11 +405,10 @@ class GameScene extends Phaser.Scene {
 	        }
 	}
 	
-	updateHandPosition(playerId, handIndex) {
+	updateHandPosition(handIndex) {
 	    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
 	        const message = {
 	            type: "HAND_POSITION_UPDATE",
-	            playerId: playerId,
 	            handIndex: handIndex,
 	            timestamp: new Date().toISOString()
 	        };
@@ -473,12 +464,11 @@ class GameScene extends Phaser.Scene {
 	
 	        // Actualizar posición del jugador si cambió
 	        if (positionChanged) {
-	            const playerId = 'player123';  // O el ID que corresponda al jugador
 	            const x = this.rat.x;          // Coordenada X de la rata
 	            const y = this.rat.y;          // Coordenada Y de la rata
 	            const timestamp = new Date().toISOString();  // Obtener el timestamp
 	
-	            this.updatePlayerPosition(playerId, x, y);  // Pasar los valores correctamente
+	            this.updatePlayerPosition(x, y);  // Pasar los valores correctamente
 	        }
 		}
     }
@@ -489,7 +479,7 @@ class GameScene extends Phaser.Scene {
         //Devolvemos a la posicion inicial
         this.rat.x = 20;
         this.rat.y = 140; 
-		this.updatePlayerPosition("player124", this.rat.x, this.rat.y);
+		this.updatePlayerPosition(this.rat.x, this.rat.y);
 		
         this.lives--; //Restar la variable de vidas
         this.lifeIcons[this.lives].setVisible(false); //Quitar el icono de corazones
@@ -547,9 +537,8 @@ class GameScene extends Phaser.Scene {
 			// Si cambió la posición, envía un evento al servidor
 			if (positionChanged) {
 				positionChanged = false;
-				const playerId = 'player124'; // ID del jugador actual
 				const handIndex = this.index; // Índice actual de la mano
-				this.updateHandPosition(playerId, handIndex); // Llamar a la función para enviar la posición
+				this.updateHandPosition(handIndex); // Llamar a la función para enviar la posición
 			}
 		}
 	}
@@ -945,13 +934,12 @@ async function sendHandMovementEvent(playerId, movementDirection) {
     }
 }
 
-function updatePlayerPosition(playerId, x, y) {
+function updatePlayerPosition(x, y) {
     // Verificar que el WebSocket esté abierto antes de enviar la posición
     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
         // Enviar la posición usando this.socket
         this.socket.send(JSON.stringify({
             type: "POSITION_UPDATE",
-            playerId: playerId,
             x: x,
             y: y,
             timestamp: new Date().toISOString()
