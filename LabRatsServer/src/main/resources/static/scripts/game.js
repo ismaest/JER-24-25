@@ -1,5 +1,5 @@
 class GameScene extends Phaser.Scene {
-	
+	userName;
 	constructor(socket) {
         super({ key: "GameScene" });
 		this.socket = socket;
@@ -22,6 +22,8 @@ class GameScene extends Phaser.Scene {
 	            console.error("Socket no válido en GameScene");
 	            return;
 	        }
+			
+			//this.userName = data.userName;
 	    }
 
     preload() {
@@ -131,7 +133,9 @@ class GameScene extends Phaser.Scene {
         //Añadir escenario
         this.add.image(400, 300, 'scenery');
         
-        
+		this.userName = sessionStorage.getItem('userName');
+        this.playerName();
+		
         //Añadir sonidos
         this.game.click = this.sound.add('click');
         this.game.tpSound = this.sound.add('tpSound');
@@ -309,6 +313,7 @@ class GameScene extends Phaser.Scene {
 				this.socket.send(JSON.stringify(message));
 				
 				// Cambiar a la escena de juego para este jugador
+				//this.rol = 0;
 				this.scene.start('WinScene');
 			} else {
 				console.error('El WebSocket no está conectado');
@@ -395,6 +400,13 @@ class GameScene extends Phaser.Scene {
             this.exitCollider = true;
         }
     }
+	
+	playerName(){
+		this.add.text(730, 80, `"${this.userName}"`, {
+		fontSize: '10px',
+		fill: '#000',
+		});
+	}
 
 
 	updatePlayerPosition(playerId, x, y) {
@@ -444,6 +456,7 @@ class GameScene extends Phaser.Scene {
 		
 		if(this.rol == 0){
 			
+			this.rol0 = this.add.image(745, 60, 'rat').setScale(0.05);
 	        // Movimiento vertical
 	        if (this.keys.W.isDown) {
 	            this.rat.setVelocityY(-speed); // Arriba
@@ -521,6 +534,8 @@ class GameScene extends Phaser.Scene {
 	    let positionChanged = false; // Flag para rastrear cambios de posición
 		
 		if(this.rol == 1){
+			
+			this.rol1 = this.add.image(745, 60, 'queso').setScale(0.05);
 		    // Moverse a la izquierda
 		    if (this.cursors.left.isDown) {
 		        if (this.index > 0 && time - this.lastMove > 150) {
