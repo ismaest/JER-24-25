@@ -424,13 +424,13 @@ class MenuScene extends Phaser.Scene {
     loadAssets() {
         this.load.setPath('assets/');
 		this.load.image('xButton', 'X.png');
-		this.load.image('logOut', 'Log_Out.png');
+		this.load.image('logOut', 'cerrar_sesion.png');
         this.load.image('background', 'MenuBackground.png');
         this.load.image('startBtn', 'ejemplo.png');
         this.load.image('optionsBtn', 'btnOpciones.png');
         this.load.image('creditsBtn', 'btnCreditos.png'); //cambiar la imagen
         this.load.image('acceptBtn', 'btnAceptar.png');
-		this.load.image('accountBtn', 'btnAceptar.png'); //cambiar la imagen
+		this.load.image('accountBtn', 'cuenta.png'); //cambiar la imagen
         this.load.image('menuBtn', 'btnMenu.png');
         this.load.image('backButton', 'btnVolver.png');
 		this.load.image('btnJugar', 'btnJugar.png');
