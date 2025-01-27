@@ -458,7 +458,7 @@ class MenuScene extends Phaser.Scene {
 	createAccountBtn(){
 		this.accBtn = this.add.image(90, 100, 'accountBtn').setScale(0.5).setInteractive(); //cambiar por CUENTA
 		this.accBtn.on('pointerdown', () => {
-			this.scene.start('AccountMenu');
+			this.scene.start('AccountMenu', { "userName" : this.userName });
 		 });
 	}
 	
@@ -472,7 +472,7 @@ class MenuScene extends Phaser.Scene {
 			
 			
 			this.scene.stop("MenuScene");
-			this.scene.start('MatchmakingScene', { socket: this.socket });
+			this.scene.start('MatchmakingScene', { socket: this.socket, "userName" : this.userName });
         });
     }
 

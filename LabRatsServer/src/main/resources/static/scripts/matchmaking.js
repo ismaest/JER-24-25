@@ -1,5 +1,5 @@
 class MatchmakingScene extends Phaser.Scene {
-
+	userName;
     constructor(socket) {
         super({key: "MatchmakingScene"});
 		this.socket = socket;
@@ -21,6 +21,7 @@ class MatchmakingScene extends Phaser.Scene {
 		            console.error("Socket no válido en GameScene");
 		            return;
 		        }
+				this.userName = data.userName;
 		    }
 
     preload() {
@@ -41,6 +42,7 @@ class MatchmakingScene extends Phaser.Scene {
 
         this.checkConnection();
         this.checkCurrentPlayers();
+		this.connectedUser();
 
         // Contenedor del chat (inicialmente oculto)
         this.createChatContainer();
@@ -77,6 +79,20 @@ class MatchmakingScene extends Phaser.Scene {
 				this.usersText.setText(`USUARIOS CONECTADOS: ${this.connectedUsers}/2`);
 		}});
     }
+	
+	connectedUser() {
+				    // Mostrar texto de 'USUARIO:'
+				    this.add.text(310, 250, 'USUARIO:', {
+				        fontSize: '32px',
+				        fill: '#000',
+				    });
+
+				    // Mostrar el nombre del usuario al lado del texto
+					this.add.text(350, 280, `"${this.userName}"`, {
+					        fontSize: '32px',
+					        fill: '#000',
+					    });
+				}
 	
     // Crear el indicador de conexión
     createConnectionIndicator() {
@@ -140,8 +156,8 @@ class MatchmakingScene extends Phaser.Scene {
 
     createConnectedUsersDisplay() {
         // Fondo negro para el área de usuarios conectados
-        this.usersContainer = this.add.container(300, 350);
-        const usersBackground = this.add.rectangle(0, 0, 180, 60, 0x000000, 0.8).setOrigin(0);
+        this.usersContainer = this.add.container(300, 380);
+        const usersBackground = this.add.rectangle(0, 0, 180, 90, 0x000000, 0.8).setOrigin(0);
         this.usersContainer.add(usersBackground);
 
         // Texto de usuarios conectados
@@ -173,7 +189,7 @@ class MatchmakingScene extends Phaser.Scene {
 				this.socket.send(JSON.stringify(message));
 				// Cambiar a la escena de juego para este jugador
 				this.scene.stop("MatchmakingScene");
-				this.scene.start('GameScene', { socket: this.socket, rol : 0 });
+				this.scene.start('GameScene', { socket: this.socket, rol : 0, "userName" : this.userName });
 			} else {
 			    console.error('El WebSocket no está conectado');
 			}
