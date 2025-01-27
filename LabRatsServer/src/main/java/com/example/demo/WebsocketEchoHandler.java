@@ -103,12 +103,12 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
                 break;
 
             case "POSITION_UPDATE":
-            	updatePlayerPosition(gameMessage);
+            	//updatePlayerPosition(gameMessage);
             	broadcastMessage(gameMessage, session);
                 break;
                 
             case "HAND_POSITION_UPDATE":
-                updateHandPosition(gameMessage); // Actualiza el estado del servidor
+                //updateHandPosition(gameMessage); // Actualiza el estado del servidor
                 broadcastMessage(gameMessage, session); // Retransmite el mensaje a los demás
                 break;
                 
@@ -118,7 +118,7 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
                 break;
                 
             case "START_GAME":
-            	assignRol(gameMessage);
+            	assignRol(gameMessage, session);
             	broadcastMessage(gameMessage, session);
             	break;
             	
@@ -265,8 +265,11 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
         handPositions.put(message.getPlayerId(), handPosition);
     }
     
-    private void assignRol(GameMessage message){
+    private void assignRol(GameMessage message, WebSocketSession session) throws Exception {
     	message.setRolId(1);
+    	session.sendMessage(new TextMessage(
+                "{\"type\": \"PLAYER_DISCONECT\", \"numOfPlayersMenu\": " + 0 + "}"
+        ));
     }
     
     private void UpdatePlayerLeft(WebSocketSession session) throws Exception {

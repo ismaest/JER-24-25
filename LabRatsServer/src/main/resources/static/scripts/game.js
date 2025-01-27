@@ -146,7 +146,6 @@ class GameScene extends Phaser.Scene {
         this.handcoords = [150, 400, 650];
         this.index = 1;
         this.lastMove = 0;
-
         
         //Contador de vidas para las ratas
         this.lives = 3; //por defecto empieza en 3
@@ -267,6 +266,7 @@ class GameScene extends Phaser.Scene {
 			    } else if (data.type === "LIFE_UPDATE") {
 					this.LifeDown();
 				} else if (data.type === "WIN_SCENE") {
+					this.rol = 0;
 					this.scene.start('WinScene');
 				}
 			});
@@ -307,6 +307,7 @@ class GameScene extends Phaser.Scene {
 			if (this.socket && this.socket.readyState === WebSocket.OPEN) {
 				const message = {type: "WIN_SCENE"};
 				this.socket.send(JSON.stringify(message));
+				this.rol = 0;
 				
 				// Cambiar a la escena de juego para este jugador
 				this.scene.start('WinScene');
@@ -385,18 +386,18 @@ class GameScene extends Phaser.Scene {
             if (this.checkCollision(this.rat, tp, 25) && this.exitCollider) {
                 this.rat.x = tp.targetX;
                 this.rat.y = tp.targetY;
-				this.updatePlayerPosition(playerId, this.rat.x, this.rat.y);
+				this.updatePlayerPosition(this.playerId, this.rat.x, this.rat.y);
                 this.exitCollider = false;
                 this.game.tpSound.play();
             }
         });
-
+	
         if (this.tps.every(tp => !this.checkCollision(this.rat, tp, 50)) && !this.exitCollider) {
             this.exitCollider = true;
         }
     }
-
-
+	
+	
 	updatePlayerPosition(playerId, x, y) {
 	        console.log(this.socket); // Asegúrate de que aquí esté definido
 	        if (this.socket && this.socket.readyState === WebSocket.OPEN) {
@@ -503,7 +504,7 @@ class GameScene extends Phaser.Scene {
                 this.game.deathMusic = this.sound.add('deathMusic', {loop: true});
                 this.game.deathMusic.play();
             }
-            
+			this.rol = 0;
             this.scene.start('GameOverScene'); //Cargar la escena de derrota
         }
     }
@@ -542,15 +543,15 @@ class GameScene extends Phaser.Scene {
 		            positionChanged = true;
 		        }
 		    }
+			
+			// Si cambió la posición, envía un evento al servidor
+			if (positionChanged) {
+				positionChanged = false;
+				const playerId = 'player124'; // ID del jugador actual
+				const handIndex = this.index; // Índice actual de la mano
+				this.updateHandPosition(playerId, handIndex); // Llamar a la función para enviar la posición
+			}
 		}
-
-	    // Si cambió la posición, envía un evento al servidor
-	    if (positionChanged) {
-	        const playerId = 'player124'; // ID del jugador actual
-	        const handIndex = this.index; // Índice actual de la mano
-	        this.updateHandPosition(playerId, handIndex); // Llamar a la función para enviar la posición
-			positionChanged = false;
-	    }
 	}
     
     
