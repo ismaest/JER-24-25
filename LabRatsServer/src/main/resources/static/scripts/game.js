@@ -70,6 +70,9 @@ class GameScene extends Phaser.Scene {
         this.load.setPath('../assets/');
 
         this.load.image('scenery', 'gameBackground.png');
+		
+		this.load.image('rataRol', 'botonRaton.png');
+		this.load.image('cientificoRol', 'botonCientifico.png');
 
         this.load.image('rat', 'rata.png');
         this.load.image('hand', 'hand.png');
@@ -402,7 +405,7 @@ class GameScene extends Phaser.Scene {
     }
 	
 	playerName(){
-		this.add.text(730, 80, `"${this.userName}"`, {
+		this.add.text(735, 100, `"${this.userName}"`, {
 		fontSize: '10px',
 		fill: '#000',
 		});
@@ -456,7 +459,7 @@ class GameScene extends Phaser.Scene {
 		
 		if(this.rol == 0){
 			
-			this.rol0 = this.add.image(745, 60, 'rat').setScale(0.05);
+			this.rol0 = this.add.image(745, 70, 'rataRol').setScale(0.145);
 	        // Movimiento vertical
 	        if (this.keys.W.isDown) {
 	            this.rat.setVelocityY(-speed); // Arriba
@@ -535,7 +538,7 @@ class GameScene extends Phaser.Scene {
 		
 		if(this.rol == 1){
 			
-			this.rol1 = this.add.image(745, 60, 'queso').setScale(0.05);
+			this.rol1 = this.add.image(745, 70, 'cientificoRol').setScale(0.145);
 		    // Moverse a la izquierda
 		    if (this.cursors.left.isDown) {
 		        if (this.index > 0 && time - this.lastMove > 150) {
