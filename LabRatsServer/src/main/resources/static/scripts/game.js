@@ -1,5 +1,5 @@
 class GameScene extends Phaser.Scene {
-	userName;
+	
 	constructor(socket) {
         super({ key: "GameScene" });
 		this.socket = socket;
@@ -22,8 +22,6 @@ class GameScene extends Phaser.Scene {
 	            console.error("Socket no válido en GameScene");
 	            return;
 	        }
-			
-			//this.userName = data.userName;
 	    }
 
     preload() {
@@ -70,9 +68,6 @@ class GameScene extends Phaser.Scene {
         this.load.setPath('../assets/');
 
         this.load.image('scenery', 'gameBackground.png');
-		
-		this.load.image('rataRol', 'botonRaton.png');
-		this.load.image('cientificoRol', 'botonCientifico.png');
 
         this.load.image('rat', 'rata.png');
         this.load.image('hand', 'hand.png');
@@ -136,9 +131,7 @@ class GameScene extends Phaser.Scene {
         //Añadir escenario
         this.add.image(400, 300, 'scenery');
         
-		this.userName = sessionStorage.getItem('userName');
-        this.playerName();
-		
+        
         //Añadir sonidos
         this.game.click = this.sound.add('click');
         this.game.tpSound = this.sound.add('tpSound');
@@ -153,7 +146,6 @@ class GameScene extends Phaser.Scene {
         this.handcoords = [150, 400, 650];
         this.index = 1;
         this.lastMove = 0;
-
         
         //Contador de vidas para las ratas
         this.lives = 3; //por defecto empieza en 3
@@ -274,22 +266,11 @@ class GameScene extends Phaser.Scene {
 			    } else if (data.type === "LIFE_UPDATE") {
 					this.LifeDown();
 				} else if (data.type === "WIN_SCENE") {
+					this.rol = 0;
+					this.scene.stop('GameScene');
 					this.scene.start('WinScene');
 				}
 			});
-       
-		this.game.events.on('handPositionUpdate', (message) => {
-            console.log("Entra al evento");
-		    const playerId = message.playerId;
-		    const handIndex = message.handIndex;
-
-		    // Encontrar el jugador y actualizar la posición de la mano
-		    let player = this.getPlayerById(playerId);
-		    if (player) {
-		        // Actualiza la posición de la mano (por ejemplo, usando el índice)
-		        player.hand.x = this.handcoords[handIndex]; // Suponiendo que `handcoords` es un arreglo de posiciones
-		    }
-		});
     }
 
     update(time, delta) {
@@ -314,9 +295,14 @@ class GameScene extends Phaser.Scene {
 			if (this.socket && this.socket.readyState === WebSocket.OPEN) {
 				const message = {type: "WIN_SCENE"};
 				this.socket.send(JSON.stringify(message));
+				this.rol = 0;
+				
+				this.rat.x = 20;
+				this.rat.y = 140; 
+				this.updatePlayerPosition(this.rat.x, this.rat.y);
 				
 				// Cambiar a la escena de juego para este jugador
-				//this.rol = 0;
+				this.scene.stop('GameScene');
 				this.scene.start('WinScene');
 			} else {
 				console.error('El WebSocket no está conectado');
@@ -393,31 +379,23 @@ class GameScene extends Phaser.Scene {
             if (this.checkCollision(this.rat, tp, 25) && this.exitCollider) {
                 this.rat.x = tp.targetX;
                 this.rat.y = tp.targetY;
-				this.updatePlayerPosition(playerId, this.rat.x, this.rat.y);
+				this.updatePlayerPosition(this.rat.x, this.rat.y);
                 this.exitCollider = false;
                 this.game.tpSound.play();
             }
         });
-
+	
         if (this.tps.every(tp => !this.checkCollision(this.rat, tp, 50)) && !this.exitCollider) {
             this.exitCollider = true;
         }
     }
 	
-	playerName(){
-		this.add.text(735, 100, `"${this.userName}"`, {
-		fontSize: '10px',
-		fill: '#000',
-		});
-	}
-
-
-	updatePlayerPosition(playerId, x, y) {
+	
+	updatePlayerPosition(x, y) {
 	        console.log(this.socket); // Asegúrate de que aquí esté definido
 	        if (this.socket && this.socket.readyState === WebSocket.OPEN) {
 	            this.socket.send(JSON.stringify({
 	                type: "POSITION_UPDATE",
-	                playerId: playerId,
 	                x: x,
 	                y: y,
 	                timestamp: new Date().toISOString()
@@ -427,11 +405,10 @@ class GameScene extends Phaser.Scene {
 	        }
 	}
 	
-	updateHandPosition(playerId, handIndex) {
+	updateHandPosition(handIndex) {
 	    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
 	        const message = {
 	            type: "HAND_POSITION_UPDATE",
-	            playerId: playerId,
 	            handIndex: handIndex,
 	            timestamp: new Date().toISOString()
 	        };
@@ -459,7 +436,6 @@ class GameScene extends Phaser.Scene {
 		
 		if(this.rol == 0){
 			
-			this.rol0 = this.add.image(745, 70, 'rataRol').setScale(0.145);
 	        // Movimiento vertical
 	        if (this.keys.W.isDown) {
 	            this.rat.setVelocityY(-speed); // Arriba
@@ -488,12 +464,11 @@ class GameScene extends Phaser.Scene {
 	
 	        // Actualizar posición del jugador si cambió
 	        if (positionChanged) {
-	            const playerId = 'player123';  // O el ID que corresponda al jugador
 	            const x = this.rat.x;          // Coordenada X de la rata
 	            const y = this.rat.y;          // Coordenada Y de la rata
 	            const timestamp = new Date().toISOString();  // Obtener el timestamp
 	
-	            this.updatePlayerPosition(playerId, x, y);  // Pasar los valores correctamente
+	            this.updatePlayerPosition(x, y);  // Pasar los valores correctamente
 	        }
 		}
     }
@@ -504,7 +479,7 @@ class GameScene extends Phaser.Scene {
         //Devolvemos a la posicion inicial
         this.rat.x = 20;
         this.rat.y = 140; 
-		this.updatePlayerPosition("player124", this.rat.x, this.rat.y);
+		this.updatePlayerPosition(this.rat.x, this.rat.y);
 		
         this.lives--; //Restar la variable de vidas
         this.lifeIcons[this.lives].setVisible(false); //Quitar el icono de corazones
@@ -519,7 +494,7 @@ class GameScene extends Phaser.Scene {
                 this.game.deathMusic = this.sound.add('deathMusic', {loop: true});
                 this.game.deathMusic.play();
             }
-            
+			this.rol = 0;
             this.scene.start('GameOverScene'); //Cargar la escena de derrota
         }
     }
@@ -537,8 +512,6 @@ class GameScene extends Phaser.Scene {
 	    let positionChanged = false; // Flag para rastrear cambios de posición
 		
 		if(this.rol == 1){
-			
-			this.rol1 = this.add.image(745, 70, 'cientificoRol').setScale(0.145);
 		    // Moverse a la izquierda
 		    if (this.cursors.left.isDown) {
 		        if (this.index > 0 && time - this.lastMove > 150) {
@@ -560,15 +533,14 @@ class GameScene extends Phaser.Scene {
 		            positionChanged = true;
 		        }
 		    }
+			
+			// Si cambió la posición, envía un evento al servidor
+			if (positionChanged) {
+				positionChanged = false;
+				const handIndex = this.index; // Índice actual de la mano
+				this.updateHandPosition(handIndex); // Llamar a la función para enviar la posición
+			}
 		}
-
-	    // Si cambió la posición, envía un evento al servidor
-	    if (positionChanged) {
-	        const playerId = 'player124'; // ID del jugador actual
-	        const handIndex = this.index; // Índice actual de la mano
-	        this.updateHandPosition(playerId, handIndex); // Llamar a la función para enviar la posición
-			positionChanged = false;
-	    }
 	}
     
     
@@ -962,13 +934,12 @@ async function sendHandMovementEvent(playerId, movementDirection) {
     }
 }
 
-function updatePlayerPosition(playerId, x, y) {
+function updatePlayerPosition(x, y) {
     // Verificar que el WebSocket esté abierto antes de enviar la posición
     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
         // Enviar la posición usando this.socket
         this.socket.send(JSON.stringify({
             type: "POSITION_UPDATE",
-            playerId: playerId,
             x: x,
             y: y,
             timestamp: new Date().toISOString()

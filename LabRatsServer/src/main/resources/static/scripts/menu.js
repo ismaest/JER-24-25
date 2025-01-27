@@ -470,7 +470,6 @@ class MenuScene extends Phaser.Scene {
 			
 			this.socket.send(JSON.stringify({type: "JOIN_ROOM"}));
 			
-			
 			this.scene.stop("MenuScene");
 			this.scene.start('MatchmakingScene', { socket: this.socket, "userName" : this.userName });
         });
