@@ -32,7 +32,4 @@ class WinScene extends Phaser.Scene {
         this.optionsBtn.on('pointerout', () => {this.optionsBtn.setScale(0.5);});
 
     }
-
-    update(){
-    }
 }

@@ -1,15 +1,14 @@
 class GameScene extends Phaser.Scene {
 	
-	userName;
 	constructor(socket) {
         super({ key: "GameScene" });
 		this.socket = socket;
-		this.updatePlayerPosition = this.updatePlayerPosition.bind(this);
     }
 	
 	init(data) {
 		this.players = {};
 		this.rol = data.rol
+		console.log("SE HA INICIADO LA ESCENA");
 		this.targetPositions = {};
 	        // Asegúrate de que el socket esté disponible
 	        if (data && data.socket instanceof WebSocket) {
@@ -261,18 +260,16 @@ class GameScene extends Phaser.Scene {
 			    console.log("Mensaje recibido:", data);
 
 			    if (data.type === "HAND_POSITION_UPDATE") {
-			        // Asegúrate de que el mensaje no sea del jugador local
-			        if (data.playerId !== this.playerId) {
-						this.index = data.handIndex;
-						this.hand.x = this.handcoords[this.index];
-			        }
+					this.index = data.handIndex;
+					this.hand.x = this.handcoords[this.index];
+					
 			    } else if (data.type === "POSITION_UPDATE") {
-			        // Asegúrate de que el mensaje no sea del jugador local
-			        if (data.playerId !== this.playerId) {
-						this.rat.setPosition(data.x, data.y);
-			        }
+					this.rat.setPosition(data.x, data.y);	
+					
+			        
 			    } else if (data.type === "LIFE_UPDATE") {
 					this.LifeDown();
+					
 				} else if (data.type === "WIN_SCENE") {
 					this.rol = 0;
 					this.scene.stop('GameScene');
@@ -282,40 +279,31 @@ class GameScene extends Phaser.Scene {
     }
 
     update(time, delta) {
-
-		Object.keys(this.targetPositions).forEach(playerId => {
-		        const otherPlayer = this.getPlayerById(playerId);
-		        const target = this.targetPositions[playerId];
-
-		        if (otherPlayer && target) {
-		            const lerpSpeed = 0.1; // Ajusta este valor para controlar la suavidad
-		            otherPlayer.x = Phaser.Math.Linear(otherPlayer.x, target.x, lerpSpeed);
-		            otherPlayer.y = Phaser.Math.Linear(otherPlayer.y, target.y, lerpSpeed);
-		        }
-		    });
 		
         //MOVIMIENTO DE LA RATA
         
         this.handleRatMovement(this.ratSpeed);
-
+	
 		//COMPROBAR SI SE HA GANADO
-        this.physics.add.overlap(this.rat, this.exit, () => {
+		if (this.checkCollision(this.rat, this.exit, 50)) {
+		    
+			this.rat.x = 20;
+			this.rat.y = 140; 
+			this.updatePlayerPosition(this.rat.x, this.rat.y);
+			
+			this.rol = 0;
+			
 			if (this.socket && this.socket.readyState === WebSocket.OPEN) {
 				const message = {type: "WIN_SCENE"};
 				this.socket.send(JSON.stringify(message));
-				this.rol = 0;
-				
-				this.rat.x = 20;
-				this.rat.y = 140; 
-				this.updatePlayerPosition(this.rat.x, this.rat.y);
-				
-				// Cambiar a la escena de juego para este jugador
-				this.scene.stop('GameScene');
-				this.scene.start('WinScene');
 			} else {
 				console.error('El WebSocket no está conectado');
 			}
-        }, null, this);
+		
+			// Cambiar a la escena de juego para este jugador
+			this.scene.stop('GameScene');
+			this.scene.start('WinScene');
+		}
         
 		
 		if (this.cheeseCollider == false) {
@@ -329,10 +317,7 @@ class GameScene extends Phaser.Scene {
 		            this.cheeseTime = time;
 		            this.game.eatSound.play();
 		            // deleteCollectedItem(this.playerId, cheese.id);
-
-		            return false;
 		        }
-		        return true;
 		    });
 
 		} else {
@@ -378,8 +363,6 @@ class GameScene extends Phaser.Scene {
             this.game.healthBoost.play();
 
             this.clon.destroy();
-
-            //sendLifeChangeEvent('player123', 'add', this.lives); //este caso es para la suma de vedas dentro del mismo evento
         }
         
         //TP ENTRE LAS ALCANTARILLAS
@@ -415,9 +398,9 @@ class GameScene extends Phaser.Scene {
 
 	playerName(){
 		this.add.text(735, 100, `"${this.userName}"`, {
-				fontSize: '10px',
-				fill: '#000',
-				});
+			fontSize: '10px',
+			fill: '#000',
+		});
 	}
 
 	updateHandPosition(handIndex) {
@@ -427,13 +410,8 @@ class GameScene extends Phaser.Scene {
 	            handIndex: handIndex,
 	            timestamp: new Date().toISOString()
 	        };
-
-	        try {
-	            this.socket.send(JSON.stringify(message));
-	            console.log("Mensaje de mano enviado:", message);
-	        } catch (error) {
-	            console.error("Error al enviar el mensaje de mano:", error);
-	        }
+			this.socket.send(JSON.stringify(message));
+	        
 	    } else {
 	        console.error("El WebSocket no está conectado.");
 	    }
@@ -447,20 +425,20 @@ class GameScene extends Phaser.Scene {
     
     //Maneja el movimiento de la rata según la velocidad.
     handleRatMovement(speed) {
-        let positionChanged = false; // Flag para rastrear si hubo movimiento
 		
 		if(this.rol == 0){
-			
 			this.rol0 = this.add.image(745, 70, 'rataRol').setScale(0.145);
 	        // Movimiento vertical
 	        if (this.keys.W.isDown) {
 	            this.rat.setVelocityY(-speed); // Arriba
-	            this.rat.rotation=-1.5708;
-	            positionChanged = true;
+	            this.rat.rotation = -1.5708;
+				this.updatePlayerPosition(this.rat.x, this.rat.y);
+				
 	        } else if (this.keys.S.isDown) {
 	            this.rat.setVelocityY(speed); // Abajo
-	            this.rat.rotation=1.5708;
-	            positionChanged = true;
+	            this.rat.rotation = 1.5708;
+				this.updatePlayerPosition(this.rat.x, this.rat.y);
+				
 	        } else {
 	            this.rat.setVelocityY(0); // Detener en Y si no hay input
 	        }
@@ -468,24 +446,18 @@ class GameScene extends Phaser.Scene {
 	        // Movimiento horizontal
 	        if (this.keys.A.isDown) {
 	            this.rat.setVelocityX(-speed); // Izquierda
-	            this.rat.rotation=3.14159;
-	            positionChanged = true;
+	            this.rat.rotation = 3.14159;
+	            this.updatePlayerPosition(this.rat.x, this.rat.y);
+				
 	        } else if (this.keys.D.isDown) {
 	            this.rat.setVelocityX(speed); // Derecha
-	            this.rat.rotation=0;
-	            positionChanged = true;
+	            this.rat.rotation = 0;
+				this.updatePlayerPosition(this.rat.x, this.rat.y);
+				
 	        } else {
 	            this.rat.setVelocityX(0); // Detener en X si no hay input
 	        }
 	
-	        // Actualizar posición del jugador si cambió
-	        if (positionChanged) {
-	            const x = this.rat.x;          // Coordenada X de la rata
-	            const y = this.rat.y;          // Coordenada Y de la rata
-	            const timestamp = new Date().toISOString();  // Obtener el timestamp
-	
-	            this.updatePlayerPosition(x, y);  // Pasar los valores correctamente
-	        }
 		}
     }
 
@@ -949,22 +921,6 @@ async function sendHandMovementEvent(playerId, movementDirection) {
         console.log('Movimiento enviado exitosamente');
     } catch (error) {
         console.error('Error al enviar el movimiento:', error);
-    }
-}
-
-function updatePlayerPosition(x, y) {
-    // Verificar que el WebSocket esté abierto antes de enviar la posición
-    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
-        // Enviar la posición usando this.socket
-        this.socket.send(JSON.stringify({
-            type: "POSITION_UPDATE",
-            x: x,
-            y: y,
-            timestamp: new Date().toISOString()
-        }));
-        console.log('Posición enviada:', { playerId, x, y });
-    } else {
-        console.error('El WebSocket no está conectado');
     }
 }
 

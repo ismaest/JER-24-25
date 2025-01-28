@@ -40,7 +40,6 @@ class MatchmakingScene extends Phaser.Scene {
         this.createConnectedUsersDisplay();
 
         this.checkConnection();
-        //this.checkCurrentPlayers();
 
         // Contenedor del chat (inicialmente oculto)
         this.createChatContainer();
@@ -59,12 +58,11 @@ class MatchmakingScene extends Phaser.Scene {
 			
 			if (data.type == "START_GAME") {
 				console.log("PARTIDA INICIADA");
+				
 				clearInterval(this.checkCurrentPlayers);
 				
 				this.scene.stop("MatchmakingScene");
-				
-				console.log(data.rolId);
-				this.scene.start('GameScene', { socket: this.socket, rol : data.rolId, "userName" : this.userName });
+				this.scene.start('GameScene', { socket: this.socket, rol: data.rolId });
 			
 			} else if (data.type == "PLAYER_LOBBY_CONNECT"){
 				console.log("JUGADOR CONECTADO AL LOBBY");
@@ -170,16 +168,16 @@ class MatchmakingScene extends Phaser.Scene {
 	    const startBtn = this.add.image(385, 550, 'jugarBtn').setScale(0.5).setInteractive();
 	    startBtn.on('pointerdown', () => {
 			if (this.socket && this.socket.readyState === WebSocket.OPEN) {
-				const message = {type: "START_GAME"};
+				const message = {type: "START_GAME", rolId : 1};
 				this.socket.send(JSON.stringify(message));
-				clearInterval(this.checkCurrentPlayers);
-				
-				// Cambiar a la escena de juego para este jugador
-				this.scene.stop("MatchmakingScene");
-				this.scene.start('GameScene', { socket: this.socket, rol : 0 });
 			} else {
 			    console.error('El WebSocket no está conectado');
 			}
+			
+			clearInterval(this.checkCurrentPlayers);
+			// Cambiar a la escena de juego para este jugador
+			this.scene.stop("MatchmakingScene");
+			this.scene.start('GameScene', { socket: this.socket, rol : 0 });
 	    });
 	}
 	

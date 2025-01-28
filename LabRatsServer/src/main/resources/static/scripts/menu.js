@@ -67,80 +67,33 @@ class MenuScene extends Phaser.Scene {
 		        const message = JSON.parse(event.data);
 		        console.log('Mensaje recibido:', message);
 
-		        switch (message.type) {
-		            case 'CONNECTED':
-		                this.userId = message.userId;
-		                console.log(`Usuario registrado con ID: ${this.userId}`);
-		                break;
-
-		            case 'CHAT':
-		                this.displayMessage(`${message.sender}: ${message.content}`);
-		                break;
-						
-					case 'POSITION_UPDATE':
-						console.log(`Jugador ${message.playerId} se movió a (${message.x}, ${message.y})`);
-						// Emitir un evento global
-						this.game.events.emit('positionUpdate', message);
-						break;	
+		        if (message.type == 'CONNECTED'){
+					this.userId = message.userId;
+					console.log(`Usuario registrado con ID: ${this.userId}`);
 					
-					case 'HAND_POSITION_UPDATE':
-					    console.log(`Jugador ${message.playerId} movió la mano al índice ${message.handIndex}`);
-					    // Emitir un evento global para que el juego lo maneje
-					    this.game.events.emit('handPositionUpdate', message);
-					    break;
+				} else if (message.type == 'CHAT') {
+					this.displayMessage(`${message.sender}: ${message.content}`);
 					
-					case 'START_GAME':
-						console.log("Iniciando el juego...");
-						break;
+				} else if (message.type == 'CHECK_ROOM'){
 					
-					case 'CHECK_ROOM':
-						if(message.roomFull == true){
-							this.startBtn.setVisible = false;
-							console.log("FULL");
-						} else {
-							this.startBtn.setVisible = true;
-							console.log("NOT FULL");
-						}
-						break;
-						
-					case "LIFE_UPDATE":
-						console.log("Actualizaciones de vida");
-						break;
-						
-					case "WIN_SCENE":
-						console.log("Pasamos a la victoria");
-						break;
-						
-					case "PLAYER_CONNECT":
-						console.log("CONEXIÓN DE JUGADOR");	
-						this.connectedUsers = message.numOfPlayersMenu;
-						this.usersText.setText(`USUARIOS CONECTADOS: ${this.connectedUsers}`);	
-						break;
-						
-					case "PLAYER_DISCONECT":
-						console.log("DESCONEXION DE JUGADOR");
-						this.connectedUsers = message.numOfPlayersMenu;
-						this.usersText.setText(`USUARIOS CONECTADOS: ${this.connectedUsers}`);
-						break;
-						
-					case "PLAYER_LOBBY_CONNECT":
-						break;
-						
-					case "PLAYER_LOBBY_DISCONNECT":
-						break;
-						
-					case "JOIN_ROOM":
-						break;
-						
-					case "UPDATE_LOBBY_PLAYERS":
-						break;
-						
-					case "ROOM_UPDATE":
-						break;
-						
-		            default:
-		                console.error('Tipo de mensaje desconocido:', message.type);
-		        }
+					if(message.roomFull == true){
+						this.startBtn.setVisible = false;
+						console.log("FULL");
+					} else {
+						this.startBtn.setVisible = true;
+						console.log("NOT FULL");
+					}
+					
+				} else if (message.type == 'PLAYER_CONNECT'){
+					console.log("CONEXIÓN DE JUGADOR");	
+					this.connectedUsers = message.numOfPlayersMenu;
+					this.usersText.setText(`USUARIOS CONECTADOS: ${this.connectedUsers}`);	
+					
+				} else if (message.type == 'PLAYER_DISCONECT'){
+					console.log("DESCONEXION DE JUGADOR");
+					this.connectedUsers = message.numOfPlayersMenu;
+					this.usersText.setText(`USUARIOS CONECTADOS: ${this.connectedUsers}`);
+				}
 		    });
 
 		    this.socket.addEventListener('close', () => {

@@ -103,12 +103,10 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
                 break;
 
             case "POSITION_UPDATE":
-            	//updatePlayerPosition(gameMessage);
             	broadcastMessage(gameMessage, session);
                 break;
                 
             case "HAND_POSITION_UPDATE":
-                //updateHandPosition(gameMessage); // Actualiza el estado del servidor
                 broadcastMessage(gameMessage, session); // Retransmite el mensaje a los demás
                 break;
                 
@@ -118,7 +116,7 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
                 break;
                 
             case "START_GAME":
-            	assignRol(gameMessage, session);
+            	AssignPlayerRol(gameMessage, session);
             	broadcastMessage(gameMessage, session);
             	break;
             	
@@ -205,9 +203,9 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
         private String timestamp;
         private boolean roomFull;
         private String roomId;
-        private Integer rolId = 0; //0: Rat / 1: Scientist
         private Integer numOfPlayersMenu;
         private Integer numOfPlayersLobby = 0;
+        private Integer rolId; //0: Rata / 1: Cientifico
 
         // Getters y setters
         public String getType() { return type; }
@@ -234,14 +232,14 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
         public Integer getHandIndex() {return handIndex; }
         public void setHandIndex(Integer handIndex) { this.handIndex = handIndex; }
         
-        public Integer getRolId() {return rolId; }
-        public void setRolId(Integer rol) { this.rolId = rol; }
-        
         public Integer getNumOfPlayersMenu() {return numOfPlayersMenu; }
         public void setNumOfPlayersMenu(Integer numOfPlayersMenu) { this.numOfPlayersMenu = numOfPlayersMenu; }
         
         public Integer getNumOfPlayersLobby() {return numOfPlayersLobby; }
         public void setNumOfPlayersLobby(Integer numOfPlayersLobby) { this.numOfPlayersLobby = numOfPlayersLobby; }
+        
+        public Integer getRolId() {return rolId; }
+        public void setRolId(Integer rolId) { this.rolId = rolId; }
         
     }
     
@@ -265,10 +263,10 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
         handPositions.put(message.getPlayerId(), handPosition);
     }
     
-    private void assignRol(GameMessage message, WebSocketSession session) throws Exception {
-    	message.setRolId(1);
-    	session.sendMessage(new TextMessage(
-                "{\"type\": \"PLAYER_DISCONECT\", \"numOfPlayersMenu\": " + 0 + "}"
+    
+    private void AssignPlayerRol(GameMessage message, WebSocketSession session) throws Exception {
+        session.sendMessage(new TextMessage(
+                "{\"type\": \"START_GAME\", \"rolId\": " + message.rolId + "}"
         ));
     }
     
