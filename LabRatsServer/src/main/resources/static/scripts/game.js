@@ -72,6 +72,8 @@ class GameScene extends Phaser.Scene {
 
         this.load.image('rat', 'rata.png');
         this.load.image('hand', 'hand.png');
+		this.load.image('rataRol', 'botonRaton.png');
+		this.load.image('cientificoRol', 'botonCientifico.png');
         this.load.image('clon', 'clon.png');
         this.load.image('tp', 'tp.png');
         this.load.image('queso', 'queso.png');
@@ -130,6 +132,11 @@ class GameScene extends Phaser.Scene {
     }
   
     create() {  
+<<<<<<< Updated upstream
+=======
+		
+		this.playerName();
+>>>>>>> Stashed changes
         //Añadir escenario
         this.add.image(400, 300, 'scenery');
         
@@ -408,14 +415,20 @@ class GameScene extends Phaser.Scene {
 	            console.error('El WebSocket no está conectado');
 	        }
 	}
+<<<<<<< Updated upstream
 	
+=======
+>>>>>>> Stashed changes
 	playerName(){
 		this.add.text(735, 100, `"${this.userName}"`, {
 				fontSize: '10px',
 				fill: '#000',
 				});
 	}
+<<<<<<< Updated upstream
 	
+=======
+>>>>>>> Stashed changes
 	updateHandPosition(handIndex) {
 	    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
 	        const message = {
