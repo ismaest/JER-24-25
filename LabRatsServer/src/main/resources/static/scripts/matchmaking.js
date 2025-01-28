@@ -64,7 +64,7 @@ class MatchmakingScene extends Phaser.Scene {
 				this.scene.stop("MatchmakingScene");
 				
 				console.log(data.rolId);
-				this.scene.start('GameScene', { socket: this.socket, rol : data.rolId });
+				this.scene.start('GameScene', { socket: this.socket, rol : data.rolId, "userName" : this.userName });
 			
 			} else if (data.type == "PLAYER_LOBBY_CONNECT"){
 				console.log("JUGADOR CONECTADO AL LOBBY");
@@ -146,7 +146,7 @@ class MatchmakingScene extends Phaser.Scene {
     createConnectedUsersDisplay() {
         // Fondo negro para el área de usuarios conectados
         this.usersContainer = this.add.container(300, 350);
-        const usersBackground = this.add.rectangle(0, 0, 180, 60, 0x000000, 0.8).setOrigin(0);
+        const usersBackground = this.add.rectangle(0, 0, 180, 90, 0x000000, 0.8).setOrigin(0);
         this.usersContainer.add(usersBackground);
 
         // Texto de usuarios conectados

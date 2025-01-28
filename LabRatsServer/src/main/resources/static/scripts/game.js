@@ -1,5 +1,6 @@
 class GameScene extends Phaser.Scene {
 	
+	userName;
 	constructor(socket) {
         super({ key: "GameScene" });
 		this.socket = socket;
@@ -76,6 +77,8 @@ class GameScene extends Phaser.Scene {
         this.load.image('queso', 'queso.png');
         this.load.image('vacuna', 'vacuna.png');
         this.load.image('trapdoor', 'trapdoor.png');
+		this.load.image('rataRol', 'botonRaton.png');
+		this.load.image('cientificoRol', 'botonCientifico.png');
         
         this.load.image("roleInfo", "btnOpciones.png"); //cambiar a btn de menu
 
@@ -127,10 +130,11 @@ class GameScene extends Phaser.Scene {
     }
   
     create() {  
-		
         //Añadir escenario
         this.add.image(400, 300, 'scenery');
         
+		this.userName = sessionStorage.getItem('userName');
+		this.playerName();
         
         //Añadir sonidos
         this.game.click = this.sound.add('click');
@@ -405,6 +409,13 @@ class GameScene extends Phaser.Scene {
 	        }
 	}
 	
+	playerName(){
+		this.add.text(735, 100, `"${this.userName}"`, {
+				fontSize: '10px',
+				fill: '#000',
+				});
+	}
+	
 	updateHandPosition(handIndex) {
 	    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
 	        const message = {
@@ -436,6 +447,7 @@ class GameScene extends Phaser.Scene {
 		
 		if(this.rol == 0){
 			
+			this.rol0 = this.add.image(745, 70, 'rataRol').setScale(0.145);
 	        // Movimiento vertical
 	        if (this.keys.W.isDown) {
 	            this.rat.setVelocityY(-speed); // Arriba
@@ -512,6 +524,8 @@ class GameScene extends Phaser.Scene {
 	    let positionChanged = false; // Flag para rastrear cambios de posición
 		
 		if(this.rol == 1){
+			
+			this.rol1 = this.add.image(745, 70, 'cientificoRol').setScale(0.145);
 		    // Moverse a la izquierda
 		    if (this.cursors.left.isDown) {
 		        if (this.index > 0 && time - this.lastMove > 150) {
