@@ -1,7 +1,18 @@
 # MEJORAS - LABRATS
 En este documento se recogerán las mejoras aplicadas al juego de las diferentes fases del proyecto.
 
-> ## **1.1 FASE 2**
+> ## **1.1 FASE 1**
+
+Se han implementado las mejoras correspondientes a la retroalimentación recibida en la fase 1:
+
+  **- Uso de la cámara:** Ahora se especifica el uso de la cámara en el documento.
+  
+  **- Maquetado del documento:** Se ha reestructurado el documento "Readme.md" para cuidar correctamente su maquetado.
+  
+  **- Descripción de imágenes:** Se han añadido descripciones a todas las imágenes del documento.
+  
+
+> ## **1.2 FASE 2**
 > 
   **- Color de la rata:** Se ha cambiado el color de la rata para aumentar su visibilidad en el entorno de juego.
   
@@ -12,7 +23,7 @@ En este documento se recogerán las mejoras aplicadas al juego de las diferentes
   **- Arreglar hitboxes y TPs:** Se han arreglado las hitboxes y TPs que dificultaban la experiencia de juego.
 
   
-> ## **1.2 FASE 3**
+> ## **1.3 FASE 3**
 > 
   **- Mensaje de error de inicio de sesión:** Se ha solucionado un error relacionado con el mensaje de error al iniciar sesión. Anteriormente, si surgían varios mensajes de error estos se acumulaban y descolocaban la interfaz.
   
@@ -21,7 +32,7 @@ En este documento se recogerán las mejoras aplicadas al juego de las diferentes
   **- Mostrar desconexión de un jugador:** El juego muestra un icono en rojo en caso de desconexión del servidor.
   
   
-> ## **1.3 FASE 5**
+> ## **1.4 FASE 5**
 > 
   **- Implementación de insignias:** Se han incluido las siguientes insignias:
   
