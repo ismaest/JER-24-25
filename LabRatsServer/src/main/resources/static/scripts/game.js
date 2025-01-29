@@ -80,6 +80,7 @@ class GameScene extends Phaser.Scene {
         this.load.image('trapdoor', 'trapdoor.png');
 		this.load.image('rataRol', 'botonRaton.png');
 		this.load.image('cientificoRol', 'botonCientifico.png');
+		this.load.image('btnSalir', 'Desconexion.png');
         
         this.load.image("roleInfo", "btnOpciones.png"); //cambiar a btn de menu
 
@@ -279,8 +280,20 @@ class GameScene extends Phaser.Scene {
 					this.rol = 0;
 					this.scene.stop('GameScene');
 					this.scene.start('WinScene');
+					
 				} else if (data.type === "REGEN_CHEESE"){
 					this.ActivateCheese();
+					
+				} else if (data.type == 'PLAYER_DISCONECT'){
+					console.log("DESCONEXION DE EL JUGADOR SE HA DESCONECTADO DE LA PARTIDA");
+					this.btnDisconect = this.add.image(400, 300, 'btnSalir').setScale(0.7);
+					this.btnDisconect.setInteractive();
+					this.btnDisconect.on('pointerdown', () => {
+						this.game.click.play();
+						this.rol = 0;
+						this.scene.stop('GameScene');
+						this.scene.launch("MenuScene");
+					});
 				}
 			});
     }
