@@ -85,18 +85,22 @@ Al obtenerla, la escribiremos como enlace en nuestro navegador, seguida de :8080
     5.1.1. Primera fase de desarrollo: Javier
     5.1.2. Segunda fase de desarrollo: Javier
     5.1.3. Tercera fase de desarrollo: Javier
+    5.1.4. Cuarta fase de desarrollo: Javier
   5.2 Iván De Castilla Guitián
     5.2.1. Primera fase de desarrollo: Iván
     5.2.2. Segunda fase de desarrollo: Iván
     5.2.3. Tercera fase de desarrollo: Iván
+    5.2.4. Cuarta fase de desarrollo: Iván
   5.3 Ismael Esteban Liberal
     5.3.1. Primera fase de desarrollo: Ismael
     5.3.2. Segunda fase de desarrollo: Ismael
     5.3.3. Tercera fase de desarrollo: Ismael
+    5.3.4. Cuarta fase de desarrollo: Ismael
   5.4 Xabier López Aguilera
     5.4.1. Primera fase de desarrollo: Xabier
     5.4.2. Segunda fase de desarrollo: Xabier
     5.4.3. Tercera fase de desarrollo: Xabier
+    5.4.4. Cuarta fase de desarrollo: Xabier
 
 6. Funciones de red
 
@@ -521,9 +525,13 @@ Se ha encargado de actualizar el README y preparar las presentaciones.
 
 > ## 7. Protocolo de comunicación Websocket
 
-- La información sobre la posición de la rata se pasa a través de la variable playerPosition, que recibe los datos enviados por el servidor al cliente con los ejes X e Y de la rata
+- La información sobre la posición de la rata se pasa a través de la variable playerPosition, que recibe los datos enviados por el servidor al cliente con los ejes X e Y de la rata.
 
 - La información sobre la posición de la mano se pasa a través de la variable handCoord, que recibe los datos enviados por el servidor al cliente con la posición de la mano (izquierda, centro o derecha).
+
+- La información sobre la victoria/derrota se envía a través del protocolo.
+
+- El número de vidas de la rata también se comunica.
  
 > ## 8. Créditos
 
