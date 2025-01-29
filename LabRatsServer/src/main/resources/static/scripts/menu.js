@@ -17,7 +17,11 @@ class MenuScene extends Phaser.Scene {
     }
 
     create() {
-		this.setupWebSocket();
+		
+		if(this.socket == undefined){
+			this.setupWebSocket();
+		}
+		
 		this.userName = sessionStorage.getItem('userName');
         //Configuramos los sonidos
         this.setupSounds();
@@ -29,6 +33,7 @@ class MenuScene extends Phaser.Scene {
 		
 		this.createConnectionIndicator();
 		this.checkConnection();
+		this.updateConnectedUsers();
 		
         ///Creamos los botones básicos
         this.createStartButton();
@@ -55,6 +60,7 @@ class MenuScene extends Phaser.Scene {
         // Iniciar polling para obtener mensajes cada 1 segundo
         this.startPolling();
     }
+	
 	
 	setupWebSocket() {
 		this.socket = new WebSocket(`ws://${window.location.host}/echo`);
@@ -86,13 +92,11 @@ class MenuScene extends Phaser.Scene {
 					
 				} else if (message.type == 'PLAYER_CONNECT'){
 					console.log("CONEXIÓN DE JUGADOR");	
-					this.connectedUsers = message.numOfPlayersMenu;
-					this.usersText.setText(`USUARIOS CONECTADOS: ${this.connectedUsers}`);	
+					this.connectedUsers = message.numOfPlayersMenu;	
 					
 				} else if (message.type == 'PLAYER_DISCONECT'){
 					console.log("DESCONEXION DE JUGADOR");
 					this.connectedUsers = message.numOfPlayersMenu;
-					this.usersText.setText(`USUARIOS CONECTADOS: ${this.connectedUsers}`);
 				}
 		    });
 
@@ -204,6 +208,12 @@ class MenuScene extends Phaser.Scene {
 	        });
 	        this.usersContainer.add(this.usersText);
 	    }
+	
+	updateConnectedUsers(){
+		setInterval(() => {
+			this.usersText.setText(`USUARIOS CONECTADOS: ${this.connectedUsers}`);
+		}, 2000);  // Verificar cada 500 milisegundos
+	}
 	
     sendHeartbeat() {
         setInterval(() => {

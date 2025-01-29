@@ -20,22 +20,19 @@ class GameOverScene extends Phaser.Scene {
 
         this.add.image(400, 300, 'loseBackground');
 
-        this.optionsBtn = this.add.image(400, 540, 'exitBtn'); //CAMBIAR A SALIR AL MENU
-        this.optionsBtn.setScale(0.5);
-        this.optionsBtn.setInteractive();
-        this.optionsBtn.on('pointerdown', () => {
-            this.scene.start('MenuScene');
+        this.exitBtn = this.add.image(400, 540, 'exitBtn'); //CAMBIAR A SALIR AL MENU
+        this.exitBtn.setScale(0.5);
+        this.exitBtn.setInteractive();
+        this.exitBtn.on('pointerdown', () => {
+			this.scene.stop("GameOverScene");
+			this.scene.start('MenuScene');
             if (this.game.deathMusic) {
                 this.game.deathMusic.stop(); //se para la musica de muerte
                 this.game.mainMenuMusic.play(); //se reinicia la musica principal
             }
         });
-        this.optionsBtn.on('pointerover', () => {
-            this.optionsBtn.setScale(0.55);
-        });
-        this.optionsBtn.on('pointerout', () => {
-            this.optionsBtn.setScale(0.5);
-        });
+        this.exitBtn.on('pointerover', () => { this.exitBtn.setScale(0.55); });
+        this.exitBtn.on('pointerout', () => { this.exitBtn.setScale(0.5); });
 
     }
 

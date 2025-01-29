@@ -24,12 +24,12 @@ class WinScene extends Phaser.Scene {
             this.game.mainMenuMusic.play();
         }
 
-        this.optionsBtn = this.add.image(400, 540, 'exitBtn');
-        this.optionsBtn.setScale(0.5);
-        this.optionsBtn.setInteractive();
-        this.optionsBtn.on('pointerdown', () => {this.scene.start('MenuScene');});
-        this.optionsBtn.on('pointerover', () => {this.optionsBtn.setScale(0.55);});
-        this.optionsBtn.on('pointerout', () => {this.optionsBtn.setScale(0.5);});
+        this.exitBtn = this.add.image(400, 540, 'exitBtn');
+        this.exitBtn.setScale(0.5);
+        this.exitBtn.setInteractive();
+        this.exitBtn.on('pointerdown', () => {this.scene.stop("WinScene"); this.scene.start('MenuScene');});
+        this.exitBtn.on('pointerover', () => {this.exitBtn.setScale(0.55);});
+        this.exitBtn.on('pointerout', () => {this.exitBtn.setScale(0.5);});
 
     }
 }

@@ -23,16 +23,18 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        String userId = "user_" + session.getId();
+    	String userId = "user_" + session.getId();
     	
-    	activeSessions.put(userId, session);
-        System.out.println("Usuario conectado: " + userId);
-
-        // Enviar mensaje de conexión al cliente
-        session.sendMessage(new TextMessage("{\"type\": \"CONNECTED\", \"userId\": \"" + userId + "\"}"));
-        
-        for(WebSocketSession sessions : activeSessions.values()){
-        	UpdatePlayerJoined(sessions);
+        if(!activeSessions.containsKey(userId)) {
+        	activeSessions.put(userId, session);
+            System.out.println("Usuario conectado: " + userId);
+            
+            // Enviar mensaje de conexión al cliente
+            session.sendMessage(new TextMessage("{\"type\": \"CONNECTED\", \"userId\": \"" + userId + "\"}"));
+            
+            for(WebSocketSession sessions : activeSessions.values()){
+            	UpdatePlayerJoined(sessions);
+            }
         }
     }
     
@@ -116,7 +118,7 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
                 break;
                 
             case "START_GAME":
-            	AssignPlayerRol(gameMessage, session);
+            	HandleStartGame(gameMessage, session);
             	broadcastMessage(gameMessage, session);
             	break;
             	
@@ -145,6 +147,10 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
             	break;
             	
             case "UPDATE_LOBBY_PLAYERS":
+            	broadcastMessage(gameMessage, session);
+            	break;
+            	
+            case "REGEN_CHEESE":
             	broadcastMessage(gameMessage, session);
             	break;
                 
@@ -199,12 +205,13 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
         private String playerId;
         private double x;
         private double y;
+        private double rotation;
         private Integer handIndex;
         private String timestamp;
         private boolean roomFull;
         private String roomId;
         private Integer numOfPlayersMenu;
-        private Integer numOfPlayersLobby = 0;
+        private Integer numOfPlayersLobby;
         private Integer rolId; //0: Rata / 1: Cientifico
 
         // Getters y setters
@@ -219,6 +226,9 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
 
         public double getY() { return y; }
         public void setY(double y) { this.y = y; }
+        
+        public double getRotation() { return rotation; }
+        public void setRotation(double rotation) { this.rotation = rotation; }
 
         public String getTimestamp() { return timestamp; }
         public void setTimestamp(String timestamp) { this.timestamp = timestamp; }
@@ -264,8 +274,15 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
     }
     
     
-    private void AssignPlayerRol(GameMessage message, WebSocketSession session) throws Exception {
-        session.sendMessage(new TextMessage(
+    private void HandleStartGame(GameMessage message, WebSocketSession session) throws Exception {
+        
+    	//Vaciar la sala
+    	String roomId = message.roomId;
+        GameRoom room = gameRooms.get(roomId);
+        room.clearRoom();
+    	
+    	//Asignar el rol
+    	session.sendMessage(new TextMessage(
                 "{\"type\": \"START_GAME\", \"rolId\": " + message.rolId + "}"
         ));
     }

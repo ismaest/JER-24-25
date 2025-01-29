@@ -229,6 +229,9 @@ class GameScene extends Phaser.Scene {
         //creamos el sprite "exit" en una posición específica
         this.exit = this.physics.add.staticImage(317, 415, 'exit').setScale(0.5);
         
+		//Evitar el daño multiple
+		this.singleHit = false;
+		
         //Crear la rata
 		this.rat = this.physics.add.sprite(20, 140, 'rat');
         this.rat.setScale(0.035);
@@ -259,21 +262,25 @@ class GameScene extends Phaser.Scene {
 			    const data = JSON.parse(event.data);
 			    console.log("Mensaje recibido:", data);
 
-			    if (data.type === "HAND_POSITION_UPDATE") {
+			    if (data.type === "HAND_POSITION_UPDATE" && this.rol == 0) {
 					this.index = data.handIndex;
 					this.hand.x = this.handcoords[this.index];
 					
-			    } else if (data.type === "POSITION_UPDATE") {
-					this.rat.setPosition(data.x, data.y);	
+			    } else if (data.type === "POSITION_UPDATE" && this.rol == 1) {
+					this.rat.setPosition(data.x, data.y);
+					this.rat.rotation = data.rotation;
 					
 			        
-			    } else if (data.type === "LIFE_UPDATE") {
+			    } else if (data.type === "LIFE_UPDATE" && this.rol == 0 && this.singleHit == false) {
+					this.singleHit = true;
 					this.LifeDown();
 					
 				} else if (data.type === "WIN_SCENE") {
 					this.rol = 0;
 					this.scene.stop('GameScene');
 					this.scene.start('WinScene');
+				} else if (data.type === "REGEN_CHEESE"){
+					this.ActivateCheese();
 				}
 			});
     }
@@ -283,7 +290,17 @@ class GameScene extends Phaser.Scene {
         //MOVIMIENTO DE LA RATA
         
         this.handleRatMovement(this.ratSpeed);
-	
+		
+		//Volver a poder recibir daño
+		if(this.singleHit == true){
+			this.resetHit = 
+				setInterval(() => {
+					this.singleHit = false;
+				}, 2000);  // Verificar cada 500 milisegundos
+		} else if (this.singleHit == false && this.resetHit != undefined) {
+			clearInterval(this.resetHit);
+		}
+		
 		//COMPROBAR SI SE HA GANADO
 		if (this.checkCollision(this.rat, this.exit, 50)) {
 		    
@@ -306,28 +323,26 @@ class GameScene extends Phaser.Scene {
 		}
         
 		
-		if (this.cheeseCollider == false) {
-
-		    // Comprobar colisiones con los quesos
-		    this.cheeses = this.cheeses.filter((cheese, index) => {
-		        if (this.checkCollision(this.rat, cheese, 30)) {
-		            this.ratSpeed = 50;
-		            cheese.destroy(); // Desactiva el queso del juego
-		            this.cheeseCollider = true;
-		            this.cheeseTime = time;
-		            this.game.eatSound.play();
-		            // deleteCollectedItem(this.playerId, cheese.id);
-		        }
-		    });
-
-		} else {
-		    // EFECTOS DEL QUESO
-		    if (Math.abs(time - this.cheeseTime) > 10000) {
-		        this.cheeseCollider = false;
-		        this.ratSpeed = 100;
-		    }
-		}
-
+		
+			if (this.cheeseCollider == false) {
+				this.cheeses.forEach(cheese => {
+					if (this.checkCollision(this.rat, cheese, 30)) {
+						this.ratSpeed = 50;
+						cheese.destroy(); // Desactiva el queso del juego
+						this.cheeseCollider = true;
+						this.cheeseTime = time;
+						this.game.eatSound.play();
+						//deleteCollectedItem(this.playerId, cheese.id);
+					}
+				});
+			} else {
+				// EFECTOS DEL QUESO
+				if (Math.abs(time - this.cheeseTime) > 10000) {
+					 this.cheeseCollider = false;
+					 this.ratSpeed = 100;
+				}
+			}
+		
         //MOVIMIENTO DE LA MANO
         this.handleHandMovement(time);
 
@@ -347,6 +362,7 @@ class GameScene extends Phaser.Scene {
                 case 2: //Activar queso
                     this.bqueso = true;
                     this.ActivateCheese();
+					this.socket.send(JSON.stringify( {type: "REGEN_CHEESE"} ));
                     break;
             }
         }
@@ -382,13 +398,14 @@ class GameScene extends Phaser.Scene {
     }
 	
 	
-	updatePlayerPosition(x, y) {
+	updatePlayerPosition(x, y, rotation) {
 	        console.log(this.socket); // Asegúrate de que aquí esté definido
 	        if (this.socket && this.socket.readyState === WebSocket.OPEN) {
 	            this.socket.send(JSON.stringify({
 	                type: "POSITION_UPDATE",
 	                x: x,
 	                y: y,
+					rotation: rotation,
 	                timestamp: new Date().toISOString()
 	            }));
 	        } else {
@@ -426,18 +443,22 @@ class GameScene extends Phaser.Scene {
     //Maneja el movimiento de la rata según la velocidad.
     handleRatMovement(speed) {
 		
+		let positionChanged = false; // Flag para rastrear cambios de posición
+		
 		if(this.rol == 0){
+			
 			this.rol0 = this.add.image(745, 70, 'rataRol').setScale(0.145);
-	        // Movimiento vertical
+	        
+			// Movimiento vertical
 	        if (this.keys.W.isDown) {
 	            this.rat.setVelocityY(-speed); // Arriba
 	            this.rat.rotation = -1.5708;
-				this.updatePlayerPosition(this.rat.x, this.rat.y);
+				positionChanged = true;
 				
 	        } else if (this.keys.S.isDown) {
 	            this.rat.setVelocityY(speed); // Abajo
 	            this.rat.rotation = 1.5708;
-				this.updatePlayerPosition(this.rat.x, this.rat.y);
+				positionChanged = true;
 				
 	        } else {
 	            this.rat.setVelocityY(0); // Detener en Y si no hay input
@@ -447,17 +468,22 @@ class GameScene extends Phaser.Scene {
 	        if (this.keys.A.isDown) {
 	            this.rat.setVelocityX(-speed); // Izquierda
 	            this.rat.rotation = 3.14159;
-	            this.updatePlayerPosition(this.rat.x, this.rat.y);
+				positionChanged = true;
 				
 	        } else if (this.keys.D.isDown) {
 	            this.rat.setVelocityX(speed); // Derecha
 	            this.rat.rotation = 0;
-				this.updatePlayerPosition(this.rat.x, this.rat.y);
+				positionChanged = true;
 				
 	        } else {
 	            this.rat.setVelocityX(0); // Detener en X si no hay input
 	        }
-	
+			
+			if (positionChanged) {
+				positionChanged = false;
+				this.updatePlayerPosition(this.rat.x, this.rat.y, this.rat.rotation);
+			}
+			
 		}
     }
 
@@ -596,10 +622,14 @@ class GameScene extends Phaser.Scene {
     }
     
     ActivateCheese(){
-        //Regenera los quesos en sus respectivas posiciones
-		this.cheeses.push(this.createCheese(275, 100));
-		this.cheeses.push(this.createCheese(300, 300));
-		this.cheeses.push(this.createCheese(735, 400));
+        
+		this.cheeses = [
+			this.createCheese(275, 100),
+			this.createCheese(300, 300),
+		 	this.createCheese(735, 400),
+		];
+		this.cheeseCollider = false;
+		this.cheeseTime = 0;
     }
     
 	createMetalPipe() {
@@ -626,7 +656,7 @@ class GameScene extends Phaser.Scene {
         //Crear el grupo estático "Paredes"
         const walls = this.physics.add.staticGroup();
 
-        fetchLabyrinthConfig(walls);
+        //fetchLabyrinthConfig(walls);
         
         //Añadir los bordes
         walls.create(400, 7.5, 'top');    //pared superior
@@ -898,31 +928,6 @@ class GameScene extends Phaser.Scene {
     }
 }
 
-async function sendHandMovementEvent(playerId, movementDirection) {
-    try {
-        const dataToSend = {
-            playerId: playerId,
-            direction: movementDirection,
-            timestamp: new Date().toISOString()
-        };
-
-        // Mostrar los datos que se van a enviar
-        console.log('Datos enviados:', JSON.stringify(dataToSend));
-
-        const response = await fetch('/api/game/hand-movement', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(dataToSend)
-        });
-
-        if (!response.ok) {
-            throw new Error(`Error: ${response.statusText}`);
-        }
-        console.log('Movimiento enviado exitosamente');
-    } catch (error) {
-        console.error('Error al enviar el movimiento:', error);
-    }
-}
 
 
 function deleteCollectedItem(playerId, itemId) {
@@ -945,26 +950,7 @@ function deleteCollectedItem(playerId, itemId) {
         });
 }
 
-//function updateLives(playerId, newLives) {
-//    fetch(`/api/game/lives`, {
-//        method: 'PUT',
-//        headers: { 'Content-Type': 'application/json' },
-//        body: JSON.stringify({
-//            playerId: playerId,
-//            lives: newLives,
-//            timestamp: new Date().toISOString(),
-//        }),
-//    })
-//        .then(response => {
-//            if (!response.ok) {
-//                throw new Error(`Error al actualizar vidas: ${response.statusText}`);
-//            }
-//            console.log(`Vidas actualizadas a: ${newLives}`);
-//        })
-//        .catch(error => {
-//            console.error('Error al actualizar las vidas:', error);
-//        });
-//}
+
 
 function fetchLabyrinthConfig(walls) {
     fetch('/api/game/labyrinth-config', {

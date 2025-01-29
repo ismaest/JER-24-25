@@ -23,6 +23,10 @@ public class GameRoom {
     public void removePlayer(String playerId) {
         players.remove(playerId);
     }
+    
+    public void clearRoom() {
+    	players = new ArrayList<>();
+    }
 
     public boolean isFull() {
         return players.size() == maxPlayers;
