@@ -44,9 +44,7 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
     	
     	int roomIdInt = gameRooms.size();
         
-    	if(roomIdInt == 0) { //ESTO ES PARA EVITAR QUE LA PRIMERA VEZ EL TAMAÑO SEA 0 Y POR ENDE, LA SIGUIENTE 1 Y SE DESCUADRE
-        	roomIdInt = 1;
-        }
+    	if(roomIdInt == 0) { roomIdInt = 1; }
     	
     	 // Puedes usar un ID específico para la sala o generar uno dinámico
         String roomId = Integer.toString(roomIdInt);
@@ -67,7 +65,7 @@ public class WebsocketEchoHandler extends TextWebSocketHandler {
             for (String playerId : room.getPlayers()) {
                 WebSocketSession playerSession = activeSessions.get(playerId);
                 playerSession.sendMessage(new TextMessage(
-            			"{\"type\": \"PLAYER_LOBBY_CONNECT\", \"roomId\": \"" + roomId + "\", \"numOfPlayersLobby\": " + room.getPlayers().size() + "}"
+            		"{\"type\": \"PLAYER_LOBBY_CONNECT\", \"roomId\": \"" + roomId + "\", \"numOfPlayersLobby\": " + room.getPlayers().size() + "}"
             	));
                 if (playerSession != null && playerSession.isOpen()) {
                 	

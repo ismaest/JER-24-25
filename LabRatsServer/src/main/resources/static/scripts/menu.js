@@ -17,7 +17,7 @@ class MenuScene extends Phaser.Scene {
     }
 
     create() {
-		
+
 		if(this.socket == undefined){
 			this.setupWebSocket();
 		}

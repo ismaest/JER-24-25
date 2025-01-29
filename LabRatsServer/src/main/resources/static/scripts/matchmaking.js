@@ -32,7 +32,8 @@ class MatchmakingScene extends Phaser.Scene {
     create() {
 		
 		this.lobbyId;
-
+		this.host = false;
+		
         this.userName = sessionStorage.getItem('userName');
         //Configuramos los sonidos
         this.setupSounds();
@@ -41,7 +42,9 @@ class MatchmakingScene extends Phaser.Scene {
         this.add.image(400, 300, 'backgroundMenu');
 
         this.createConnectedUsersDisplay();
-
+		
+		this.createPlayButton();
+		
         this.checkConnection();
 		
         // Contenedor del chat (inicialmente oculto)
@@ -57,8 +60,7 @@ class MatchmakingScene extends Phaser.Scene {
 			if (data.type == "START_GAME" && this.host == false) {
 				console.log("PARTIDA INICIADA");
 				
-				//this.connectedUsers = 0;
-				this.host = false;
+				this.connectedUsers = 0;
 				clearInterval(this.checkCurrentPlayers);
 				
 				this.scene.stop("MatchmakingScene");
@@ -76,35 +78,15 @@ class MatchmakingScene extends Phaser.Scene {
 			
 			} else if (data.type == "UPDATE_LOBBY_PLAYERS"){
 				this.connectedUsers = data.numOfPlayersLobby;
+				this.lobbyId = data.roomId;
 				this.usersText.setText(`USUARIOS CONECTADOS: ${this.connectedUsers}/2`);
 		}});
 		
 		this.checkCurrentPlayers = 
 			setInterval(() => {
 				this.usersText.setText(`USUARIOS CONECTADOS: ${this.connectedUsers}/2`);
-				this.socket.send(JSON.stringify({type: "UPDATE_LOBBY_PLAYERS", numOfPlayersLobby : this.connectedUsers}));
+				this.socket.send(JSON.stringify({type: "UPDATE_LOBBY_PLAYERS", numOfPlayersLobby : this.connectedUsers, roomId : this.lobbyId}));
 			}, 1000);  // Verificar cada 500 milisegundos
-		
-		this.checkHost =
-			setInterval(() => {
-				if(this.connectedUsers == 1){
-					console.log("HOST");
-					this.host = true;
-				} else if (this.connectedUsers == 2) {
-					console.log("NOT HOST");
-					this.host = false;
-				}
-				
-				clearInterval(this.checkHost);
-			}, 1500);
-		
-		this.createButton =
-			setInterval(() => {
-				if(this.connectedUsers == 2 && this.host == true){
-					this.createPlayButton();
-					clearInterval(this.createButton);
-				}
-			}, 2000);
     }
 	
     // Crear el indicador de conexión
@@ -188,18 +170,15 @@ class MatchmakingScene extends Phaser.Scene {
 	createPlayButton() {
 	    const startBtn = this.add.image(385, 550, 'jugarBtn').setScale(0.5).setInteractive();
 	    startBtn.on('pointerdown', () => {
-			if(this.connectedUsers == 2){
 				this.host = true;
-							
+				
 				this.socket.send(JSON.stringify({type: "START_GAME", rolId : 1, roomId : this.lobbyId}));
-							
-				this.host = false;
+				
 				clearInterval(this.checkCurrentPlayers);
-							
+				
 				// Cambiar a la escena de juego para este jugador
 				this.scene.stop("MatchmakingScene");
 				this.scene.start('GameScene', { socket: this.socket, rol : 0 });
-			}
 	    });
 	}
 	
