@@ -56,6 +56,7 @@ Se han implementado las mejoras correspondientes a la retroalimentación recibid
     - Se ha incluido un logo para el juego
     - Ahora se muestra visualmente en partida el rol asociado a cada jugador junto con su nombre de usuario
     - Se ha cambiado la información enviada a WebSocket para mejorar la jugabilidad y experiencia de juego
+    - Se ha incluido un aviso dentro de partida en caso de que uno de los dos jugadores se desconecte del servidor
   
   **- Subida del juego a plataformas:** Se ha publicado el juego en las siguientes plataformas:
   
