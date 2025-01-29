@@ -5,7 +5,7 @@
 
 PINCHA EN LA IMAGEN PARA CARGAR EL VIDEO EXPLICATIVO CÓMO USAR EL JUEGO
 
-[![ALT TEXT](https://github.com/user-attachments/assets/3bc07232-cfbd-435f-bc43-e1c85379cc70)](https://www.youtube.com/watch?v=FAvfSkwJzWI)
+[![ALT TEXT](https://github.com/user-attachments/assets/3bc07232-cfbd-435f-bc43-e1c85379cc70)](https://www.youtube.com/watch?v=2n-2z8X06o0&ab_channel=SmartWasTaken)
 
 LABRATS es un juego arcade 1vs1 en el que ambos jugadores tomarán el rol de una rata o un científico. La rata deberá sobrevivir a los intentos del científico por acabar con ella.
 
